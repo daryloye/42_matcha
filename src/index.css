@@ -1,5 +1,14 @@
+@font-face {
+  font-family: 'Pricedown';
+  src: local('Pricedown'), url('./assets//Pricedown\ Bl.otf') format('opentype');
+  /* You can add other formats like 'truetype' or 'woff2' for better compatibility */
+}
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: sans-serif;
+  /* You can add other formats like 'truetype' or 'woff2' for better compatibility */
+
+  /* font-family: system-ui, Avenir, Helvetica, Arial, sans-serif; */
   line-height: 1.5;
   font-weight: 400;
 
@@ -28,9 +37,15 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+
+  background-image: url('./assets/background.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 h1 {
+  font-family: 'Pricedown';
   font-size: 3.2em;
   line-height: 1.1;
 }
@@ -41,9 +56,8 @@ button {
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
-  font-family: inherit;
+  font-family: sans-serif;
   background-color: #1a1a1a;
-  cursor: pointer;
   transition: border-color 0.25s;
 }
 button:hover {
@@ -65,9 +79,4 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
-}
-
-.background-image {
-  background-image: url('./assets/background.png');
-  background-size: cover;
 }
