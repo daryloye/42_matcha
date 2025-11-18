@@ -1,0 +1,133 @@
+openapi: '3.0.3'
+info:
+  title: 42_Matcha API
+  version: '1.0'
+servers:
+  - url: https://api.server.test/v1
+
+components:
+  parameters:
+    BearerAuth:
+      in: header
+      name: Authorization
+      required: true
+      schema:
+        type: string
+        example: "Bearer <token>"
+
+paths:
+  /auth/login:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              username: 'user123'
+              password: 'password123'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              example:
+                accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        '400':
+          description: Missing required fields 
+        '401':
+          description: Incorrect email or password
+
+  /auth/signup:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              firstname: 'test'
+              lastname: 'user'
+              email: 'user@email.com'
+              username: 'user123'
+              password: 'password123'
+      responses:
+        '200':
+          description: Sign up successful
+          content:
+            application/json:
+              example:
+                accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        '400':
+          description: Invalid or missing required fields
+          content:
+            application/json:
+              examples:
+                missingFields:
+                  value:
+                    errorCode: 0
+                    message: 'Missing required fields'
+                weakPassword:
+                  value:
+                    errorCode: 1
+                    message: 'Password is too weak'
+        '409':
+          description: User already exists
+  
+  /auth/resetpassword:
+    post:
+      description: Request password reset email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              email: 'user@email.com'
+              username: 'user123'
+      responses:
+        '201':
+          description: Accepted
+        '400':
+          description: Missing required fields
+        '409':
+          description: User does not exist
+  
+  /auth/changepassword:
+    post:
+      description: Change password after logging in
+      parameters:
+        - $ref: '#/components/parameters/BearerAuth'
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            example:
+              oldPassword: 'oldpassword123'
+              newPassword: 'newpassword123'
+      responses:
+        '200':
+          description: Password changed
+        '400':
+          description: Invalid or missing required fields
+          content:
+            application/json:
+              examples:
+                missingFields:
+                  value:
+                    errorCode: 0
+                    message: 'Missing required fields'
+                weakPassword:
+                  value:
+                    errorCode: 1
+                    message: 'Password is too weak'
+
+  /auth/validate:
+    post:
+      description: Send OTP to email for validation
+      parameters:
+        - $ref: '#/components/parameters/BearerAuth'
+      responses:
+        '201':
+          description: Accepted
+
+
+        
+
