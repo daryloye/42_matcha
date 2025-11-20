@@ -61,6 +61,7 @@ button {
 }
 button:hover {
   background-color: rgb(98, 106, 254);
+  cursor: pointer;
 }
 button:focus,
 button:focus-visible {
