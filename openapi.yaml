@@ -128,6 +128,31 @@ paths:
         '201':
           description: Accepted
 
-
+  /profile/update:
+    post:
+      parameters:
+        - $ref: '#/components/parameters/BearerAuth'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                gender:
+                  type: string
+                sexualPreference:
+                  type: string
+                biography:
+                  type: string
+                profileImage:
+                  type: string
+                  format: base64
+            encoding:
+              profileImage:
+                contentType: image/png, image/jpeg
+      responses:
+        '201':
+          description: Accepted
         
 

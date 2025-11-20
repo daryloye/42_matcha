@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import './Login.css';
+import { useEffect, useState } from 'react';
+import './Auth.css';
 
 export default function SignUp() {
   const [firstname, setFirstname] = useState('');
@@ -7,69 +7,107 @@ export default function SignUp() {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordRetype, setPasswordRetype] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  useEffect(() => {
+    if (password !== passwordRetype) {
+      setErrorMsg('Passwords do not match');
+    } else if (password === passwordRetype) {
+      setErrorMsg('');
+    }
+  }, [password, passwordRetype])
+
+  const handleCreateAccount = () => {
+    if (errorMsg !== '') return;
+
+    // Simulate /auth/signup request
+    if (password === 'a') {
+      setErrorMsg('Password is too weak');
+    } else {
+      setErrorMsg('');
+    }
+  }
 
   return (
-    <div className='login-container'>
-      <h1>Welcome to Matcha</h1>
+    <div className='page-wrapper-center'>
+      <div className='login-container'>
+        <h1>Welcome to Matcha</h1>
 
-      <form className='form-container'>
-        <input
-          className='login-input'
-          type="text"
-          id="firstname"
-          value={firstname}
-          onChange={(event) => setFirstname(event.target.value)}
-          placeholder="First name"
-          required
-        />
+        <p className='error-message'>{errorMsg}</p>
 
-        <input
-          className='login-input'
-          type="text"
-          id="lastname"
-          value={lastname}
-          onChange={(event) => setLastname(event.target.value)}
-          placeholder="Last name"
-          required
-        />
+        <form className='login-form-container'>
+          <input
+            className='login-input'
+            type="text"
+            id="firstname"
+            value={firstname}
+            onChange={(event) => setFirstname(event.target.value.trim())}
+            placeholder="First name"
+            required
+          />
 
-        <input
-          className='login-input'
-          type="email"
-          id="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          placeholder="Email"
-          required
-        />
+          <input
+            className='login-input'
+            type="text"
+            id="lastname"
+            value={lastname}
+            onChange={(event) => setLastname(event.target.value.trim())}
+            placeholder="Last name"
+            required
+          />
 
-        <input
-          className='login-input'
-          type="text"
-          id="username"
-          value={username}
-          onChange={(event) => setUsername(event.target.value)}
-          placeholder="Username"
-          required
-        />
+          <input
+            className='login-input'
+            type="email"
+            id="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value.trim())}
+            placeholder="Email"
+            required
+          />
 
-        <input
-          className='login-input'
-          type="password"
-          id="password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          placeholder="Password"
-          required
-        />
+          <input
+            className='login-input'
+            type="text"
+            id="username"
+            value={username}
+            onChange={(event) => setUsername(event.target.value.trim())}
+            placeholder="Username"
+            required
+          />
 
-        <button className='login-button'>
-          Create Account
-        </button>
-      </form>
+          <input
+            className='login-input'
+            type="password"
+            id="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value.trim())}
+            placeholder="Password"
+            required
+          />
 
-      <div>
-        <a href='/'>Back to Login</a>
+          <input
+            className='login-input'
+            type="password"
+            id="password-retype"
+            value={passwordRetype}
+            onChange={(event) => setPasswordRetype(event.target.value.trim())}
+            placeholder="Retype Password"
+            required
+          />
+
+          <button
+            type='button'
+            onClick={handleCreateAccount}
+          >
+            Create Account
+          </button>
+        </form>
+
+        <div>
+          <a href='/'>Back to Login</a>
+        </div>
       </div>
     </div>
   )

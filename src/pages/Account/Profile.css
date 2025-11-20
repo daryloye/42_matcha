@@ -1,0 +1,41 @@
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.profile-picture {
+  width: 200px;
+  height: 200px;
+  border-radius: 200px;
+}
+
+.profile-heading {
+  margin-bottom: 0;
+  font-family: sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.profile-button-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.profile-button {
+  width: 7em;
+  border-radius: 0px;
+  border-color: grey;
+  border-width: 1px;
+}
+
+.profile-biography-text {
+  margin-top: 10px;
+  padding: 10px;
+  resize: none;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: white;
+  font-size: 16px;
+}

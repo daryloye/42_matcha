@@ -1,16 +1,15 @@
-// Filename - App.js
-
 import {
     Route,
     BrowserRouter as Router,
     Routes,
 } from "react-router-dom";
+import Profile from './pages/Account/Profile';
 import Login from './pages/Auth/Login';
 import SignUp from './pages/Auth/SignUp';
 import Home from './pages/Home/Home';
-import Profile from './pages/Profile/Profile';
+import NotFoundPage from './pages/NotFoundPage';
 
-function App() {
+export default function App() {
     return (
         <Router>
             <Routes>
@@ -18,9 +17,8 @@ function App() {
                 <Route path="/home" element={<Home />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="*" element={<NotFoundPage />} />
             </Routes>
         </Router>
     );
 }
-
-export default App;
