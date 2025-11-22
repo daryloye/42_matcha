@@ -24,11 +24,11 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #5c7de0;
   text-decoration: underline;
 }
 a:hover {
-  color: #989dfc;
+  color: #b394d6;
 }
 
 body {
@@ -55,12 +55,12 @@ button {
   font-weight: 500;
   font-family: sans-serif;
   margin: 10px 0px 20px 0px;
-  background-color: #733ac4;
+  background-color: #5c7de0;
   color: white;
   width: 200px;
 }
 button:hover {
-  background-color: rgb(98, 106, 254);
+  background-color: #b394d6;
   cursor: pointer;
 }
 button:focus,
@@ -73,6 +73,14 @@ button:focus-visible {
   height: 100vh;
   justify-content: center;
   align-items: center;
+}
+
+.page-container {
+  background-color: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  border: 3px #213547 solid;
+  box-sizing: border-box;
 }
 
 .error-message {

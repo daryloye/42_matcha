@@ -1,35 +1,37 @@
 import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './Auth.css';
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = () => {
-    if (errorMsg !== '') return;
-
-    if (username === '' || password === '') return;
+    if (username === '' || password === '') {
+      setErrorMsg('Please enter email and password');
+    }
 
     // simulate /auth/login request
-    if (username === 'a' && password === 'a') {
+    else if (username === 'a' && password === 'a') {
       setErrorMsg('Incorrect email or password');
-    } else {
+    }
+    else {
       setErrorMsg('');
-      console.log("Logged in");
+      navigate('/dashboard');
     }
   }
 
   return (
     <div className='page-wrapper-center'>
-      <div className='login-container'>
+      <div className='page-container login-container'>
         <h1>Welcome to Matcha</h1>
 
         <p className='error-message'>{errorMsg}</p>
 
-        <form className='login-form-container'>
+        <form>
           <input
-            className='login-input'
             type="text"
             id="username"
             value={username}
@@ -39,7 +41,6 @@ export default function Login() {
           />
 
           <input
-            className='login-input'
             type="password"
             id="password"
             value={password}
@@ -56,9 +57,7 @@ export default function Login() {
           </button>
         </form>
 
-        <div>
-          <a href='./signup'>Create Account</a>
-        </div>
+        <Link to='/signup'>Create Account</Link>
       </div>
     </div>
   )

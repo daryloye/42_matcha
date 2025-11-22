@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './Auth.css';
 
 export default function SignUp() {
@@ -9,6 +10,7 @@ export default function SignUp() {
   const [password, setPassword] = useState('');
   const [passwordRetype, setPasswordRetype] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (password !== passwordRetype) {
@@ -26,19 +28,19 @@ export default function SignUp() {
       setErrorMsg('Password is too weak');
     } else {
       setErrorMsg('');
+      navigate('/dashboard');
     }
   }
 
   return (
     <div className='page-wrapper-center'>
-      <div className='login-container'>
+      <div className='page-container login-container'>
         <h1>Welcome to Matcha</h1>
 
         <p className='error-message'>{errorMsg}</p>
 
-        <form className='login-form-container'>
+        <form>
           <input
-            className='login-input'
             type="text"
             id="firstname"
             value={firstname}
@@ -48,7 +50,6 @@ export default function SignUp() {
           />
 
           <input
-            className='login-input'
             type="text"
             id="lastname"
             value={lastname}
@@ -58,7 +59,6 @@ export default function SignUp() {
           />
 
           <input
-            className='login-input'
             type="email"
             id="email"
             value={email}
@@ -68,7 +68,6 @@ export default function SignUp() {
           />
 
           <input
-            className='login-input'
             type="text"
             id="username"
             value={username}
@@ -78,7 +77,6 @@ export default function SignUp() {
           />
 
           <input
-            className='login-input'
             type="password"
             id="password"
             value={password}
@@ -88,7 +86,6 @@ export default function SignUp() {
           />
 
           <input
-            className='login-input'
             type="password"
             id="password-retype"
             value={passwordRetype}
@@ -105,9 +102,7 @@ export default function SignUp() {
           </button>
         </form>
 
-        <div>
-          <a href='/'>Back to Login</a>
-        </div>
+        <Link to='/'>Back to Login</Link>
       </div>
     </div>
   )

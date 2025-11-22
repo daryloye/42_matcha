@@ -1,42 +1,132 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+.home-container {
+  width: 95%;
+  height: 90vh;
+  padding: 30px 5px 30px 30px;
+
+  display: flex;
+  flex-direction: row;
+  gap: 50px;
+}
+
+.home-container-vertical-line {
+  border: 2px solid #213547;
+}
+
+.home-sidebar {
+  width: 15%;
+}
+.home-sidebar h2 {
+  display: block;
+  margin: 0.5em auto;
   text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.home-sidebar h1 {
+  font-size: 2.8em;
+  color: #213547;
+}
+.home-sidebar h1:hover {
+  color: #b394d6;
+}
+.home-sidebar a {
+  text-decoration: none;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+
+.profile-picture {
+  display: block;
+  margin: 0 auto;
+  width: 100px;
+  height: 100px;
+  border-radius: 100px;
+  border: 2px solid #213547;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+
+.home-page-container {
+  overflow-y: auto;
+  width: 100%;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* Styling the scrollbar */
+.home-page-container::-webkit-scrollbar {
+    width: 5px;
+}
+.home-page-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+.home-page-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+}
+.home-page-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
-.card {
-  padding: 2em;
+
+.profile h2 {
+  margin-bottom: 0;
+  font-size: 20px;
+  font-weight: bold;
 }
 
-.read-the-docs {
-  color: #888;
+#profile-button-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.profile-button {
+  width: 7em;
+  border-radius: 0px;
+  border: 1px solid grey;
+  color: black;
+}
+
+#profile-biography-text {
+  margin-top: 10px;
+  padding: 10px;
+  resize: none;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.2);
+  color: white;
+  font-size: 16px;
+}
+#profile-biography-text::placeholder {
+  color: rgba(255, 255, 255, 0.811);
+  font-style: italic;
+}
+
+#profile-tag-container {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
+.profile-tag {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background-color: lightblue;
+  padding: 2px 5px;
+  border-radius: 10px;
+  border: 2px solid black;
+}
+
+.profile-tag-button,
+.profile-tag-button:hover,
+.profile-tag-button:focus,
+.profile-tag-button:focus-visible {
+  all: unset;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.profile-tag-text {
+  font-weight: bold;
+  margin: 0;
 }

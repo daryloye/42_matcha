@@ -1,9 +1,7 @@
 import { IonIcon } from '@ionic/react';
 import { closeSharp } from 'ionicons/icons';
 import { atom, useAtom } from 'jotai';
-import { Link } from 'react-router-dom';
-import profilePic from '../../assets/profilePic.jpg';
-import './Profile.css';
+import { HomePageTemplate } from './HomePageTemplate';
 
 const genderAtom = atom('Male');
 const genderPreferenceAtom = atom('Male');
@@ -11,25 +9,30 @@ const biographyAtom = atom('');
 const tagInputAtom = atom('');
 const tagListAtom = atom<string[]>(['hello', 'world']);
 
+
 export default function Profile() {
+  return (
+    <HomePageTemplate page={<ProfilePage />} />
+  )
+}
+
+
+function ProfilePage() {
   const [biography, setBiography] = useAtom(biographyAtom);
   const [tagInput, setTagInput] = useAtom(tagInputAtom);
   const [tagList, setTagList] = useAtom(tagListAtom);
 
   return (
-    <div className='page-wrapper-center' style={{ alignItems: 'baseline', marginTop: '5em' }}>
-      <div id='profile-container'>
-        <img src={profilePic} id='profile-picture' />
+      <div className='home-page-container profile'>
+        <h1>Profile</h1>
 
-        <h1>Your Name</h1>
-
-        <h1 className='profile-heading'>Gender:</h1>
+        <h2>Gender:</h2>
         <SelectionButtons atom={genderAtom} />
 
-        <h1 className='profile-heading'>Preference:</h1>
+        <h2>Preference:</h2>
         <SelectionButtons atom={genderPreferenceAtom} />
 
-        <h1 className='profile-heading'>Biography:</h1>
+        <h2>Biography:</h2>
         <textarea
           id='profile-biography-text'
           rows={5}
@@ -39,7 +42,7 @@ export default function Profile() {
         >
         </textarea>
 
-        <h1 className='profile-heading'>Interests (max 5):</h1>
+        <h2>Interests (max 5):</h2>
         <TagButtons />
         <input
           type='text'
@@ -52,12 +55,7 @@ export default function Profile() {
             }
           }}
         />
-
-        <Link to='/'>
-          <button type='button'>Back to Home</button>
-        </Link>
       </div>
-    </div>
   )
 }
 
@@ -71,7 +69,7 @@ function SelectionButtons({ atom }: { atom: any }) {
         type='button'
         className='profile-button'
         onClick={() => setSelection(text)}
-        style={{ backgroundColor: selection === text ? 'purple' : 'orange' }}
+        style={{ backgroundColor: selection === text ? 'lightBlue' : 'transparent' }}
       >
         {text}
       </button>
@@ -94,7 +92,7 @@ function TagButtons() {
     return (
       <div className='profile-tag'>
 
-        <p className='profile-tag-text'># {text}</p>
+        <p className='profile-tag-text'>#{text}</p>
 
         <button
           type='button'
