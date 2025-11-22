@@ -1,6 +1,7 @@
 import { ProfileInterestTags } from '../../components/ProfileInterestTags';
 import { ProfileLocation } from '../../components/ProfileLocation';
 import { ProfileSelectionButtons } from '../../components/ProfileSelectionButtons';
+import { ProfileUploadPictures } from '../../components/ProfileUploadPictures';
 import { genderAtom, genderPreferenceAtom } from '../../utils/atoms';
 import { HomePageTemplate } from './HomePageTemplate';
 
@@ -35,6 +36,9 @@ function ProfilePage() {
 
       <h2>Interests (max 5):</h2>
       <ProfileInterestTags />
+
+      <h2>Pictures:</h2>
+      <ProfileUploadPictures />
 
       <h2>Location:</h2>
       <ProfileLocation />

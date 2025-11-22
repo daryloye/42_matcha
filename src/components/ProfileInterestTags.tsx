@@ -4,33 +4,18 @@ import { useAtom } from 'jotai';
 import { useState } from 'react';
 import { tagListAtom } from '../utils/atoms';
 
-function useTags() {
+function Tags() {
   const [tagList, setTagList] = useAtom(tagListAtom);
-  const [tagInput, setTagInput] = useState('');
-  
-  const addTag = (tagInput: string) => {
-    if (tagInput !== '' && !tagList.includes(tagInput) && tagList.length < 5) {
-      setTagList([...tagList, tagInput])
-      setTagInput('');
-    }
-  }
 
   const deleteTag = (tag: string) => {
     const newTagList = tagList.filter(item => item !== tag);
     setTagList(newTagList);
   }
-  
-  return { tagList, tagInput, setTagInput, addTag, deleteTag };
-}
-
-
-function Tags() {
-  const {tagList, deleteTag} = useTags();
 
   return (
     <div id='profile-tag-container'>
       {tagList.map((tag) => (
-        <div className='profile-tag'>
+        <div key={tag} className='profile-tag'>
 
           <p className='profile-tag-text'>#{tag}</p>
 
@@ -53,7 +38,15 @@ function Tags() {
 }
 
 function TagInput() {
-  const {tagInput, setTagInput, addTag } = useTags();
+  const [tagList, setTagList] = useAtom(tagListAtom);
+  const [tagInput, setTagInput] = useState('');
+
+  const addTag = (tagInput: string) => {
+    if (tagInput !== '' && !tagList.includes(tagInput) && tagList.length < 5) {
+      setTagList([...tagList, tagInput])
+      setTagInput('');
+    }
+  }
 
   return (
     <input
