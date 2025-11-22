@@ -33,7 +33,7 @@ function Sidebar() {
         <h1>Chat</h1>
       </Link>
 
-      <Link to='/'>
+      <Link to='/account'>
         <h1>Account</h1>
       </Link>
       

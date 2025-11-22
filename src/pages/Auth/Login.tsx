@@ -8,7 +8,7 @@ export default function Login() {
   const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = () => {
+  const handleSubmit = () => {
     if (username === '' || password === '') {
       setErrorMsg('Please enter email and password');
     }
@@ -51,13 +51,14 @@ export default function Login() {
 
           <button
             type='button'
-            onClick={handleLogin}
+            onClick={handleSubmit}
           >
             Login
           </button>
         </form>
 
         <Link to='/signup'>Create Account</Link>
+        <Link to='/resetpassword'>I forgot my password</Link>
       </div>
     </div>
   )

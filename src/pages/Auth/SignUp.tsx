@@ -20,7 +20,7 @@ export default function SignUp() {
     }
   }, [password, passwordRetype])
 
-  const handleCreateAccount = () => {
+  const handleSubmit = () => {
     if (errorMsg !== '') return;
 
     // Simulate /auth/signup request
@@ -96,7 +96,7 @@ export default function SignUp() {
 
           <button
             type='button'
-            onClick={handleCreateAccount}
+            onClick={handleSubmit}
           >
             Create Account
           </button>
