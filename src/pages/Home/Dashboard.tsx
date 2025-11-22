@@ -8,7 +8,7 @@ export default function Dashboard() {
 
 function DashboardPage() {
   return (
-    <div>
+    <div className='home-page-container'>
       <h1>Dashboard</h1>
     </div>
   )

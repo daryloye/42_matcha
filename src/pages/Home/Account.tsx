@@ -8,7 +8,7 @@ export default function Account() {
 
 function AccountPage() {
   return (
-    <div>
+    <div className='home-page-container'>
       <h1>Account</h1>
       <h2>Reset Password</h2>
     </div>
