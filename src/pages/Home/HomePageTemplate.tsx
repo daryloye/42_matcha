@@ -5,7 +5,7 @@ import './Home.css';
 
 export function HomePageTemplate({ page }: { page: ReactNode }) {
   return (
-    <div className='page-wrapper-center'>
+    <div className='page-wrapper'>
       <div className='page-container home-container'>
         <Sidebar />
         <div className='home-container-vertical-line' />
@@ -32,7 +32,7 @@ function Sidebar() {
         <h1>Profile</h1>
       </Link>
 
-      <Link to='/'>
+      <Link to='/chat'>
         <h1>Chat</h1>
       </Link>
 

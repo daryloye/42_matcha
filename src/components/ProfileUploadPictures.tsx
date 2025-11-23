@@ -39,7 +39,7 @@ function PicturesView() {
 }
 
 function PicturesInput() {
-  const [picturesList, setPicturesList] = useAtom(picturesAtom);
+  const [_, setPicturesList] = useAtom(picturesAtom);
 
   const addPictures = (event: any) => {
     const files = Array.from(event.target.files) as File[];

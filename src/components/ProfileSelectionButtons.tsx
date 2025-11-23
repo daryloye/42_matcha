@@ -6,7 +6,7 @@ function SelectionButton({ atom, text }: { atom: any; text: string }) {
   return (
     <button
       type='button'
-      className='profile-button'
+      className='profile-selection-button'
       onClick={() => setSelection(text)}
       style={{
         backgroundColor: selection === text ? 'lightBlue' : 'transparent',
@@ -25,7 +25,7 @@ export function ProfileSelectionButtons({
   options: string[];
 }) {
   return (
-    <div id='profile-button-container'>
+    <div className='row'>
       {options.map((t) => (
         <SelectionButton key={t} atom={atom} text={t} />
       ))}

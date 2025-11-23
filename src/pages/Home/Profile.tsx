@@ -4,6 +4,7 @@ import { ProfileSelectionButtons } from '../../components/ProfileSelectionButton
 import { ProfileUploadPictures } from '../../components/ProfileUploadPictures';
 import { genderAtom, genderPreferenceAtom } from '../../utils/atoms';
 import { HomePageTemplate } from './HomePageTemplate';
+import './Profile.css';
 
 export default function Profile() {
   return <HomePageTemplate page={<ProfilePage />} />;
@@ -25,7 +26,7 @@ function ProfilePage() {
 
       <h2>Biography:</h2>
       <textarea
-        id='profile-biography-text'
+        className='profile-text-input'
         rows={5}
         cols={50}
         wrap='soft'

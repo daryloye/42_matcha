@@ -1,0 +1,53 @@
+.profile h2 {
+  margin: 20px 0 0;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.profile-selection-button {
+  width: 7em;
+  border-radius: 0px;
+  border: 1px solid grey;
+  color: black;
+}
+
+.profile-text-input {
+  margin-top: 10px;
+  border-radius: 10px;
+  font-size: 16px;
+  color: white;
+}
+.profile-text-input::placeholder {
+  color: white;
+  font-style: italic;
+}
+
+.profile-tag {
+  background-color: lightblue;
+  padding: 2px 5px;
+  border-radius: 10px;
+  border: 1px solid black;
+}
+.profile-tag p {
+  font-weight: bold;
+  margin: 0;
+}
+.profile-tag button,
+.profile-tag button:hover,
+.profile-tag button:focus,
+.profile-tag button:focus-visible {
+  all: unset;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.profile-util-button {
+  width: auto;
+  border: 1px solid grey;
+  border-radius: 5px;
+  margin: 5px;
+  padding: 5px 10px;
+  font-size: 14px;
+}

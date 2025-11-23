@@ -1,0 +1,56 @@
+.chat-container {
+  margin: 30px 40px 0 0;
+  border: 2px solid #213547;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  overflow: hidden;
+  height: 90%;
+}
+
+.chat-container-vertical-line {
+  border: 1px solid #213547;
+}
+
+.chat-container-horizontal-line {
+  border: 1px solid #213547;
+}
+
+.chat-overview-container {
+  width: 25%;
+  min-width: 200px;
+  overflow-y: auto;
+}
+
+.chat-overview-item {
+  all: unset;
+  padding: 10px;
+}
+.chat-overview-item:not(:last-child) {
+  border-bottom: 1px solid #213547;
+}
+.chat-overview-item:focus,
+.chat-overview-item:focus-visible {
+  outline: none;
+}
+
+.chat-overview-item-text {
+  overflow: hidden;
+}
+.chat-overview-item-text p,
+h2 {
+  padding-left: 20px;
+  line-height: 1em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-selected-container {
+  width: 75%;
+  min-width: 200px;
+  overflow-y: auto;
+}
+.chat-selected-header {
+  padding: 15px;
+  background-color: #b394d6;
+}

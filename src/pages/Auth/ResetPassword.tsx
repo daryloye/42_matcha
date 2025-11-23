@@ -18,7 +18,7 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className='page-wrapper-center'>
+    <div className='page-wrapper'>
       <div className='page-container login-container'>
         <h1>Welcome to Matcha</h1>
 

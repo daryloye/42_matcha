@@ -13,16 +13,12 @@ function Tags() {
   };
 
   return (
-    <div id='profile-tag-container'>
+    <div className='row' style={{ gap: '5px' }}>
       {tagList.map((tag) => (
-        <div key={tag} className='profile-tag'>
-          <p className='profile-tag-text'>#{tag}</p>
+        <div key={tag} className='profile-tag row justify-center align-center'>
+          <p>#{tag}</p>
 
-          <button
-            type='button'
-            className='profile-tag-button'
-            onClick={() => deleteTag(tag)}
-          >
+          <button type='button' onClick={() => deleteTag(tag)}>
             <IonIcon
               icon={closeSharp}
               style={{ width: '20px', height: '20px', color: 'black' }}
@@ -55,7 +51,7 @@ function TagInput() {
           if (event.key == 'Enter') addTag();
         }}
         placeholder='Add tag...'
-        className='profile-tag-input'
+        className='profile-text-input'
       />
       <button
         type='button'
