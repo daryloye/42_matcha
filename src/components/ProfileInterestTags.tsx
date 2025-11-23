@@ -41,7 +41,7 @@ function TagInput() {
   const [tagList, setTagList] = useAtom(tagListAtom);
   const [tagInput, setTagInput] = useState('');
 
-  const addTag = (tagInput: string) => {
+  const addTag = () => {
     if (tagInput !== '' && !tagList.includes(tagInput) && tagList.length < 5) {
       setTagList([...tagList, tagInput])
       setTagInput('');
@@ -49,15 +49,26 @@ function TagInput() {
   }
 
   return (
-    <input
-      type='text'
-      value={tagInput}
-      onChange={(event) => setTagInput(event.target.value.trim())}
-      onKeyDown={(event) => {
-        if (event.key == 'Enter')
-          addTag(tagInput);
-      }}
-    />
+    <div>
+      <input
+        type='text'
+        value={tagInput}
+        onChange={(event) => setTagInput(event.target.value.trim())}
+        onKeyDown={(event) => {
+          if (event.key == 'Enter')
+            addTag();
+        }}
+        placeholder='Add tag...'
+        className='profile-tag-input'
+      />
+      <button
+        type='button'
+        className='profile-util-button'
+        onClick={() => addTag()}
+      >
+        Add
+      </button>
+    </div>
   )
 }
 

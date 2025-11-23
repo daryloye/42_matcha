@@ -1,26 +1,33 @@
 import { useAtom } from 'jotai';
-import { useEffect, useState } from 'react';
 import { picturesAtom } from '../utils/atoms';
+import type { PictureItem } from '../utils/types';
 
-function PicturesPreview({ previewList }: { previewList: string[] }) {
-  const deletePicture = () => {}
+function PicturesView() {
+  const [picturesList, setPicturesList] = useAtom(picturesAtom);
+
+  const deletePicture = (item: PictureItem) => {
+    URL.revokeObjectURL(item.url);
+    setPicturesList((prev) => {
+      return prev.filter(p => p !== item);
+    })
+  }
 
   return (
     <div>
-      {previewList.map((file: string) =>
-      <div key={file} style={{display: 'flex', flexDirection: 'column'}}>
-        <img
-          key={file}
-          src={file}
-          style={{ height: '100px', width: '100px' }}
-        />
-        <button
-          type='button'
-          style={{all: 'unset', color: 'white', backgroundColor: 'red', width: '3em'}}
-          onClick={() => deletePicture()}
-        >
-          Delete
-        </button>
+      {picturesList.map((item) =>
+        <div key={item.url} style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+          <img
+            src={item.url}
+            style={{ height: '100px', width: '100px' }}
+          />
+          <button
+            type='button'
+            className='profile-util-button'
+            style={{backgroundColor: 'red'}}
+            onClick={() => deletePicture(item)}
+          >
+            Delete
+          </button>
         </div>
       )}
     </div>
@@ -31,8 +38,14 @@ function PicturesInput() {
   const [picturesList, setPicturesList] = useAtom(picturesAtom);
 
   const addPictures = (event: any) => {
-    const newPictures = Array.from(event.target.files) as File[];
-    setPicturesList((prev) => [...prev, ...newPictures]);
+    const files = Array.from(event.target.files) as File[];
+
+    setPicturesList((prev) => [
+      ...prev,
+      ...files.map((file) => ({
+        file, url: URL.createObjectURL(file)
+      }))
+    ])
   }
 
   return (
@@ -45,20 +58,10 @@ function PicturesInput() {
 }
 
 export function ProfileUploadPictures() {
-  const [picturesList, setPicturesList] = useAtom(picturesAtom);
-  const [previewList, setPreviewList] = useState<string[]>([]);
-
-  useEffect(() => {
-    const newPreviewList = picturesList.map((file) => {
-      return URL.createObjectURL(file);
-    });
-    setPreviewList(newPreviewList);
-  }, [picturesList])
-
   return (
     <div>
       <PicturesInput />
-      <PicturesPreview previewList={previewList} />
+      <PicturesView />
     </div>
   )
 }

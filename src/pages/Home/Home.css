@@ -122,10 +122,10 @@
   background-color: rgba(0, 0, 0, 0.2);
   color: white;
   font-size: 16px;
+  font-family: sans-serif;
 }
-
 #profile-biography-text::placeholder {
-  color: rgba(255, 255, 255, 0.811);
+  color: rgba(255, 255, 255, 0.8);
   font-style: italic;
 }
 
@@ -133,6 +133,21 @@
   display: flex;
   flex-direction: row;
   gap: 5px;
+}
+
+.profile-tag-input {
+  margin-top: 10px;
+  padding: 10px;
+  resize: none;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.2);
+  color: white;
+  font-size: 16px;
+  font-family: sans-serif;
+}
+.profile-tag-input::placeholder {
+  color: rgba(255, 255, 255, 0.8);
+  font-style: italic;
 }
 
 .profile-tag {
@@ -160,4 +175,13 @@
 .profile-tag-text {
   font-weight: bold;
   margin: 0;
+}
+
+.profile-util-button {
+  width: auto;
+  border: 1px solid grey;
+  border-radius: 5px;
+  margin: 5px;
+  padding: 5px 10px;
+  font-size: 14px;
 }

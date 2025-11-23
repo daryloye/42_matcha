@@ -51,7 +51,7 @@ function LocationMarker() {
 export function ProfileLocation() {
   return (
     <MapContainer
-      center={[51.505, -0.09]}
+      center={[25.791, -80.130]}
       zoom={13}
       scrollWheelZoom={true}
       style={{height: '500px', width: '50%'}}

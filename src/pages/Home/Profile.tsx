@@ -34,9 +34,12 @@ function ProfilePage() {
       >
       </textarea>
 
-      <h2>Interests (max 5):</h2>
+      <h2>Interests (max 5, press Enter to add):</h2>
       <ProfileInterestTags />
 
+      <h2>Profile Picture:</h2>
+      
+      
       <h2>Pictures:</h2>
       <ProfileUploadPictures />
 
