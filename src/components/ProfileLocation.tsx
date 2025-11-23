@@ -1,28 +1,38 @@
 import { useAtom } from 'jotai';
-import type { Marker as LeafletMarker } from "leaflet";
+import type { Marker as LeafletMarker } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useMemo, useRef } from 'react';
-import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents } from 'react-leaflet';
+import {
+  MapContainer,
+  Marker,
+  Popup,
+  TileLayer,
+  useMap,
+  useMapEvents,
+} from 'react-leaflet';
 import { locationAtom } from '../utils/atoms';
 
 function LocationMarker() {
   const [position, setPosition] = useAtom(locationAtom);
   const markerRef = useRef<LeafletMarker | null>(null);
-  
-  const eventHandlers = useMemo(() => ({
-    dragend() {
-      const marker = markerRef.current
-      if (marker != null) {
-        setPosition(marker.getLatLng());
-      }
-    },
-  }), []);
-  
+
+  const eventHandlers = useMemo(
+    () => ({
+      dragend() {
+        const marker = markerRef.current;
+        if (marker != null) {
+          setPosition(marker.getLatLng());
+        }
+      },
+    }),
+    [],
+  );
+
   const map = useMap();
 
   useEffect(() => {
     map.locate();
-  }, [map])
+  }, [map]);
 
   useMapEvents({
     locationfound(e) {
@@ -40,8 +50,8 @@ function LocationMarker() {
     >
       <Popup>
         <p style={{ textAlign: 'center' }}>
-          Drag this to set your location<br />
-          ({position.lat.toFixed(3)}, {position.lng.toFixed(3)})
+          Drag this to set your location
+          <br />({position.lat.toFixed(3)}, {position.lng.toFixed(3)})
         </p>
       </Popup>
     </Marker>
@@ -51,14 +61,14 @@ function LocationMarker() {
 export function ProfileLocation() {
   return (
     <MapContainer
-      center={[25.791, -80.130]}
+      center={[25.791, -80.13]}
       zoom={13}
       scrollWheelZoom={true}
-      style={{height: '500px', width: '50%'}}
+      style={{ height: '500px', width: '50%' }}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
       />
       <LocationMarker />
     </MapContainer>

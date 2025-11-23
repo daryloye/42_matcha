@@ -5,13 +5,9 @@ import { ProfileUploadPictures } from '../../components/ProfileUploadPictures';
 import { genderAtom, genderPreferenceAtom } from '../../utils/atoms';
 import { HomePageTemplate } from './HomePageTemplate';
 
-
 export default function Profile() {
-  return (
-    <HomePageTemplate page={<ProfilePage />} />
-  )
+  return <HomePageTemplate page={<ProfilePage />} />;
 }
-
 
 function ProfilePage() {
   return (
@@ -22,7 +18,10 @@ function ProfilePage() {
       <ProfileSelectionButtons atom={genderAtom} options={['Male', 'Female']} />
 
       <h2>Preference:</h2>
-      <ProfileSelectionButtons atom={genderPreferenceAtom} options={['Male', 'Female', 'Any']} />
+      <ProfileSelectionButtons
+        atom={genderPreferenceAtom}
+        options={['Male', 'Female', 'Any']}
+      />
 
       <h2>Biography:</h2>
       <textarea
@@ -31,20 +30,18 @@ function ProfilePage() {
         cols={50}
         wrap='soft'
         placeholder='Add biography...'
-      >
-      </textarea>
+      ></textarea>
 
       <h2>Interests (max 5, press Enter to add):</h2>
       <ProfileInterestTags />
 
       <h2>Profile Picture:</h2>
-      
-      
+
       <h2>Pictures:</h2>
       <ProfileUploadPictures />
 
       <h2>Location:</h2>
       <ProfileLocation />
     </div>
-  )
+  );
 }

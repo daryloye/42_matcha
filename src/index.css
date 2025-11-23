@@ -1,6 +1,8 @@
 @font-face {
   font-family: 'Pricedown';
-  src: local('Pricedown'), url('./assets//Pricedown\ Bl.otf') format('opentype');
+  src:
+    local('Pricedown'),
+    url('./assets//Pricedown\ Bl.otf') format('opentype');
   /* You can add other formats like 'truetype' or 'woff2' for better compatibility */
 }
 

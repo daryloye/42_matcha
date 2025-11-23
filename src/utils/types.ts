@@ -1,4 +1,4 @@
 export type PictureItem = {
-  file: File
-  url: string
-}
+  file: File;
+  url: string;
+};

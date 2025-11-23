@@ -8,15 +8,14 @@ function Tags() {
   const [tagList, setTagList] = useAtom(tagListAtom);
 
   const deleteTag = (tag: string) => {
-    const newTagList = tagList.filter(item => item !== tag);
+    const newTagList = tagList.filter((item) => item !== tag);
     setTagList(newTagList);
-  }
+  };
 
   return (
     <div id='profile-tag-container'>
       {tagList.map((tag) => (
         <div key={tag} className='profile-tag'>
-
           <p className='profile-tag-text'>#{tag}</p>
 
           <button
@@ -24,17 +23,15 @@ function Tags() {
             className='profile-tag-button'
             onClick={() => deleteTag(tag)}
           >
-
             <IonIcon
               icon={closeSharp}
-              style={{ width: "20px", height: "20px", color: "black" }}
+              style={{ width: '20px', height: '20px', color: 'black' }}
             />
-
           </button>
         </div>
       ))}
     </div>
-  )
+  );
 }
 
 function TagInput() {
@@ -43,10 +40,10 @@ function TagInput() {
 
   const addTag = () => {
     if (tagInput !== '' && !tagList.includes(tagInput) && tagList.length < 5) {
-      setTagList([...tagList, tagInput])
+      setTagList([...tagList, tagInput]);
       setTagInput('');
     }
-  }
+  };
 
   return (
     <div>
@@ -55,8 +52,7 @@ function TagInput() {
         value={tagInput}
         onChange={(event) => setTagInput(event.target.value.trim())}
         onKeyDown={(event) => {
-          if (event.key == 'Enter')
-            addTag();
+          if (event.key == 'Enter') addTag();
         }}
         placeholder='Add tag...'
         className='profile-tag-input'
@@ -69,7 +65,7 @@ function TagInput() {
         Add
       </button>
     </div>
-  )
+  );
 }
 
 export function ProfileInterestTags() {
@@ -78,5 +74,5 @@ export function ProfileInterestTags() {
       <Tags />
       <TagInput />
     </div>
-  )
+  );
 }

@@ -16,12 +16,11 @@ export default function Login() {
     // simulate /auth/login request
     else if (username === 'a' && password === 'a') {
       setErrorMsg('Incorrect email or password');
-    }
-    else {
+    } else {
       setErrorMsg('');
       navigate('/dashboard');
     }
-  }
+  };
 
   return (
     <div className='page-wrapper-center'>
@@ -32,27 +31,24 @@ export default function Login() {
 
         <form>
           <input
-            type="text"
-            id="username"
+            type='text'
+            id='username'
             value={username}
             onChange={(event) => setUsername(event.target.value.trim())}
-            placeholder="Username"
+            placeholder='Username'
             required
           />
 
           <input
-            type="password"
-            id="password"
+            type='password'
+            id='password'
             value={password}
             onChange={(event) => setPassword(event.target.value.trim())}
-            placeholder="Password"
+            placeholder='Password'
             required
           />
 
-          <button
-            type='button'
-            onClick={handleSubmit}
-          >
+          <button type='button' onClick={handleSubmit}>
             Login
           </button>
         </form>
@@ -61,5 +57,5 @@ export default function Login() {
         <Link to='/resetpassword'>I forgot my password</Link>
       </div>
     </div>
-  )
+  );
 }

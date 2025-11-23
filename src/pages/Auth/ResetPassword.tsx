@@ -10,13 +10,12 @@ export default function ResetPassword() {
   const handleSubmit = () => {
     if (email === '') {
       setErrorMsg('Please enter your email');
-    }
-    else {
+    } else {
       setErrorMsg('');
       alert('Please check your email for the reset instructions.');
       navigate('/');
     }
-  }
+  };
 
   return (
     <div className='page-wrapper-center'>
@@ -27,18 +26,15 @@ export default function ResetPassword() {
 
         <form>
           <input
-            type="email"
-            id="email"
+            type='email'
+            id='email'
             value={email}
             onChange={(event) => setEmail(event.target.value.trim())}
-            placeholder="Your email"
+            placeholder='Your email'
             required
           />
 
-          <button
-            type='button'
-            onClick={handleSubmit}
-          >
+          <button type='button' onClick={handleSubmit}>
             Request reset link
           </button>
         </form>
@@ -46,5 +42,5 @@ export default function ResetPassword() {
         <Link to='/'>Back to Login</Link>
       </div>
     </div>
-  )
+  );
 }

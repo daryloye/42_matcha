@@ -9,23 +9,22 @@ export default function NewPassword() {
   const navigate = useNavigate();
 
   useEffect(() => {
-      if (password !== passwordRetype) {
-        setErrorMsg('Passwords do not match');
-      } else if (password === passwordRetype) {
-        setErrorMsg('');
-      }
-    }, [password, passwordRetype])
-  
+    if (password !== passwordRetype) {
+      setErrorMsg('Passwords do not match');
+    } else if (password === passwordRetype) {
+      setErrorMsg('');
+    }
+  }, [password, passwordRetype]);
+
   const handleSubmit = () => {
     if (password === '') {
       setErrorMsg('Please enter a password');
-    }
-    else {
+    } else {
       setErrorMsg('');
       alert('Password reset successful.');
       navigate('/');
     }
-  }
+  };
 
   return (
     <div className='page-wrapper-center'>
@@ -36,27 +35,24 @@ export default function NewPassword() {
 
         <form>
           <input
-            type="password"
-            id="password"
+            type='password'
+            id='password'
             value={password}
             onChange={(event) => setPassword(event.target.value.trim())}
-            placeholder="Enter new password"
+            placeholder='Enter new password'
             required
           />
 
           <input
-            type="password"
-            id="password-retype"
+            type='password'
+            id='password-retype'
             value={passwordRetype}
             onChange={(event) => setPasswordRetype(event.target.value.trim())}
-            placeholder="Retype password"
+            placeholder='Retype password'
             required
           />
 
-          <button
-            type='button'
-            onClick={handleSubmit}
-          >
+          <button type='button' onClick={handleSubmit}>
             Reset Password
           </button>
         </form>
@@ -64,5 +60,5 @@ export default function NewPassword() {
         <Link to='/'>Back to Login</Link>
       </div>
     </div>
-  )
+  );
 }
