@@ -10,6 +10,9 @@
   border: 1px solid grey;
   color: black;
 }
+.profile-selection-button:not(:last-child) {
+  border-right: none;
+}
 
 .profile-text-input {
   margin-top: 10px;

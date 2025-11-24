@@ -8,7 +8,6 @@ export function HomePageTemplate({ page }: { page: ReactNode }) {
     <div className='page-wrapper'>
       <div className='page-container home-container'>
         <Sidebar />
-        <div className='home-container-vertical-line' />
         {page}
       </div>
     </div>

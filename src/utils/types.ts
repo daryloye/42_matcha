@@ -7,6 +7,6 @@ export type ChatItem = {
   id: number;
   name: string;
   image: string;
-  message: string;
   status: string;
+  messages: { from: string; message: string }[];
 };

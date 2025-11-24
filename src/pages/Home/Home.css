@@ -7,16 +7,12 @@
   padding: 30px 5px 30px 30px;
 }
 
-.home-container-vertical-line {
-  border: 2px solid #213547;
-  margin: 0px 5px;
-}
-
 .home-sidebar {
   width: 15%;
   min-width: 15em;
   overflow-y: auto;
   padding-right: 45px;
+  border-right: 5px solid #213547;
 }
 .home-sidebar h2 {
   display: block;
