@@ -1,3 +1,7 @@
+.profile {
+  width: 20%;
+  min-width: 300px;
+}
 .profile h2 {
   margin: 20px 0 0;
   font-size: 20px;
@@ -5,31 +9,30 @@
 }
 
 .profile-selection-button {
+  margin: 0;
   width: 7em;
   border-radius: 0px;
-  border: 1px solid grey;
-  color: black;
+  border: 1px solid #213547;
+  color: #213547;
 }
 .profile-selection-button:not(:last-child) {
   border-right: none;
 }
 
 .profile-text-input {
-  margin-top: 10px;
   border-radius: 10px;
   font-size: 16px;
-  color: white;
 }
 .profile-text-input::placeholder {
-  color: white;
   font-style: italic;
 }
 
 .profile-tag {
-  background-color: lightblue;
+  margin: 5px 0 10px 0;
+  background-color: #b394d6;
   padding: 2px 5px;
   border-radius: 10px;
-  border: 1px solid black;
+  border: 1px solid #213547;
 }
 .profile-tag p {
   font-weight: bold;

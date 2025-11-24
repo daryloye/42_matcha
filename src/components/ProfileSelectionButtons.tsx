@@ -9,7 +9,7 @@ function SelectionButton({ atom, text }: { atom: any; text: string }) {
       className='profile-selection-button'
       onClick={() => setSelection(text)}
       style={{
-        backgroundColor: selection === text ? 'lightBlue' : 'transparent',
+        backgroundColor: selection === text ? '#b394d6' : 'transparent',
       }}
     >
       {text}

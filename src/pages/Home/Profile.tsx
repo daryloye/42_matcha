@@ -12,37 +12,60 @@ export default function Profile() {
 
 function ProfilePage() {
   return (
-    <div className='home-page-container profile'>
+    <div className='home-page-container'>
       <h1>Profile</h1>
 
-      <h2>Gender:</h2>
-      <ProfileSelectionButtons atom={genderAtom} options={['Male', 'Female']} />
+      <div className='profile'>
+        <h2>Profile Picture</h2>
 
-      <h2>Preference:</h2>
-      <ProfileSelectionButtons
-        atom={genderPreferenceAtom}
-        options={['Male', 'Female', 'Any']}
-      />
+        <h2>Fame</h2>
 
-      <h2>Biography:</h2>
-      <textarea
-        className='profile-text-input'
-        rows={5}
-        cols={50}
-        wrap='soft'
-        placeholder='Add biography...'
-      ></textarea>
+        <div className='row' style={{ gap: '10%' }}>
+          <div>
+            <h2>First name</h2>
+            <input style={{ width: '100%' }} />
+          </div>
 
-      <h2>Interests (max 5, press Enter to add):</h2>
-      <ProfileInterestTags />
+          <div>
+            <h2>Last name</h2>
+            <input style={{ width: '100%' }} />
+          </div>
+        </div>
 
-      <h2>Profile Picture:</h2>
+        <h2>Email</h2>
+        <input style={{ width: '100%' }} />
 
-      <h2>Pictures:</h2>
-      <ProfileUploadPictures />
+        <h2>Gender</h2>
+        <ProfileSelectionButtons
+          atom={genderAtom}
+          options={['Male', 'Female']}
+        />
 
-      <h2>Location:</h2>
-      <ProfileLocation />
+        <h2>Preference</h2>
+        <ProfileSelectionButtons
+          atom={genderPreferenceAtom}
+          options={['Male', 'Female', 'Any']}
+        />
+
+        <h2>Biography</h2>
+        <textarea
+          className='profile-text-input'
+          rows={5}
+          wrap='soft'
+          style={{ width: '100%' }}
+          placeholder='Add biography...'
+        ></textarea>
+
+        <h2>Interests (max 5)</h2>
+        <ProfileInterestTags />
+
+        <h2>Pictures</h2>
+        <ProfileUploadPictures />
+
+        <h2>Location</h2>
+        <ProfileLocation />
+      </div>
+      <button type='button'>Update Profile</button>
     </div>
   );
 }
