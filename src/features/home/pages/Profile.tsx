@@ -1,16 +1,19 @@
-import { ProfileInterestTags } from '../../components/ProfileInterestTags';
-import { ProfileLocation } from '../../components/ProfileLocation';
-import { ProfileSelectionButtons } from '../../components/ProfileSelectionButtons';
-import { ProfileUploadPictures } from '../../components/ProfileUploadPictures';
-import { genderAtom, genderPreferenceAtom } from '../../utils/atoms';
-import { HomePageTemplate } from './HomePageTemplate';
-import './Profile.css';
+import { ActionButton } from '../../../components/ActionButton';
+import { genderAtom, genderPreferenceAtom } from '../../../utils/atoms';
+import { HomePageTemplate } from '../components/HomePageTemplate';
+import { ProfileInterestTags } from '../components/profile/ProfileInterestTags';
+import { ProfileLocation } from '../components/profile/ProfileLocation';
+import { ProfileSelectionButtons } from '../components/profile/ProfileSelectionButtons';
+import { ProfileUploadPictures } from '../components/profile/ProfileUploadPictures';
+import '../profile.css';
 
 export default function Profile() {
   return <HomePageTemplate page={<ProfilePage />} />;
 }
 
 function ProfilePage() {
+  const handleSubmit = () => {};
+
   return (
     <div className='home-page-container'>
       <h1>Profile</h1>
@@ -65,7 +68,8 @@ function ProfilePage() {
         <h2>Location</h2>
         <ProfileLocation />
       </div>
-      <button type='button'>Update Profile</button>
+
+      <ActionButton text='Update Profile' onClick={handleSubmit} />
     </div>
   );
 }

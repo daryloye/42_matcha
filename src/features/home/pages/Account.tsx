@@ -1,4 +1,4 @@
-import { HomePageTemplate } from './HomePageTemplate';
+import { HomePageTemplate } from '../components/HomePageTemplate';
 
 export default function Account() {
   return <HomePageTemplate page={<AccountPage />} />;

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './Auth.css';
+import { ActionButton } from '../../../components/ActionButton';
+import { TextInput } from '../../../components/TextInput';
+import '../auth.css';
 
 export default function NewPassword() {
   const [password, setPassword] = useState('');
@@ -34,27 +36,21 @@ export default function NewPassword() {
         <p className='error-message'>{errorMsg}</p>
 
         <form>
-          <input
+          <TextInput
             type='password'
-            id='password'
             value={password}
-            onChange={(event) => setPassword(event.target.value.trim())}
+            onChange={setPassword}
             placeholder='Enter new password'
-            required
           />
 
-          <input
+          <TextInput
             type='password'
-            id='password-retype'
             value={passwordRetype}
-            onChange={(event) => setPasswordRetype(event.target.value.trim())}
+            onChange={setPasswordRetype}
             placeholder='Retype password'
-            required
           />
 
-          <button type='button' onClick={handleSubmit}>
-            Reset Password
-          </button>
+          <ActionButton text='Reset Password' onClick={handleSubmit} />
         </form>
 
         <Link to='/'>Back to Login</Link>

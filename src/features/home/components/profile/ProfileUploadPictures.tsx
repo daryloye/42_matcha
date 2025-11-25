@@ -1,6 +1,6 @@
 import { useAtom } from 'jotai';
-import { picturesAtom } from '../utils/atoms';
-import type { PictureItem } from '../utils/types';
+import { picturesAtom } from '../../../../utils/atoms';
+import type { PictureItem } from '../../../../utils/types';
 
 function PicturesView() {
   const [picturesList, setPicturesList] = useAtom(picturesAtom);

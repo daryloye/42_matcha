@@ -1,13 +1,13 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import Login from './pages/Auth/Login';
-import NewPassword from './pages/Auth/NewPassword';
-import ResetPassword from './pages/Auth/ResetPassword';
-import SignUp from './pages/Auth/SignUp';
-import Account from './pages/Home/Account';
-import Chat from './pages/Home/Chat';
-import Dashboard from './pages/Home/Dashboard';
-import Profile from './pages/Home/Profile';
-import NotFoundPage from './pages/NotFoundPage';
+import Login from './features/auth/pages/Login';
+import NewPassword from './features/auth/pages/NewPassword';
+import ResetPassword from './features/auth/pages/ResetPassword';
+import SignUp from './features/auth/pages/SignUp';
+import Account from './features/home/pages/Account';
+import Chat from './features/home/pages/Chat';
+import Dashboard from './features/home/pages/Dashboard';
+import Profile from './features/home/pages/Profile';
+import NotFoundPage from './features/notFound/NotFoundPage';
 
 export default function App() {
   return (

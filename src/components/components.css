@@ -1,0 +1,20 @@
+.action-button {
+  border-radius: 8px;
+  padding: 0.6em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: sans-serif;
+  margin: 10px 0px 20px 0px;
+  background-color: #5c7de0;
+  color: white;
+  width: 200px;
+  border: 1px solid black;
+}
+.action-button:hover {
+  background-color: #b394d6;
+  cursor: pointer;
+}
+.action-button:focus,
+.action-button:focus-visible {
+  outline: 1px auto -webkit-focus-ring-color;
+}

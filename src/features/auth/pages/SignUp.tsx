@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './Auth.css';
+import { ActionButton } from '../../../components/ActionButton';
+import { TextInput } from '../../../components/TextInput';
+import '../auth.css';
 
 export default function SignUp() {
   const [firstname, setFirstname] = useState('');
@@ -40,63 +42,49 @@ export default function SignUp() {
         <p className='error-message'>{errorMsg}</p>
 
         <form>
-          <input
+          <TextInput
             type='text'
-            id='firstname'
             value={firstname}
-            onChange={(event) => setFirstname(event.target.value.trim())}
+            onChange={setFirstname}
             placeholder='First name'
-            required
           />
 
-          <input
+          <TextInput
             type='text'
-            id='lastname'
             value={lastname}
-            onChange={(event) => setLastname(event.target.value.trim())}
+            onChange={setLastname}
             placeholder='Last name'
-            required
           />
 
-          <input
+          <TextInput
             type='email'
-            id='email'
             value={email}
-            onChange={(event) => setEmail(event.target.value.trim())}
+            onChange={setEmail}
             placeholder='Email'
-            required
           />
 
-          <input
+          <TextInput
             type='text'
-            id='username'
             value={username}
-            onChange={(event) => setUsername(event.target.value.trim())}
+            onChange={setUsername}
             placeholder='Username'
-            required
           />
 
-          <input
+          <TextInput
             type='password'
-            id='password'
             value={password}
-            onChange={(event) => setPassword(event.target.value.trim())}
+            onChange={setPassword}
             placeholder='Password'
-            required
           />
 
-          <input
+          <TextInput
             type='password'
-            id='password-retype'
             value={passwordRetype}
-            onChange={(event) => setPasswordRetype(event.target.value.trim())}
+            onChange={setPasswordRetype}
             placeholder='Retype Password'
-            required
           />
 
-          <button type='button' onClick={handleSubmit}>
-            Create Account
-          </button>
+          <ActionButton text='Create Account' onClick={handleSubmit} />
         </form>
 
         <Link to='/'>Back to Login</Link>

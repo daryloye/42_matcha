@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './Auth.css';
+import { ActionButton } from '../../../components/ActionButton';
+import { TextInput } from '../../../components/TextInput';
+import '../auth.css';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -30,27 +32,21 @@ export default function Login() {
         <p className='error-message'>{errorMsg}</p>
 
         <form>
-          <input
+          <TextInput
             type='text'
-            id='username'
             value={username}
-            onChange={(event) => setUsername(event.target.value.trim())}
+            onChange={setUsername}
             placeholder='Username'
-            required
           />
 
-          <input
+          <TextInput
             type='password'
-            id='password'
             value={password}
-            onChange={(event) => setPassword(event.target.value.trim())}
+            onChange={setPassword}
             placeholder='Password'
-            required
           />
 
-          <button type='button' onClick={handleSubmit}>
-            Login
-          </button>
+          <ActionButton text='Login' onClick={handleSubmit} />
         </form>
 
         <Link to='/signup'>Create Account</Link>

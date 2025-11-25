@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import profilePic from '../../assets/profilePic2.png';
-import './Home.css';
+import profilePic from '../../../assets/profilePic2.png';
+import '../home.css';
 
 export function HomePageTemplate({ page }: { page: ReactNode }) {
   return (

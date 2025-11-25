@@ -9,9 +9,8 @@
 }
 
 .profile-selection-button {
-  margin: 0;
+  padding: 0.6em;
   width: 7em;
-  border-radius: 0px;
   border: 1px solid #213547;
   color: #213547;
 }
@@ -50,10 +49,14 @@
 }
 
 .profile-util-button {
-  width: auto;
+  width: unset;
   border: 1px solid grey;
   border-radius: 5px;
   margin: 5px;
   padding: 5px 10px;
   font-size: 14px;
+}
+.profile-util-button:hover {
+  background-color: #b394d6;
+  cursor: pointer;
 }

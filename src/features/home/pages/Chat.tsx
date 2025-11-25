@@ -1,9 +1,9 @@
 import { useAtom } from 'jotai';
 import { useEffect, useRef } from 'react';
-import profilePic from '../../assets/profilePic2.png';
-import { selectedChatAtom } from '../../utils/atoms';
-import './Chat.css';
-import { HomePageTemplate } from './HomePageTemplate';
+import profilePic from '../../../assets/profilePic2.png';
+import { selectedChatAtom } from '../../../utils/atoms';
+import '../chat.css';
+import { HomePageTemplate } from '../components/HomePageTemplate';
 
 const chatOverviewJson = [
   {

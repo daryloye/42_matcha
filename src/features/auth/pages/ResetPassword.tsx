@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './Auth.css';
+import { ActionButton } from '../../../components/ActionButton';
+import { TextInput } from '../../../components/TextInput';
+import '../auth.css';
 
 export default function ResetPassword() {
   const [email, setEmail] = useState('');
@@ -25,18 +27,14 @@ export default function ResetPassword() {
         <p className='error-message'>{errorMsg}</p>
 
         <form>
-          <input
+          <TextInput
             type='email'
-            id='email'
             value={email}
-            onChange={(event) => setEmail(event.target.value.trim())}
+            onChange={setEmail}
             placeholder='Your email'
-            required
           />
 
-          <button type='button' onClick={handleSubmit}>
-            Request reset link
-          </button>
+          <ActionButton text='Request Reset Link' onClick={handleSubmit} />
         </form>
 
         <Link to='/'>Back to Login</Link>

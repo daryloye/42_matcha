@@ -2,7 +2,8 @@ import { IonIcon } from '@ionic/react';
 import { closeSharp } from 'ionicons/icons';
 import { useAtom } from 'jotai';
 import { useState } from 'react';
-import { tagListAtom } from '../utils/atoms';
+import { ActionButton } from '../../../../components/ActionButton';
+import { tagListAtom } from '../../../../utils/atoms';
 
 function Tags() {
   const [tagList, setTagList] = useAtom(tagListAtom);
@@ -53,13 +54,12 @@ function TagInput() {
         placeholder='Add tag...'
         className='profile-text-input'
       />
-      <button
-        type='button'
+
+      <ActionButton
         className='profile-util-button'
-        onClick={() => addTag()}
-      >
-        Add
-      </button>
+        text='Add'
+        onClick={addTag}
+      />
     </div>
   );
 }
