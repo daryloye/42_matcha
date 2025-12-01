@@ -1,39 +1,16 @@
 {
-  "name": "backend",
+  "name": "matcha-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "Backend API for Matcha dating application",
+  "main": "dist/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "watch": "tsc -w",
+    "clean": "rm -rf dist"
   },
-  "keywords": [],
+  "keywords": ["dating", "express", "typescript", "postgresql"],
   "author": "",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "bcrypt": "^6.0.0",
-    "cookie-parser": "^1.4.7",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
-    "express": "^5.1.0",
-    "express-validator": "^7.3.1",
-    "jsonwebtoken": "^9.0.2",
-    "multer": "^2.0.2",
-    "nodemailer": "^7.0.11",
-    "pg": "^8.16.3",
-    "socket.io": "^4.8.1"
-  },
-  "devDependencies": {
-    "@types/bcrypt": "^6.0.0",
-    "@types/cookie-parser": "^1.4.10",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.5",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/multer": "^2.0.0",
-    "@types/node": "^24.10.1",
-    "@types/nodemailer": "^7.0.4",
-    "@types/pg": "^8.15.6",
-    "@types/socket.io": "^3.0.1",
-    "ts-node-dev": "^2.0.0",
-    "typescript": "^5.9.3"
-  }
+  "license": "ISC"
 }
