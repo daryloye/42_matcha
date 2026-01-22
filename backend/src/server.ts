@@ -42,17 +42,13 @@ app.get('/health', (_req: Request, res: Response) => {
     });
 });
 
+//socket.io connection handling
 io.on('connection', (socket) => {
     console.log('user connected:', socket.id);
     
     socket.on('disconnect', () => {
         console.log('User disconnected:', socket.id);
     });
-});
-const PORT = process.env.PORT || 5001
-httpServer.listen(PORT, ()=>{
-    console.log(`Server running on port ${PORT}`);
-    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
 //404 handler
@@ -67,6 +63,14 @@ app.use((err: Error, req: Request, res: Response, next: any) => {
         ? 'Internal server error'
         : err.message
     });
+});
+
+const PORT = process.env.PORT || 5001
+
+// this will start the server
+httpServer.listen(PORT, ()=>{
+    console.log(`Server running on port ${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
 export { io };
