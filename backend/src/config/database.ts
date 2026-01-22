@@ -36,3 +36,6 @@ export const testConnection = async() => {
 
 export default pool;
 
+//mkdir -p src/database/migrations
+
+

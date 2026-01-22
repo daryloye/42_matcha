@@ -7,6 +7,9 @@ import dotenv from 'dotenv';
 import { createServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io'; //library
 import helmet from 'helmet';
+import createTables from './config/initDB';
+import { testConnection } from './config/database';
+
 
 dotenv.config(); //this reads my env file and makes variables available via process.env.PORT
 
@@ -68,9 +71,12 @@ app.use((err: Error, req: Request, res: Response, next: any) => {
 const PORT = process.env.PORT || 5001
 
 // this will start the server
-httpServer.listen(PORT, ()=>{
+httpServer.listen(PORT, async ()=>{
     console.log(`Server running on port ${PORT}`);
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+
+    await testConnection() //wrote this to test database
+    await createTables();
 });
 
 export { io };
