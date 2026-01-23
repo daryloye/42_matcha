@@ -1,5 +1,14 @@
-export const isValidEmail = (password: string): boolean => {
-    if password.length < 9
+export const isValidUserName = (username: string): boolean => {
+    const usernameLength = username.length;
+    if (usernameLength > 50 || usernameLength < 3)
+        return false
+    for(let i = 0; i < usernameLength; i++)
+    {
+        const character = username.charAt(i)
+        if(/[^A-Za-z0-9_]/.test(character))
+            return false
+    }
+    return true
 }
 
 const commonPasswords = [
@@ -7,8 +16,7 @@ const commonPasswords = [
     'welcome', 'monkey', 'dragon', 'master', 'sunshine',
     'princess', 'football', 'baseball', 'whatever', 'freedom', 
     'letmein', 'admin', 'welcome', 'iloveyou', 'password1',
-    'Password123', 'P@ssword', 'P@ssw0rd', 'password!',
-    'password123!'
+    'Password123', 'P@ssword', 'password!', 'password123!'
 ]
 
 export const isValidPassword = (password: string): boolean => {
@@ -40,9 +48,12 @@ export const isValidPassword = (password: string): boolean => {
     return (uppcaseExist && lowercaseExist && intExist && specialcharExist)
 };
 
-    // Check:
-    // - At least 8 characters long
-    // - Contains uppercase and lowercase
-    // - Contains numbers
-    // - Contains special characters
-    // - NOT a common English word
+
+
+// export const isValidEmail = (password: string): boolean => {
+//     let passwordLength = password.length;
+//     if (passwordLength < 1)
+//         return false
+
+//         return false
+// }
