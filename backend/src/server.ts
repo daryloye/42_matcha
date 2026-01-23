@@ -59,7 +59,7 @@ app.use((_req: Request, res: Response) => {
     res.status(404).json({ error:'Route not found' });
 });
 
-app.use((err: Error, req: Request, res: Response, next: any) => {
+app.use((err: Error, _req: Request, res: Response, next: any) => {
     console.log('Error:', err);
     res.status(500).json({
         error: process.env.NODE_ENV === 'production'
