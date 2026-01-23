@@ -14,7 +14,6 @@ export interface User {
     updated_at: Date;
 };
  
-
 //this is a register request object. It is only what the user provides
 export interface RegisterRequest {
     email: string;
