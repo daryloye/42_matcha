@@ -1,4 +1,4 @@
-//this is a user obhect
+//this is a user obhect. It is everything in the database
 export interface User {
     id: number;
     email: string;
@@ -15,7 +15,7 @@ export interface User {
 };
  
 
-//this is a register request object
+//this is a register request object. It is only what the user provides
 export interface RegisterRequest {
     email: string;
     username: string;
@@ -24,6 +24,16 @@ export interface RegisterRequest {
     password: string; //Plain password is not hashed yet
 };
 
-
-
+//this is object for login response. What we send back(never include password)
+export interface LoginResponse {
+    user: {
+    id: number;
+    email: string;
+    username: string;
+    first_name: string;
+    last_name: string;    
+    is_verified: boolean;
+    };
+    token: string;
+};
 
