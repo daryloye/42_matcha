@@ -1,6 +1,7 @@
 export const isValidUserName = (username: string): boolean => {
+    
     const usernameLength = username.length;
-    if (usernameLength > 50 || usernameLength < 3)
+    if (usernameLength < 3 || usernameLength > 50)
         return false
     for(let i = 0; i < usernameLength; i++)
     {
@@ -16,7 +17,7 @@ const commonPasswords = [
     'welcome', 'monkey', 'dragon', 'master', 'sunshine',
     'princess', 'football', 'baseball', 'whatever', 'freedom', 
     'letmein', 'admin', 'welcome', 'iloveyou', 'password1',
-    'Password123', 'P@ssword', 'password!', 'password123!'
+    'p@ssword', 'password!', 'password123!'
 ]
 
 export const isValidPassword = (password: string): boolean => {
@@ -49,11 +50,66 @@ export const isValidPassword = (password: string): boolean => {
 };
 
 
+export const isValidEmail = (email: string): boolean => {
+    const emailRegex = /^[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    
+    if(email.length < 1 || email.length > 255)
+        return false;
+    if(email.includes('..'))
+        return false;
+    return emailRegex.test(email);
+}
+/*
+^[a-zA-Z0-9._%+-]+: The "local part" (before the @). It allows letters, numbers, dots, underscores, percents, pluses, and hyphens.
 
-// export const isValidEmail = (password: string): boolean => {
-//     let passwordLength = password.length;
-//     if (passwordLength < 1)
-//         return false
+@: Must have exactly one "at" symbol.
 
+[a-zA-Z0-9.-]+: The domain name. Allows letters, numbers, dots, and hyphens.
+
+\.: A literal dot before the extension.
+
+[a-zA-Z]{2,}$: The Top Level Domain (TLD). It must be at least 2 letters (like .io, .com, .fr).
+*/
+// export const isValidEmail = (email: string): boolean => {
+
+//     if(email.includes("..") || !email)
+//         return false;
+    
+//     let emailLength = email.length;
+//     if (emailLength < 1 || emailLength > 255)
 //         return false
+    
+//     for(let i = 0; i < emailLength ;i++)
+//     {
+//         const character = email.charAt(i);
+//         if(/^[a-zA-Z0-9._%+-]+/.test(character))
+//             return false
+//         if(character === "@")
+//             break;
+//     }
+//     for(let i = 0; i < emailLength ; i++)
+//     {
+//         const character = email.charAt(i)
+//         if(character !== "@")
+//             continue;
+
+//     }
+//     let atCounter = 0;
+//     let dotCounter = false;
+
+//     for(let i = 0; i < emailLength; i++)
+//     {
+//         const character = email.charAt(i);
+//         if(character === "@")
+//             atCounter += 1;
+//         if(character === ".")
+//             dotCounter = true;
+//         if(atCounter > 1 || !dotCounter)
+//             return false;
+//     }
+//     return true
 // }
+    // Use a regex pattern to check email format
+    // Example: user@example.com should be valid
+
+    
