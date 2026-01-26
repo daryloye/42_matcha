@@ -35,4 +35,28 @@ export const sendVerificationEmail = async (email: string, username: string, tok
         console.log(`❌ error sending verification email: `, error);
         throw error;
     }
+};
+
+export const sendPasswordResetEmail = async (email: string, username: string, token :string): Promise<void>  => {
+    const resetPasswordLink = `${process.env.FRONTEND_URL}/reset?token=${token}`;
+
+ const htmlContent = `
+        <h1>Hello ${username}!</h1>
+        <p>Please reset your email password by clicking the link below:</p>
+        <a href="${resetPasswordLink}">reset password</a>
+        <p>Or copy this link: ${resetPasswordLink}</p>
+        <p>This link will expire in 24 hours.</p>`
+
+    try{
+        await transporter.sendMail({
+            from: process.env.EMAIL_FROM,
+            to: email,
+            subject: "Reset your password",
+            html: htmlContent,
+        });
+        console.log(`✅ password reset link email sent to ${email}`);
+    }catch(error){
+        console.log(`❌ error sending verification email: `, error);
+        throw error;
+    }
 }
