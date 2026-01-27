@@ -17,7 +17,7 @@ psql -U matcha_user -d matcha_db
 \d users     # Shows the actual columns INSIDE the users table
 
 
-# 28 Jan 2026
+# 26 Jan 2026
 1. ✅ Database setup - Done!
 2. ✅ Email utility - Done!
 3. ✅ Validation utility - Done!
@@ -28,3 +28,14 @@ psql -U matcha_user -d matcha_db
 Frontend:
 1. ⏳ Registration form - HTML form to submit data
 2. ⏳ API calls - Fetch requests to backend
+
+# 27 Jan 2026
+Backend:
+
+✅ Database setup - Done!
+✅ Email utility - Done!
+✅ Validation utility - Done!
+✅ User model - DONE! 
+⏳ Auth controller - Next!
+⏳ Auth routes - After controller
+⏳ Connect routes to server - Final step

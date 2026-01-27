@@ -53,9 +53,17 @@
     const result = await query(sql, params);
 
     return result.rows.length > 0 ? result.rows[0] : null;
-
-
  }
+
+export const verifyUser = async(userId: number): Promise<void> => {
+    const sql = `
+        UPDATE users
+        SET is_verified = true, verification_token = null
+        WHERE id = $1
+    `;
+
+    await query(sql, [userId]);
+}
 
  /*For the registration flow, we need:
 
