@@ -15,7 +15,27 @@ cd to backend
 psql -U matcha_user -d matcha_db
 \dt          # Lists all tables with metadata
 \d users     # Shows the actual columns INSIDE the users table
+Backend:
 
+# 28 Jan 2026
+✅ Database setup- Done!
+✅ Email utility (Mailgun configured!)- Done!
+✅ Validation utility- Done!
+✅ User model- Done!
+✅ Auth controller - DONE! 🎉
+⏳ Auth routes - Next!
+⏳ Connect routes to server
+
+# 27 Jan 2026
+Backend:
+
+✅ Database setup - Done!
+✅ Email utility - Done!
+✅ Validation utility - Done!
+✅ User model - DONE! 
+⏳ Auth controller - Next!
+⏳ Auth routes - After controller
+⏳ Connect routes to server - Final step
 
 # 26 Jan 2026
 1. ✅ Database setup - Done!
@@ -28,14 +48,3 @@ psql -U matcha_user -d matcha_db
 Frontend:
 1. ⏳ Registration form - HTML form to submit data
 2. ⏳ API calls - Fetch requests to backend
-
-# 27 Jan 2026
-Backend:
-
-✅ Database setup - Done!
-✅ Email utility - Done!
-✅ Validation utility - Done!
-✅ User model - DONE! 
-⏳ Auth controller - Next!
-⏳ Auth routes - After controller
-⏳ Connect routes to server - Final step
