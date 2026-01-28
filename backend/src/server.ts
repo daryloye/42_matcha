@@ -9,6 +9,7 @@ import { Server as SocketIOServer } from 'socket.io'; //library
 import helmet from 'helmet';
 import createTables from './config/initDB';
 import { testConnection } from './config/database';
+import authRouter from './routes/auth.routes';
 
 
 dotenv.config(); //this reads my env file and makes variables available via process.env.PORT
