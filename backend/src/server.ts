@@ -27,13 +27,15 @@ const io = new SocketIOServer(httpServer, {
 });
 
 //middleware
-app.use(helmet());
+app.use(helmet()); //default security headers to help protect against various attacks
 app.use(cors({
     origin: process.env.FRONTEND_URL || 'https://localhost:5173',
     credentials: true
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use('/api/auth', authRouter);
 
 //static files for uploads
 app.use('/uploads', express.static('uploads'));
