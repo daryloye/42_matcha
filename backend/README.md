@@ -1,8 +1,45 @@
 # backend manual
+
+# 2 Feb 2026
+
+What's Left (Backend):
+
+⏳ Login endpoint
+⏳ Password reset endpoint
+⏳ Profile system
+⏳ Browsing/Matching
+⏳ Chat (Socket.IO)
+⏳ Notifications
+
+Understanding the Login Flow
+here's what login needs to do:
+1. Get email and password from request body
+2. Validate input (not empty)
+3. Find user by email in database
+4. Check if user exists
+5. Check if user is verified
+6. Compare password with hashed password (bcrypt)
+7. Generate JWT token
+8. Return token + user info to frontend
+
+User logs in
+    ↓
+Backend creates JWT with user's data
+    ↓
+Sends JWT back to frontend
+    ↓
+Frontend stores it
+    ↓
+Every future request, frontend sends JWT
+    ↓
+Backend verifies JWT signature using JWT_SECRET
+    ↓
+If valid → User is authenticated!
+
 # 29 Jan 2026 12:31pm
 to run back end and check if server is running:
 
-Step 1: cd to backend director
+Step 1: cd to backend directory
 step 2: npm run dev on a termnial
 step 3: open up new terminal and run curl http://localhost:5001/health
 
