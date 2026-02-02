@@ -1,10 +1,45 @@
 # backend manual
 
-# 2 Feb 2026
+# 2 Feb 2026 3:52pm
 
-What's Left (Backend):
 
-⏳ Login endpoint
+Continuation of (Backend):
+
+🔐 Authentication Flow Testing
+Follow these steps to test the Mandatory Part (IV.1) of the application using the terminal.
+
+1. Register a New Account
+This step creates a new user in the database with a hashed password and sends a verification email.
+
+Bash
+curl -i -X POST http://localhost:5001/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "jack.sng@gmail.com",
+    "username": "jacksng",
+    "first_name": "Jack",
+    "last_name": "Sng",
+    "password": "MyP@ssw0rd123"
+  }'
+Note: Ensure your password meets the complexity requirements (no common English words).
+
+2. Verify Email Address
+Before logging in, the is_verified flag must be set to true. Find the verification_token in your database or your Mailgun email, then run:
+
+Bash
+curl -i -X GET "http://localhost:5001/api/auth/verify?token=YOUR_TOKEN_STRING"
+3. Login to Receive JWT
+Once verified, you can authenticate to receive your JSON Web Token (JWT). This token is required for all subsequent "protected" routes like profile updates.
+
+Bash
+curl -i -X POST http://localhost:5001/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "jack.sng@gmail.com",
+    "password": "MyP@ssw0rd123"
+  }'
+
+✅ Login endpoint
 ⏳ Password reset endpoint
 ⏳ Profile system
 ⏳ Browsing/Matching

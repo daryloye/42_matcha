@@ -10,6 +10,19 @@
     verification_token: string;
  }
 
+ export const setResetToken = async (email: string, token: string, expires: Date): Promise<any> => {
+   
+   const sql = `
+      UPDATE users
+      SET reset_token = $1, reset_token_expires = $2
+      WHERE email = $3
+      
+      RETURNING id
+   `
+   const result = await query(sql, [token, expires, email])
+   return result.rows.length > 0 ? result.rows[0] : null;
+ };
+
  export const findUserByEmail = async(email: string): Promise<User | null> => {
      // SQL query SELECT * FROM users WHERE email = $1
     const params = [email];

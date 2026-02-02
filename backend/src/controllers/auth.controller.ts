@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import  bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import jwt, { Secret } from 'jsonwebtoken';
 import  crypto from 'crypto';
 import { 
     findUserByEmail, 
@@ -12,8 +12,12 @@ import {
 import { isValidEmail, isValidUserName, isValidPassword } from '../utils/validation';
 import { sendVerificationEmail } from '../utils/email';
 import { RegisterRequest, LoginRequest } from '../types/user.types';
+/*
+resetPassword
 
 
+
+*/
 /*
 Login function
 1. Get email and password from request body
@@ -29,6 +33,7 @@ Login function
 export const login = async (req: Request, res: Response): Promise<void> => {
     try {
         const { email, password }: LoginRequest = req.body;
+
         if(!isValidEmail(email)) {
             res.status(400).json({ error: 'Invalid email or password.'});
             return;
@@ -53,8 +58,21 @@ export const login = async (req: Request, res: Response): Promise<void> => {
             res.status(400).json({ error: 'Invalid email or password.'})
             return;
         }
-        const secret = process.env.JWT_SECRET;
-        const token = jwt.sign({userId: existingUser.id}, secret || 'fallback_secret', { expiresIn: process.env.JWT_EXPIRES_IN} as jwt.SignOptions);
+        const jwtSecret = process.env.JWT_SECRET;
+        if(!jwtSecret)
+            throw new Error('JWT_SECRET is not defined');
+        const token = jwt.sign(
+            {
+                userId: existingUser.id,
+                email: existingUser.email,
+                username: existingUser.username
+            },
+            jwtSecret,
+            {
+                expiresIn: process.env.JWT_EXPIRES_IN || '7d'
+            } as jwt.SignOptions
+
+        );
 
         res.status(200).json({
             message: 'Login successful!',
