@@ -13,11 +13,19 @@ import { isValidEmail, isValidUserName, isValidPassword } from '../utils/validat
 import { sendVerificationEmail } from '../utils/email';
 import { RegisterRequest, LoginRequest } from '../types/user.types';
 /*
-resetPassword
-
-
-
+## Password Reset Flow (What We'll Build Next)
+```
+1. User clicks "Forgot Password"
+2. User enters their email
+3. Backend generates reset token
+4. Backend calls setResetToken() to save token + expiry
+5. Backend sends email with reset link
+6. User clicks link → Frontend page
+7. User enters new password
+8. Backend verifies token, updates password
 */
+
+
 /*
 Login function
 1. Get email and password from request body

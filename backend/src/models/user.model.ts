@@ -10,14 +10,45 @@
     verification_token: string;
  }
 
+ export const updatePassword = async( userId: number, passwordHash: string ) : Promise <any> => {
+   const sql = `
+      UPDATE users
+      set password_hash = $1, updated_at = NOW()
+      WHERE id = $2
+      RETURNING id
+   `
+   const result = await query(sql, [passwordHash, userId]);
+   return result.rows.length > 0 ? result.rows[0] : null;
+ }
+
+ export const clearResetToken = async( userId: number): Promise <any> => {
+   const sql = `
+      UPDATE users
+      set reset_token = NULL, reset_token_expires = NULL
+      where id = $1
+   `
+
+   const result = await query(sql, [userId]);
+   return result.rows.length > 0 ? result.rows[0] : null;
+ }
+
+ export const findUserByResetToken = async( token: string): Promise<any> => {
+   const sql = `
+      SELECT id, email, reset_token_expires
+      FROM users
+      WHERE reset_token = $1
+      AND reset_token_expires > NOW()
+   `  
+   const result = await query(sql, [token]);
+   return result.rows.length > 0 ? result.rows[0] : null;
+ }
+
  export const setResetToken = async (email: string, token: string, expires: Date): Promise<any> => {
    
    const sql = `
       UPDATE users
       SET reset_token = $1, reset_token_expires = $2
       WHERE email = $3
-      
-      RETURNING id
    `
    const result = await query(sql, [token, expires, email])
    return result.rows.length > 0 ? result.rows[0] : null;

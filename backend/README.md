@@ -1,7 +1,33 @@
 # backend manual
+# Password reset endpoint
+
+
+
+✅ Login endpoint
+⏳ Password reset endpoint
+⏳ Profile system
+⏳ Browsing/Matching
+⏳ Chat (Socket.IO)
+⏳ Notifications
+
+Model functions (user.model.ts):
+
+✅ setResetToken() - You already have this!
+✅ findUserByResetToken() - Find user by reset token
+✅ updatePassword() - Update user's password
+✅ clearResetToken() - Clear token after password reset
+
+Controller functions (auth.controller.ts):
+
+⏳ forgotPassword() - Generate token, send email
+⏳ resetPassword() - Verify token, update password
+
+Routes (auth.routes.ts):
+
+⏳ POST /forgot-password
+⏳ POST /reset-password
 
 # 2 Feb 2026 3:52pm
-
 
 Continuation of (Backend):
 
