@@ -2,9 +2,10 @@
 # Password reset endpoint
 
 
+# 4 Feb 2026 3:52pm
 
 ✅ Login endpoint
-⏳ Password reset endpoint
+✅ Password reset endpoint
 ⏳ Profile system
 ⏳ Browsing/Matching
 ⏳ Chat (Socket.IO)
@@ -24,8 +25,8 @@ Controller functions (auth.controller.ts):
 
 Routes (auth.routes.ts):
 
-⏳ POST /forgot-password
-⏳ POST /reset-password
+✅  POST /forgot-password
+✅  POST /reset-password
 
 # 2 Feb 2026 3:52pm
 

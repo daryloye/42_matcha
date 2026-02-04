@@ -34,25 +34,33 @@ export const resetPassword = async (req: Request, res: Response) : Promise <void
             res.status(400).json({ error: 'invalid password format'});
             return;
         }
+        if(!resetToken){
+            res.status(400).json({ error: 'Reset token is required'})
+            return;
+        }
         const existingUser = await findUserByResetToken(resetToken);
         if(!existingUser){
             res.status(400).json({ error: 'invalid or expired reset token'})
             return;
         }
-
-        const currentTime = new Date();
-        currentTime.setHours(currentTime.getHours());
-
+        const saltRounds = 10;
+        const password_hash = await bcrypt.hash(newPassword, saltRounds);
+        await updatePassword(existingUser.id, password_hash);
+        await clearResetToken(existingUser.id);
+        /*
+        // const currentTime = new Date();
+        // currentTime.setHours(currentTime.getHours());
         if(existingUser && existingUser.reset_token_expires > currentTime){
             const saltRounds = 10;
             const password_hash = await bcrypt.hash(newPassword, saltRounds);
             await updatePassword(existingUser.id, password_hash);
             await clearResetToken(existingUser.id);
         }
+*/
         res.status(200).json({message:' Password updated.'})
     } catch (error) {
-        console.error('Reset password error');
-        res.status(500).json({ error: 'Internal ' })
+        console.error('Reset password error: ', error);
+        res.status(500).json({ error: 'Internal server error' })
     }
 }
 
