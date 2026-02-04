@@ -19,8 +19,8 @@ Model functions (user.model.ts):
 
 Controller functions (auth.controller.ts):
 
-⏳ forgotPassword() - Generate token, send email
-⏳ resetPassword() - Verify token, update password
+✅ forgotPassword() - Generate token, send email
+✅ resetPassword() - Verify token, update password
 
 Routes (auth.routes.ts):
 

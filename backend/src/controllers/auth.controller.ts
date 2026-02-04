@@ -1,17 +1,61 @@
 import { Request, Response } from 'express';
 import  bcrypt from 'bcrypt';
-import jwt, { Secret } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import  crypto from 'crypto';
 import { 
     findUserByEmail, 
     findUserByUsername, 
     createUser, 
     findUserByVerificationToken, 
-    verifyUser
+    verifyUser,
+    updatePassword,
+    setResetToken,
+    findUserByResetToken,
+    clearResetToken,
 } from '../models/user.model';
 import { isValidEmail, isValidUserName, isValidPassword } from '../utils/validation';
-import { sendVerificationEmail } from '../utils/email';
-import { RegisterRequest, LoginRequest } from '../types/user.types';
+import { sendPasswordResetEmail, sendVerificationEmail } from '../utils/email';
+import { RegisterRequest, LoginRequest, ForgotPasswordRequest, ResetPasswordRequest } from '../types/user.types';
+
+/*
+    // 1. Get token and new password from request
+    // 2. Validate new password
+    // 3. Find user by reset token
+    // 4. Check if user exists and token not expired
+    // 5. Hash new password
+    // 6. Update password
+    // 7. Clear reset token
+    // 8. Return success
+*/
+export const resetPassword = async (req: Request, res: Response) : Promise <void> => {
+    try {
+        const { newPassword, resetToken }  :ResetPasswordRequest = req.body;
+        if(!isValidPassword(newPassword) || !newPassword){
+            res.status(400).json({ error: 'invalid password format'});
+            return;
+        }
+        const existingUser = await findUserByResetToken(resetToken);
+        if(!existingUser){
+            res.status(400).json({ error: 'invalid or expired reset token'})
+            return;
+        }
+
+        const currentTime = new Date();
+        currentTime.setHours(currentTime.getHours());
+
+        if(existingUser && existingUser.reset_token_expires > currentTime){
+            const saltRounds = 10;
+            const password_hash = await bcrypt.hash(newPassword, saltRounds);
+            await updatePassword(existingUser.id, password_hash);
+            await clearResetToken(existingUser.id);
+        }
+        res.status(200).json({message:' Password updated.'})
+    } catch (error) {
+        console.error('Reset password error');
+        res.status(500).json({ error: 'Internal ' })
+    }
+}
+
 /*
 ## Password Reset Flow (What We'll Build Next)
 ```
@@ -24,7 +68,34 @@ import { RegisterRequest, LoginRequest } from '../types/user.types';
 7. User enters new password
 8. Backend verifies token, updates password
 */
+export const forgotPassword = async (req: Request, res: Response) : Promise <void> => {
+    try{
+        const { email }: ForgotPasswordRequest = req.body;
 
+        if(!isValidEmail(email) || !email) {
+            res.status(400).json({ error: 'Invalid email format'});
+            return;
+        }
+        
+        const exisitngUser = await findUserByEmail(email);
+        if (exisitngUser && exisitngUser.is_verified){
+            const reset_token = crypto.randomBytes(32).toString('hex');
+            const expires = new Date();
+            expires.setHours(expires.getHours() + 1);
+    
+            await setResetToken(email, reset_token, expires);
+            await sendPasswordResetEmail(email, exisitngUser.username, reset_token);
+        }
+
+        res.status(200).json({
+            message: 'A password reset link has been sent'
+        });
+
+    }catch (error){
+        console.error('Forgot password error: ', error);
+        res.status(500).json({ error: 'Internal server error. Please try again.' });
+    }
+}
 
 /*
 Login function
