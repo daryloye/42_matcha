@@ -12,8 +12,8 @@ interface CreateUserProfile {
 }
 /*
 ✅ createBlankProfile() - You started this (fix the SQL)
-⏳ getProfileByUserId() - Get user's profile
-⏳ updateProfile() - Update profile fields
+✅ getProfileByUserId() - Get user's profile
+✅ updateProfile() - Update profile fields
 ⏳ addProfilePicture() - Add a photo
 ⏳ setProfilePicture() - Mark which photo is the profile pic
 ⏳ getProfilePictures() - Get all user's photos
