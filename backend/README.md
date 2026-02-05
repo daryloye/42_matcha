@@ -2,20 +2,39 @@
 # Password reset endpoint
 
 # 5 Feb
-Profile System ⭐
-
-⏳ Profile completion (gender, bio, preferences, interests, location)
-⏳ Photo upload (up to 5 images)
-⏳ Profile editing (update any profile info)
-⏳ View own profile
-⏳ Fame rating calculation
-
 Database schema completed
 ✅ users
 ✅ profiles
 ✅ profile_pictures
 ✅ interests
 ✅ user_interests
+
+Profile System ⭐
+Profile Model functions:
+profile.model.ts needs:
+
+✅ createBlankProfile() - You started this (fix the SQL)
+⏳ getProfileByUserId() - Get user's profile
+⏳ updateProfile() - Update profile fields
+⏳ addProfilePicture() - Add a photo
+⏳ setProfilePicture() - Mark which photo is the profile pic
+⏳ getProfilePictures() - Get all user's photos
+⏳ deleteProfilePicture() - Remove a photo
+
+interest.model.ts needs:
+
+⏳ createInterest() - Create new tag (if doesn't exist)
+⏳ findOrCreateInterest() - Get tag or create if new
+⏳ addUserInterest() - Link user to a tag
+⏳ removeUserInterest() - Unlink user from tag
+⏳ getUserInterests() - Get all user's tags
+
+
+⏳ Profile completion (gender, bio, preferences, interests, location)
+⏳ Photo upload (up to 5 images)
+⏳ Profile editing (update any profile info)
+⏳ View own profile
+⏳ Fame rating calculation
 
 # 4 Feb 2026 3:52pm
 
