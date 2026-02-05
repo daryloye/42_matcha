@@ -43,12 +43,12 @@ export const getProfileByUserId = async (userId: number): Promise<any | null> =>
 export const updateProfile = async (userId: number, data: CreateUserProfile): Promise<any | null> => {
     const sql = `
         UPDATE profiles
-        SET gender = $2
-            sexual_preference= $3
-            biography = $4
-            latitude = $5 
-            longitude = $6 
-            location_city = $7 
+        SET gender = $2,
+            sexual_preference= $3,
+            biography = $4,
+            latitude = $5,
+            longitude = $6, 
+            location_city = $7, 
             updated_at = NOW()
         WHERE user_id = $1
         RETURNING *
@@ -62,7 +62,7 @@ export const updateProfile = async (userId: number, data: CreateUserProfile): Pr
         data.longitude, 
         data.location_city, 
     ];
-    const result = await query(sql, values)
+    const result = await query(sql, values);
 
     return result.rows.length > 0 ? result.rows[0] : null;
 }
