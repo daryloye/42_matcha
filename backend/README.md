@@ -1,6 +1,15 @@
 # backend manual
 # Password reset endpoint
 
+# 5 Feb
+Profile System ⭐
+
+⏳ Profile completion (gender, bio, preferences, interests, location)
+⏳ Photo upload (up to 5 images)
+⏳ Profile editing (update any profile info)
+⏳ View own profile
+⏳ Fame rating calculation
+
 
 # 4 Feb 2026 3:52pm
 
