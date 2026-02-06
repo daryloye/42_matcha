@@ -1,3 +1,4 @@
+import { param } from 'express-validator';
 import { query } from '../config/database';
 
 
@@ -18,7 +19,6 @@ interface CreateUserProfile {
 ⏳ setProfilePicture() - Mark which photo is the profile pic
 ⏳ getProfilePictures() - Get all user's photos
 ⏳ deleteProfilePicture() - Remove a photo
-
 */ 
 
 
@@ -39,7 +39,7 @@ export const getProfileByUserId = async (userId: number): Promise<any | null> =>
     const result = await query(sql, [userId]);
     return result.rows.length > 0 ? result.rows[0] : null;
 }
-
+/*
 export const updateProfile = async (userId: number, data: CreateUserProfile): Promise<any | null> => {
     const sql = `
         UPDATE profiles
@@ -66,4 +66,42 @@ export const updateProfile = async (userId: number, data: CreateUserProfile): Pr
 
     return result.rows.length > 0 ? result.rows[0] : null;
 }
+*/
 
+export const updateProfile = async (userId: number, data: CreateUserProfile): Promise<any | null> => {
+    const updates: string[] = [];
+    const values: any[] = [userId];
+    let paramCount = 1;
+
+    for(const [key, value] of Object.entries(data)){
+        if(value !== undefined) {
+            paramCount += 1;
+            updates.push(`${key} = $${paramCount}`);
+            values.push(value);
+        }
+    }
+    if (updates.length === 0) {
+        return await getProfileByUserId(userId);
+    }
+    updates.push(`updated_at = NOW()`);
+    const sql = `
+        UPDATE profiles
+        SET ${updates.join(', ')}
+        WHERE user_id = $1
+        RETURNING *    
+    `
+    const result = await query(sql, values);
+    return result.rows.length > 0 ? result.rows[0] : null;
+}
+
+export const addProfilePicture = async (userId: number, imageUrl: string, isPrimary: boolean = false): Promise<any | null> => {
+    const sql = `
+        INSERT INTO profile_pictures (user_id, image_url, is_profile_picture)
+        VALUES ($1, $2, $3)
+        RETURNING *   
+    `;
+    const params = [userId, imageUrl, isPrimary]
+    const result = await query(sql, params);
+
+    return result.rows.length > 0 ? result.rows[0] : null;
+}
