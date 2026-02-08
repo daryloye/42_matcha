@@ -1,11 +1,11 @@
 import { useAtom } from 'jotai';
 import { useEffect, useRef } from 'react';
-import profilePic from '../../../assets/profilePic2.png';
-import { selectedChatAtom } from '../../../utils/atoms';
-import '../chat.css';
-import { HomePageTemplate } from '../components/HomePageTemplate';
+import profilePic from '../../assets/profilePic2.png';
+import { HomePageTemplate } from '../../components/home/HomePageTemplate';
+import { selectedChatAtom } from '../../utils/atoms';
+import styles from './Chat.module.css';
 
-const chatOverviewJson = [
+const chatSidebarJson = [
   {
     id: 1,
     name: 'Test',
@@ -59,9 +59,9 @@ export default function Chat() {
 
 function ChatPage() {
   return (
-    <div className='home-page-container col'>
+    <div className='home-page-layout col'>
       <h1>Chat</h1>
-      <div className='row chat-container'>
+      <div className={styles.chatContainer}>
         <ChatSidebar />
         <ChatSelected />
       </div>
@@ -73,12 +73,12 @@ function ChatSidebar() {
   const [selectedChat, setSelectedChat] = useAtom(selectedChatAtom);
 
   return (
-    <div className='col chat-overview-container'>
-      {chatOverviewJson.map((c) => (
+    <div className={styles.chatSidebarContainer}>
+      {chatSidebarJson.map((c) => (
         <button
           type='button'
           key={c.id}
-          className='row chat-overview-item'
+          className={styles.chatSidebarItem}
           style={{
             backgroundColor: c.id === selectedChat?.id ? '#b394d6' : 'inherit',
           }}
@@ -86,11 +86,9 @@ function ChatSidebar() {
             setSelectedChat(c);
           }}
         >
-          <div>
-            <img src={c.image} className='chat-profile-picture' />
-          </div>
+          <img src={c.image} className={styles.chatProfilePicture} />
 
-          <div className='chat-overview-item-text'>
+          <div className={styles.chatSidebarItemText}>
             <h2>{c.name}</h2>
             <p>{c.messages?.at(-1)?.message}</p>
           </div>
@@ -128,25 +126,23 @@ function ChatSelected() {
   if (!selectedChat) return null;
 
   return (
-    <div className='chat-selected-container col'>
+    <div className={styles.chatSelectedContainer}>
       {/* Header */}
-      <div className='chat-selected-header row'>
-        <div>
-          <img src={selectedChat.image} className='chat-profile-picture' />
-        </div>
-        <div className='chat-overview-item-text'>
+      <div className={styles.chatSelectedHeader}>
+        <img src={selectedChat.image} className={styles.chatProfilePicture} />
+        <div className={styles.chatSidebarItemText}>
           <h2>{selectedChat.name}</h2>
           <p>{selectedChat.status}</p>
         </div>
       </div>
 
       {/* Messages */}
-      <div className='chat-box col'>
+      <div className={styles.chatBox}>
         {selectedChat.messages.map((item, idx) => (
           <div
             key={idx}
             className={
-              item.from === 'user' ? 'chat-box-user' : 'chat-box-other'
+              item.from === 'user' ? styles.chatBoxUser : styles.chatBoxOther
             }
           >
             <p>{item.message}</p>
@@ -157,7 +153,7 @@ function ChatSelected() {
 
       {/* Message input */}
       <textarea
-        className='chat-input'
+        className={styles.chatInput}
         placeholder='Message'
         ref={inputRef}
         onKeyDown={handleKeyDown}

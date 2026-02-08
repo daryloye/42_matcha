@@ -10,7 +10,7 @@ import {
   useMap,
   useMapEvents,
 } from 'react-leaflet';
-import { locationAtom } from '../../../../utils/atoms';
+import { locationAtom } from '../../utils/atoms';
 
 function LocationMarker() {
   const [position, setPosition] = useAtom(locationAtom);

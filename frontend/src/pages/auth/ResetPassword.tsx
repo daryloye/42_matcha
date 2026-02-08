@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ActionButton } from '../../../components/ActionButton';
-import { TextInput } from '../../../components/TextInput';
-import '../auth.css';
+import { ActionButton } from '../../components/ActionButton';
+import { TextInput } from '../../components/TextInput';
+import './auth.css';
 
 export default function ResetPassword() {
   const [email, setEmail] = useState('');

@@ -2,15 +2,11 @@
   font-family: 'Pricedown';
   src:
     local('Pricedown'),
-    url('./assets//Pricedown\ Bl.otf') format('opentype');
-  /* You can add other formats like 'truetype' or 'woff2' for better compatibility */
+    url('./assets/Pricedown\ Bl.otf') format('opentype');
 }
 
 :root {
   font-family: sans-serif;
-  /* You can add other formats like 'truetype' or 'woff2' for better compatibility */
-
-  /* font-family: system-ui, Avenir, Helvetica, Arial, sans-serif; */
   line-height: 1.5;
   font-weight: 400;
 

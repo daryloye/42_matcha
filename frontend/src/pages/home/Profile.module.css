@@ -2,45 +2,63 @@
   width: 20%;
   min-width: 300px;
 }
+.profile form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.profileRow {
+  display: flex;
+  gap: 10%;
+}
+.profileInputFull {
+  width: 100%;
+}
+.profileTextArea {
+  width: 100%;
+  border-radius: 10px;
+  font-size: 16px;
+  padding: 8px;
+}
 .profile h2 {
   margin: 20px 0 0;
   font-size: 20px;
   font-weight: bold;
 }
 
-.profile-selection-button {
+.profileSelectionButton {
   padding: 0.6em;
   width: 7em;
   border: 1px solid #213547;
   color: #213547;
 }
-.profile-selection-button:not(:last-child) {
+.profileSelectionButton:not(:last-child) {
   border-right: none;
 }
 
-.profile-text-input {
+.profileTextInput {
   border-radius: 10px;
   font-size: 16px;
 }
-.profile-text-input::placeholder {
+.profileTextInput::placeholder {
   font-style: italic;
 }
 
-.profile-tag {
+.profileTag {
   margin: 5px 0 10px 0;
   background-color: #b394d6;
   padding: 2px 5px;
   border-radius: 10px;
   border: 1px solid #213547;
 }
-.profile-tag p {
+.profileTag p {
   font-weight: bold;
   margin: 0;
 }
-.profile-tag button,
-.profile-tag button:hover,
-.profile-tag button:focus,
-.profile-tag button:focus-visible {
+.profileTag button,
+.profileTag button:hover,
+.profileTag button:focus,
+.profileTag button:focus-visible {
   all: unset;
   display: flex;
   justify-content: center;
@@ -48,7 +66,7 @@
   cursor: pointer;
 }
 
-.profile-util-button {
+.profileUtilButton {
   width: unset;
   border: 1px solid grey;
   border-radius: 5px;
@@ -56,7 +74,7 @@
   padding: 5px 10px;
   font-size: 14px;
 }
-.profile-util-button:hover {
+.profileUtilButton:hover {
   background-color: #b394d6;
   cursor: pointer;
 }

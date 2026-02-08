@@ -1,4 +1,4 @@
-import { HomePageTemplate } from '../components/HomePageTemplate';
+import { HomePageTemplate } from '../../components/home/HomePageTemplate';
 
 export default function Dashboard() {
   return <HomePageTemplate page={<DashboardPage />} />;
@@ -6,7 +6,7 @@ export default function Dashboard() {
 
 function DashboardPage() {
   return (
-    <div className='home-page-container'>
+    <div className='home-page-layout'>
       <h1>Dashboard</h1>
     </div>
   );

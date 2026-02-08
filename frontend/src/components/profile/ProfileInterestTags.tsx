@@ -2,8 +2,9 @@ import { IonIcon } from '@ionic/react';
 import { closeSharp } from 'ionicons/icons';
 import { useAtom } from 'jotai';
 import { useState } from 'react';
-import { ActionButton } from '../../../../components/ActionButton';
-import { tagListAtom } from '../../../../utils/atoms';
+import styles from '../../pages/home/Profile.module.css';
+import { tagListAtom } from '../../utils/atoms';
+import { ActionButton } from '../ActionButton';
 
 function Tags() {
   const [tagList, setTagList] = useAtom(tagListAtom);
@@ -16,7 +17,10 @@ function Tags() {
   return (
     <div className='row' style={{ gap: '5px' }}>
       {tagList.map((tag) => (
-        <div key={tag} className='profile-tag row justify-center align-center'>
+        <div
+          key={tag}
+          className={`${styles.profileTag} row justify-center align-center`}
+        >
           <p>#{tag}</p>
 
           <button type='button' onClick={() => deleteTag(tag)}>
@@ -52,11 +56,11 @@ function TagInput() {
           if (event.key == 'Enter') addTag();
         }}
         placeholder='Add tag...'
-        className='profile-text-input'
+        className={styles.profileTextInput}
       />
 
       <ActionButton
-        className='profile-util-button'
+        className={styles.profileUtilButton}
         text='Add'
         onClick={addTag}
       />

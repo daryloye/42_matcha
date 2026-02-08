@@ -1,4 +1,6 @@
-.chat-container {
+.chatContainer {
+  display: flex;
+  flex-direction: row;
   flex: 1;
   margin: 30px 40px 0 0;
   border: 2px solid #213547;
@@ -7,34 +9,39 @@
   overflow: hidden;
 }
 
-.chat-overview-container {
+.chatSidebarContainer {
+  display: flex;
+  flex-direction: column;
   width: 25%;
   min-width: 200px;
   overflow-y: auto;
   border-right: 1px solid #213547;
 }
 
-.chat-overview-item {
+.chatSidebarItem {
   all: unset;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   padding: 10px;
   border-top: 1px solid #213547;
 }
-.chat-overview-item:first-child {
+.chatSidebarItem:first-child {
   border-top: none;
 }
-.chat-overview-item:last-child {
+.chatSidebarItem:last-child {
   border-bottom: 1px solid #213547;
 }
-.chat-overview-item:focus,
-.chat-overview-item:focus-visible {
+.chatSidebarItem:focus,
+.chatSidebarItem:focus-visible {
   outline: none;
 }
 
-.chat-overview-item-text {
+.chatSidebarItemText {
   overflow: hidden;
 }
-.chat-overview-item-text p,
-.chat-overview-item-text h2 {
+.chatSidebarItemText p,
+.chatSidebarItemText h2 {
   margin: 10px 20px;
   line-height: 1em;
   white-space: nowrap;
@@ -42,27 +49,33 @@
   text-overflow: ellipsis;
 }
 
-.chat-selected-container {
+.chatSelectedContainer {
+  display: flex;
+  flex-direction: column;
   width: 75%;
   min-width: 200px;
   overflow-y: auto;
   height: 100%;
 }
-.chat-selected-header {
+.chatSelectedHeader {
+  display: flex;
+  flex-direction: row;
   padding: 15px;
   background-color: #b394d6;
   border-bottom: 1px solid #213547;
 }
 
-.chat-box {
+.chatBox {
+  display: flex;
+  flex-direction: column;
   padding: 10px;
   gap: 10px;
   overflow-y: auto;
 }
-.chat-box p {
+.chatBox p {
   line-height: 1em;
 }
-.chat-box-user {
+.chatBoxUser {
   padding: 0 10px;
   text-align: right;
   margin-left: auto;
@@ -70,7 +83,7 @@
   background-color: lightblue;
   white-space: pre-wrap;
 }
-.chat-box-other {
+.chatBoxOther {
   padding: 0 10px;
   margin-right: auto;
   border-radius: 10px;
@@ -78,7 +91,7 @@
   white-space: pre-wrap;
 }
 
-.chat-input {
+.chatInput {
   all: unset;
   margin-top: auto;
   background-color: rgba(255, 255, 255, 0.7);
@@ -88,9 +101,9 @@
   min-height: 1.5em;
 }
 
-.chat-profile-picture {
+.chatProfilePicture {
   display: block;
-  margin: 0 auto;
+  margin: 0;
   width: 75px;
   height: 75px;
   border-radius: 75px;

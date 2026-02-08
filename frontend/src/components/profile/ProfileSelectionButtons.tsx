@@ -1,4 +1,5 @@
 import { useAtom } from 'jotai';
+import styles from '../../pages/home/Profile.module.css';
 
 function SelectionButton({ atom, text }: { atom: any; text: string }) {
   const [selection, setSelection] = useAtom(atom);
@@ -6,7 +7,7 @@ function SelectionButton({ atom, text }: { atom: any; text: string }) {
   return (
     <button
       type='button'
-      className='profile-selection-button'
+      className={styles.profileSelectionButton}
       onClick={() => setSelection(text)}
       style={{
         backgroundColor: selection === text ? '#b394d6' : 'transparent',
