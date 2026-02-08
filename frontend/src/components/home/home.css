@@ -1,7 +1,7 @@
 .home-container {
   display: flex;
   flex-direction: row;
-  width: clamp(320px, 90%, 1400px);
+  width: clamp(320px, 80%, 100%);
   box-sizing: border-box;
   height: 90vh;
   padding: 30px 5px 30px 30px;
@@ -35,7 +35,6 @@
 
 .home-page-layout {
   overflow-y: auto;
-  /* width: 100%; */
   flex: 1 1 auto;
   min-width: 0;
   padding-left: 45px;
@@ -47,5 +46,4 @@
   width: 100px;
   height: 100px;
   border-radius: 100px;
-  border: 2px solid #213547;
 }

@@ -19,7 +19,7 @@ export default function Login() {
     else if (username === 'a' && password === 'a') {
       toast.error('Incorrect email or password');
     } else {
-      navigate('/dashboard');
+      navigate('/search');
     }
   };
 

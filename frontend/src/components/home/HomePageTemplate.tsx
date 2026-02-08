@@ -23,8 +23,8 @@ function Sidebar() {
         nameYour nameYour name
       </h2>
 
-      <Link to='/dashboard'>
-        <h1>Dashboard</h1>
+      <Link to='/search'>
+        <h1>Search</h1>
       </Link>
 
       <Link to='/profile'>

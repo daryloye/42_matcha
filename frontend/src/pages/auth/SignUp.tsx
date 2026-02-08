@@ -25,7 +25,7 @@ export default function SignUp() {
       toast.error('Password is too weak');
     } else {
       toast.success('Welcome to Matcha 🥳');
-      navigate('/dashboard');
+      navigate('/search');
     }
   };
 

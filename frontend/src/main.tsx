@@ -10,8 +10,8 @@ import ResetPassword from './pages/auth/ResetPassword';
 import SignUp from './pages/auth/SignUp';
 import Account from './pages/home/Account';
 import Chat from './pages/home/Chat';
-import Dashboard from './pages/home/Dashboard';
 import Profile from './pages/home/Profile';
+import Search from './pages/home/Search';
 import NotFoundPage from './pages/notFound/NotFoundPage';
 
 createRoot(document.getElementById('root')!).render(
@@ -23,7 +23,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path='/signup' element={<SignUp />} />
           <Route path='/resetpassword' element={<ResetPassword />} />
           <Route path='/newpassword' element={<NewPassword />} />
-          <Route path='/dashboard' element={<Dashboard />} />
+          <Route path='/search' element={<Search />} />
           <Route path='/profile' element={<Profile />} />
           <Route path='/chat' element={<Chat />} />
           <Route path='/account' element={<Account />} />

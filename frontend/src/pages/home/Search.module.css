@@ -1,0 +1,57 @@
+.searchContainer {
+  margin: 30px 50px 0 0;
+}
+
+.searchUserInput {
+  width: 50%;
+}
+
+.searchResultsGrid {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: 5%;
+  row-gap: 5%;
+}
+
+.searchResultsItem {
+  all: unset;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  border: 2px solid #213547;
+  border-radius: 20px;
+}
+.searchResultsItem:hover {
+  background-color: #b394d6;
+}
+
+.searchResultsItem h2 {
+  margin: 0;
+}
+.searchResultsItem p {
+  margin: 0;
+  font-style: italic;
+}
+
+.searchResultsProfilePicture {
+  display: block;
+  width: 150px;
+  height: 150px;
+  border-radius: 150px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+.tags p {
+  white-space: nowrap;
+  background-color: pink;
+  border-radius: 5px;
+  border: 1px solid #213547;
+  padding: 0 3px;
+}

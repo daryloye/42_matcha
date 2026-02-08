@@ -48,6 +48,11 @@ function ProfilePage() {
 
           <div className={styles.profileGrid}>
             <div>
+              <h2>Date of birth</h2>
+              <input type='date' className={styles.profileInput} />
+            </div>
+
+            <div>
               <h2>Gender</h2>
               <ProfileSelectionButtons
                 atom={genderAtom}
