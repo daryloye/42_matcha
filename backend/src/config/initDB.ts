@@ -1,8 +1,7 @@
-import { query } from './database';
+import { query } from "./database";
 
-const createTables = async() => {
-
-    const sql = `
+const createTables = async () => {
+  const sql = `
     CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
         email VARCHAR(255) UNIQUE NOT NULL,
@@ -57,12 +56,12 @@ const createTables = async() => {
     );
     `;
 
-    try {
-        await query(sql);
-        console.log("✅ Tables initialized successfully");
-    } catch(error) {
-        console.error("❌ Error initializing tables:", error);
-    }
+  try {
+    await query(sql);
+    console.log("✅ Tables initialized successfully");
+  } catch (error) {
+    console.error("❌ Error initializing tables:", error);
+  }
 };
 
 export default createTables;

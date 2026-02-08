@@ -1,0 +1,36 @@
+meta {
+  name: 02_auth_register
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:5001/api/auth/register
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "your_email@example.com",
+    "username": "testuser",
+    "first_name": "Test",
+    "last_name": "User",
+    "password": "Test@Password123"
+  }
+}
+
+// tests {
+//   test("status is 200", function() {
+//     expect(res.getStatus()).to.equal(200);
+//   });
+// }
+
+settings {
+  encodeUrl: false
+  timeout: 0
+}
