@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { ActionButton } from '../../components/ActionButton';
 import { TextInput } from '../../components/TextInput';
 import './auth.css';
@@ -7,23 +8,15 @@ import './auth.css';
 export default function NewPassword() {
   const [password, setPassword] = useState('');
   const [passwordRetype, setPasswordRetype] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (password !== passwordRetype) {
-      setErrorMsg('Passwords do not match');
-    } else if (password === passwordRetype) {
-      setErrorMsg('');
-    }
-  }, [password, passwordRetype]);
 
   const handleSubmit = () => {
     if (password === '') {
-      setErrorMsg('Please enter a password');
+      toast.error('Please enter a password');
+    } else if (password !== passwordRetype) {
+      toast.error('Passwords do not match');
     } else {
-      setErrorMsg('');
-      alert('Password reset successful.');
+      toast.success('Password reset successful.');
       navigate('/');
     }
   };
@@ -32,8 +25,6 @@ export default function NewPassword() {
     <div className='page-wrapper'>
       <div className='page-container login-container'>
         <h1>Welcome to Matcha</h1>
-
-        <p className='error-message'>{errorMsg}</p>
 
         <form>
           <TextInput

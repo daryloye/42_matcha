@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { ActionButton } from '../../components/ActionButton';
 import { TextInput } from '../../components/TextInput';
 import './auth.css';
@@ -11,25 +12,19 @@ export default function SignUp() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [passwordRetype, setPasswordRetype] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (password !== passwordRetype) {
-      setErrorMsg('Passwords do not match');
-    } else if (password === passwordRetype) {
-      setErrorMsg('');
-    }
-  }, [password, passwordRetype]);
-
   const handleSubmit = () => {
-    if (errorMsg !== '') return;
-
+    if (password === '') {
+      toast.error('Please enter a password');
+    } else if (password !== passwordRetype) {
+      toast.error('Passwords do not match');
+    }
     // Simulate /auth/signup request
-    if (password === 'a') {
-      setErrorMsg('Password is too weak');
+    else if (password === 'a') {
+      toast.error('Password is too weak');
     } else {
-      setErrorMsg('');
+      toast.success('Welcome to Matcha 🥳');
       navigate('/dashboard');
     }
   };
@@ -38,8 +33,6 @@ export default function SignUp() {
     <div className='page-wrapper'>
       <div className='page-container login-container'>
         <h1>Welcome to Matcha</h1>
-
-        <p className='error-message'>{errorMsg}</p>
 
         <form>
           <TextInput

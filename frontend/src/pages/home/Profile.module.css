@@ -1,17 +1,23 @@
 .profile {
-  width: 20%;
-  min-width: 300px;
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  margin: 30px 50px 0 0;
+  border-radius: 10px;
+  /* overflow: hidden; */
 }
 .profile form {
   display: flex;
   flex-direction: column;
+  width: 100%;
   gap: 8px;
 }
-.profileRow {
-  display: flex;
-  gap: 10%;
+.profileGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 10%;
 }
-.profileInputFull {
+.profileInput {
   width: 100%;
 }
 .profileTextArea {

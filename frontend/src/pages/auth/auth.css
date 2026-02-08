@@ -10,6 +10,7 @@
   flex-direction: column;
   align-items: center;
   gap: 5px;
+  padding-top: 30px;
 }
 .login-container input {
   font-family: sans-serif;

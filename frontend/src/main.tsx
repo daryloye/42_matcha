@@ -2,6 +2,7 @@ import { Provider } from 'jotai';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import './index.css';
 import Login from './pages/auth/Login';
 import NewPassword from './pages/auth/NewPassword';
@@ -29,6 +30,18 @@ createRoot(document.getElementById('root')!).render(
           <Route path='*' element={<NotFoundPage />} />
         </Routes>
       </Router>
+      <ToastContainer
+        position='top-right'
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme='colored'
+      />
     </Provider>
   </StrictMode>,
 );

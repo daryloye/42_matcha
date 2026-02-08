@@ -1,4 +1,5 @@
 import type { FormEvent } from 'react';
+import { toast } from 'react-toastify';
 import { ActionButton } from '../../components/ActionButton';
 import { HomePageTemplate } from '../../components/home/HomePageTemplate';
 import { ProfileInterestTags } from '../../components/profile/ProfileInterestTags';
@@ -14,6 +15,7 @@ export default function Profile() {
 
 function ProfilePage() {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    toast.success('Profile updated');
     event.preventDefault();
   };
 
@@ -27,32 +29,40 @@ function ProfilePage() {
 
           <h2>Fame</h2>
 
-          <div className={styles.profileRow}>
-            <div className={styles.profileInputFull}>
+          <div className={styles.profileGrid}>
+            <div>
               <h2>First name</h2>
-              <input className={styles.profileInputFull} />
+              <input className={styles.profileInput} />
             </div>
 
-            <div className={styles.profileInputFull}>
+            <div>
               <h2>Last name</h2>
-              <input className={styles.profileInputFull} />
+              <input className={styles.profileInput} />
+            </div>
+
+            <div>
+              <h2>Email</h2>
+              <input className={styles.profileInput} />
             </div>
           </div>
 
-          <h2>Email</h2>
-          <input className={styles.profileInputFull} />
+          <div className={styles.profileGrid}>
+            <div>
+              <h2>Gender</h2>
+              <ProfileSelectionButtons
+                atom={genderAtom}
+                options={['Male', 'Female']}
+              />
+            </div>
 
-          <h2>Gender</h2>
-          <ProfileSelectionButtons
-            atom={genderAtom}
-            options={['Male', 'Female']}
-          />
-
-          <h2>Preference</h2>
-          <ProfileSelectionButtons
-            atom={genderPreferenceAtom}
-            options={['Male', 'Female', 'Any']}
-          />
+            <div>
+              <h2>Preference</h2>
+              <ProfileSelectionButtons
+                atom={genderPreferenceAtom}
+                options={['Male', 'Female', 'Any']}
+              />
+            </div>
+          </div>
 
           <h2>Biography</h2>
           <textarea
@@ -71,7 +81,11 @@ function ProfilePage() {
           <h2>Location</h2>
           <ProfileLocation />
 
-          <ActionButton type='submit' text='Update Profile' />
+          <ActionButton
+            type='submit'
+            text='Update Profile'
+            onClick={() => handleSubmit}
+          />
         </form>
       </div>
     </div>

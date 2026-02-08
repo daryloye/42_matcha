@@ -1,16 +1,15 @@
 .home-container {
   display: flex;
   flex-direction: row;
-  width: 95%;
-  min-width: 0;
+  width: clamp(320px, 90%, 1400px);
   box-sizing: border-box;
   height: 90vh;
   padding: 30px 5px 30px 30px;
 }
 
 .home-sidebar {
-  flex: 0 0 15em;
-  width: 15em;
+  flex: 0 0 20%;
+  min-width: 250px;
   overflow-y: auto;
   padding-right: 45px;
   border-right: 5px solid #213547;
@@ -36,7 +35,7 @@
 
 .home-page-layout {
   overflow-y: auto;
-  width: 100%;
+  /* width: 100%; */
   flex: 1 1 auto;
   min-width: 0;
   padding-left: 45px;

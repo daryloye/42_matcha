@@ -64,7 +64,7 @@ export function ProfileLocation() {
       center={[25.791, -80.13]}
       zoom={13}
       scrollWheelZoom={true}
-      style={{ height: '300px', width: '150%' }}
+      style={{ height: '300px', width: '100%' }}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
