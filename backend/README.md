@@ -1,6 +1,76 @@
 # backend manual
 # Password reset endpoint
 
+# 9 Feb Progress
+
+✅ Login endpoint
+✅ Password reset endpoint
+⏳ Profile system
+⏳ Browsing/Matching
+⏳ Chat (Socket.IO)
+⏳ Notifications
+
+✅ profile.model.ts - COMPLETE
+  ✅ createBlankProfile()
+  ✅ getProfileByUserId()
+  ✅ updateProfile()
+  ✅ addProfilePicture()
+  ✅ setProfilePicture()
+  ✅ getProfilePictures()
+  ✅ getPrimaryProfilePicture()
+  ✅ deleteProfilePicture()
+
+✅ Authentication System - COMPLETE
+  ✅ Register endpoint
+  ✅ Verify email endpoint
+  ✅ Login endpoint
+  ✅ Forgot password endpoint
+  ✅ Reset password endpoint
+
+⏳ Profile System - IN PROGRESS
+  ⏳ Step 18: Profile Controller & Routes
+    ⏳ 18.1: Create profile.controller.ts
+    ⏳ 18.2: Create auth.middleware.ts (requireAuth)
+    ⏳ 18.3: Build profile completion endpoint
+    ⏳ 18.4: Build get own profile endpoint
+    ⏳ 18.5: Build view other's profile endpoint
+    ⏳ 18.6: Build update profile endpoint
+    ⏳ 18.7: Build upload picture endpoint (multer)
+    ⏳ 18.8: Build set profile picture endpoint
+    ⏳ 18.9: Build delete picture endpoint
+    ⏳ 18.10: Build get user pictures endpoint
+    ⏳ 18.11: Create profile.routes.ts
+    ⏳ 18.12: Connect routes to server.ts
+    ⏳ 18.13: Test all endpoints with Postman
+
+  ⏳ Step 19: Interest System
+    ⏳ 19.1: Create interest.model.ts
+    ⏳ 19.2: Add interest endpoints to profile controller
+    ⏳ 19.3: Test interest management
+
+⏳ Browsing/Matching System
+  ⏳ Step 20: Browse/Search endpoints
+  ⏳ Step 21: Like/Unlike system
+  ⏳ Step 22: View history tracking
+  ⏳ Step 23: Fame rating calculation
+  ⏳ Step 24: Matching algorithm
+
+⏳ Chat System (Socket.IO)
+  ⏳ Step 25: Message model
+  ⏳ Step 26: Chat controller
+  ⏳ Step 27: Socket.IO setup
+  ⏳ Step 28: Real-time messaging
+
+⏳ Notifications System
+  ⏳ Step 29: Notification model
+  ⏳ Step 30: Notification controller
+  ⏳ Step 31: Real-time notifications via Socket.IO
+
+⏳ Additional Features
+  ⏳ Block/Report system
+  ⏳ Profile view tracking
+  ⏳ 500+ fake profiles seeding
+
 # 5 Feb
 Database schema completed
 ✅ users
@@ -16,9 +86,10 @@ profile.model.ts needs:
 ✅ createBlankProfile() - You started this (fix the SQL)
 ✅ getProfileByUserId() - Get user's profile
 ✅ updateProfile() - Update profile fields
-⏳ addProfilePicture() - Add a photo
-⏳ setProfilePicture() - Mark which photo is the profile pic
-⏳ getProfilePictures() - Get all user's photos
+✅ addProfilePicture() - Add a photo
+✅ setProfilePicture() - Mark which photo is the profile pic
+✅ getProfilePictures() - Get all user's photos
+⏳ getPrimaryProfilePictures() - Get user's primary avatar profile
 ⏳ deleteProfilePicture() - Remove a photo
 
 interest.model.ts needs:
