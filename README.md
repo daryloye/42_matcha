@@ -27,7 +27,7 @@ make down
 ### Remove containers and volumens:
 
 ```
-make prune
+make docker-reset
 ```
 
 ### Run API tests with Bruno (after the application is running):

@@ -3,7 +3,7 @@ BACKEND=./backend
 BRUNO=./bruno-api
 
 
-.PHONY: up down install test prune
+.PHONY: up down install test docker-stop docker-reset
 
 up:
 	docker-compose up -d
@@ -17,7 +17,10 @@ install:
 test:
 	npm --workspace $(BRUNO) run test
 
-prune:
+docker-reset:
+	docker-compose down -v --remove-orphans
+	docker stop $$(docker ps -q) || true
+	docker rm $$(docker ps -aq) || true
 	docker container prune -f
 	docker image prune -a -f
 	docker volume prune -f
