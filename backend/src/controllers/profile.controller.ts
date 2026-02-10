@@ -40,3 +40,59 @@ export const completeProfile = async (req: AuthRequest, res: Response): Promise<
     }
 
 };
+
+/*
+1. Get userId from req.user (set by requireAuth middleware)
+2. Check if userId exists
+3. Get profile from database using getProfileByUserId(userId)
+4. Check if profile exists
+5. If no profile → return 404 error
+6. If profile exists → return it
+*/
+export const getOwnerProfile = async (req: AuthRequest, res: Response): Promise <void> => {
+    try{
+        const userId = req.user?.userId;
+        if(!userId){
+            res.status(401).json({error: 'user not authenticated'});
+            return;
+        }
+        const userProfile = await getProfileByUserId(userId);
+        if(!userProfile) {
+            res.status(404).json({error: 'user profile does not exist'});
+            return;
+        }
+        res.status(200).json({message: 'Owner\'s Profile returnted successfully', userProfile});
+    }catch(error){
+        console.error('error getting owner', error);
+        res.status(500).json({error: 'Internal server error'});
+
+    }
+};
+
+export const getOthersProfile = async (req: AuthRequest, res: Response): Promise<void> => {
+    try {
+        const userId = req.user?.userId;
+        if (!userId){
+            res.status(401).json({error: 'user not authenticated'});
+            return;
+        }
+        const targetId = parseInt(req.params.id as string);
+        if(isNaN(targetId)){
+            res.status(400).json({error: 'invalid id numver'});
+            return;
+        }
+        const targetProfile = await getProfileByUserId(targetId);
+        if(!targetProfile){
+            res.status(404).json({error: 'user not authenticated'});
+            return;
+        }
+        // TODO: Track profile view (will implement in Step 22)
+        // await trackProfileView(userId, targetId);
+        res.status(200).json({profile: targetProfile});
+
+    }catch(error){
+        console.error('error getting other\'s profile', error);
+        res.status(500).json({error: 'internal server error'});
+    }
+    
+};

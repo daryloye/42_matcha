@@ -1,7 +1,7 @@
 # backend manual
 # Password reset endpoint
 
-# 9 Feb Progress
+# 10 Feb Progress
 
 ✅ Login endpoint
 ✅ Password reset endpoint
@@ -28,11 +28,11 @@
   ✅ Reset password endpoint
 
 ⏳ Profile System - IN PROGRESS
-  ⏳ Step 18: Profile Controller & Routes
-    ⏳ 18.1: Create profile.controller.ts
-    ⏳ 18.2: Create auth.middleware.ts (requireAuth)
-    ⏳ 18.3: Build profile completion endpoint
-    ⏳ 18.4: Build get own profile endpoint
+   ✅ Step 18: Profile Controller & Routes
+     ✅ 18.1: Create profile.controller.ts
+     ✅ 18.2: Create auth.middleware.ts (requireAuth)
+     ✅ 18.3: Build profile completion endpoint
+     ✅ 18.4: Build get own profile endpoint
     ⏳ 18.5: Build view other's profile endpoint
     ⏳ 18.6: Build update profile endpoint
     ⏳ 18.7: Build upload picture endpoint (multer)
