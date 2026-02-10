@@ -96,3 +96,4 @@ export const getOthersProfile = async (req: AuthRequest, res: Response): Promise
     }
     
 };
+
