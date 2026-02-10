@@ -38,7 +38,6 @@ export const completeProfile = async (req: AuthRequest, res: Response): Promise<
         console.error('complete profile error: ', error)
         res.status(500).json({error: 'failed to complete profile'}); 
     }
-
 };
 
 /*
@@ -97,3 +96,30 @@ export const getOthersProfile = async (req: AuthRequest, res: Response): Promise
     
 };
 
+/*Get userId from req.user
+Get update data from req.body
+Call updateProfile(userId, data)
+Return updated profile*/
+
+
+export const updateOwnProfile = async(req: AuthRequest, res: Response): Promise<void> => {
+    try { 
+        const userId = req.user?.userId;
+        if(!userId){
+            res.status(401).json({error: 'user not authenticated'});
+            return;
+        }
+
+        const { gender, sexual_preference, biography, latitude, longitude, location_city } = req.body;
+        const profile = await updateProfile(userId, {gender, sexual_preference, biography, latitude, longitude, location_city});
+        
+        if(!profile){
+            res.status(404).json({error: 'Profile not found'});
+            return;
+        }
+        res.status(200).json({message: 'Profile updated successfully', profile});
+    } catch (error) {
+        console.error('error getting owner', error);
+        res.status(500).json({error: 'internal server error'})
+    }
+};

@@ -33,8 +33,8 @@
      ✅ 18.2: Create auth.middleware.ts (requireAuth)
      ✅ 18.3: Build profile completion endpoint
      ✅ 18.4: Build get own profile endpoint
-    ⏳ 18.5: Build view other's profile endpoint
-    ⏳ 18.6: Build update profile endpoint
+     ✅ 18.5: Build view other's profile endpoint
+     ✅ 18.6: Build update profile endpoint
     ⏳ 18.7: Build upload picture endpoint (multer)
     ⏳ 18.8: Build set profile picture endpoint
     ⏳ 18.9: Build delete picture endpoint
