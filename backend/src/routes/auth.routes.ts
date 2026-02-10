@@ -1,5 +1,6 @@
 import { Router } from 'express'; 
 import { register, verify, login, forgotPassword, resetPassword } from '../controllers/auth.controller'
+
 // import { verify } from 'node:crypto';
 
 

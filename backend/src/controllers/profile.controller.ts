@@ -40,4 +40,3 @@ export const completeProfile = async (req: AuthRequest, res: Response): Promise<
     }
 
 };
-
