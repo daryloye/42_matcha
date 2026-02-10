@@ -54,7 +54,10 @@
   ⏳ Step 22: View history tracking
   ⏳ Step 23: Fame rating calculation
   ⏳ Step 24: Matching algorithm
-
+    ⏳ 24.1: Create utils/geo.ts with distance calculation ← GEO FUNCTIONS HERE!
+    ⏳ 24.2: Sort suggestions by proximity
+    ⏳ 24.3: Filter by max distance
+    ⏳ 24.4: Combine with other criteria (tags, fame, gender)
 ⏳ Chat System (Socket.IO)
   ⏳ Step 25: Message model
   ⏳ Step 26: Chat controller
