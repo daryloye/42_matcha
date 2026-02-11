@@ -101,7 +101,6 @@ Get update data from req.body
 Call updateProfile(userId, data)
 Return updated profile*/
 
-
 export const updateOwnProfile = async(req: AuthRequest, res: Response): Promise<void> => {
     try { 
         const userId = req.user?.userId;
