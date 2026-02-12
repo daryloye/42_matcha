@@ -1,5 +1,5 @@
 meta {
-  name: 01_healthcheck
+  name: 00_healthcheck
   type: http
   seq: 1
 }
@@ -14,9 +14,4 @@ tests {
   test("status is 200", function() {
     expect(res.getStatus()).to.equal(200);
   });
-}
-
-settings {
-  encodeUrl: true
-  timeout: 0
 }

@@ -1,3 +1,4 @@
+import { seedAdmin } from "../database/seed";
 import { query } from "./database";
 
 const createTables = async () => {
@@ -59,6 +60,8 @@ const createTables = async () => {
   try {
     await query(sql);
     console.log("✅ Tables initialized successfully");
+
+    await seedAdmin();
   } catch (error) {
     console.error("❌ Error initializing tables:", error);
   }

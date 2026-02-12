@@ -1,0 +1,33 @@
+meta {
+  name: 01_invalid_email
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:5001/api/auth/login
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "admin1@matcha.com",
+    "password": "MatchaAdmin2026!"
+  }
+}
+
+tests {
+  test("status 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}
+
+settings {
+  encodeUrl: false
+  timeout: 10000
+}

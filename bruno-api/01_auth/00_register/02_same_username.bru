@@ -1,0 +1,36 @@
+meta {
+  name: 02_same_username
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:5001/api/auth/register
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "admin1@matcha.com",
+    "username": "admin",
+    "first_name": "Admin1",
+    "last_name": "Matcha1",
+    "password": "Password@123"
+  }
+}
+
+tests {
+  test("status 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}
+
+settings {
+  encodeUrl: false
+  timeout: 10000
+}
