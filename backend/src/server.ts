@@ -20,7 +20,7 @@ const httpServer = createServer(app); //Node js httpServer
 //this is for the handshake; a walkie talkie system for talking and pushes updates
 const io = new SocketIOServer(httpServer, {
   cors: {
-    origin: process.env.FRONTEND_URL || "https://localhost:5173",
+    origin: process.env.FRONTEND_URL!,
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -30,7 +30,7 @@ const io = new SocketIOServer(httpServer, {
 app.use(helmet()); //default security headers to help protect against various attacks
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "https://localhost:5173",
+    origin: process.env.FRONTEND_URL!,
     credentials: true,
   }),
 );
@@ -75,12 +75,10 @@ app.use((err: Error, _req: Request, res: Response) => {
   });
 });
 
-const PORT = process.env.PORT || 5001;
-
 // this will start the server
-httpServer.listen(PORT, async () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
+httpServer.listen(process.env.PORT, async () => {
+  console.log(`Server running on port ${process.env.PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV}`);
 
   await testConnection(); //wrote this to test database
   await createTables();
