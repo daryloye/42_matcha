@@ -1,0 +1,32 @@
+meta {
+  name: 00_existing_email
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:5001/api/auth/forgot-password
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "admin1@matcha.com"
+  }
+}
+
+tests {
+  test("status 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}
+
+settings {
+  encodeUrl: false
+  timeout: 10000
+}

@@ -4,9 +4,9 @@ import { createRoot } from 'react-dom/client';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import './index.css';
+import ForgotPasswordPage from './pages/auth/ForgotPassword';
 import LoginPage from './pages/auth/Login';
 import NewPasswordPage from './pages/auth/NewPassword';
-import ResetPasswordPage from './pages/auth/ResetPassword';
 import SignUpPage from './pages/auth/SignUp';
 import Account from './pages/home/Account';
 import Chat from './pages/home/Chat';
@@ -21,7 +21,7 @@ createRoot(document.getElementById('root')!).render(
         <Routes>
           <Route path='/' element={<LoginPage />} />
           <Route path='/signup' element={<SignUpPage />} />
-          <Route path='/resetpassword' element={<ResetPasswordPage />} />
+          <Route path='/resetpassword' element={<ForgotPasswordPage />} />
           <Route path='/newpassword' element={<NewPasswordPage />} />
           <Route path='/search' element={<Search />} />
           <Route path='/profile' element={<Profile />} />

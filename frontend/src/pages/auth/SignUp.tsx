@@ -1,31 +1,53 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { Register } from '../../api/api';
 import { ActionButton } from '../../components/ActionButton';
 import { TextInput } from '../../components/TextInput';
 import './auth.css';
 
-export default function SignUp() {
-  const [firstname, setFirstname] = useState('');
-  const [lastname, setLastname] = useState('');
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordRetype, setPasswordRetype] = useState('');
+export default function SignUpPage() {
+  const [formData, setFormData] = useState({
+    firstname: '',
+    lastname: '',
+    email: '',
+    username: '',
+    password: '',
+    passwordRetype: '',
+  });
   const navigate = useNavigate();
 
-  const handleSubmit = () => {
-    if (password === '') {
-      toast.error('Please enter a password');
-    } else if (password !== passwordRetype) {
-      toast.error('Passwords do not match');
+  const handleChange = (field: keyof typeof formData, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleSubmit = async () => {
+    if (
+      formData.firstname === '' ||
+      formData.lastname === '' ||
+      formData.email === '' ||
+      formData.username === '' ||
+      formData.password === '' ||
+      formData.passwordRetype === ''
+    ) {
+      toast.error('Please fill in all fields');
+      return;
     }
-    // Simulate /auth/signup request
-    else if (password === 'a') {
-      toast.error('Password is too weak');
-    } else {
-      toast.success('Welcome to Matcha 🥳');
-      navigate('/search');
+
+    if (formData.password !== formData.passwordRetype) {
+      toast.error('Passwords do not match');
+      return;
+    }
+
+    try {
+      const res = await Register(formData);
+      toast.info(res.message);
+      navigate('/');
+    } catch (err: any) {
+      toast.error(err.message);
     }
   };
 
@@ -37,43 +59,43 @@ export default function SignUp() {
         <form>
           <TextInput
             type='text'
-            value={firstname}
-            onChange={setFirstname}
+            value={formData.firstname}
+            onChange={(value) => handleChange('firstname', value)}
             placeholder='First name'
           />
 
           <TextInput
             type='text'
-            value={lastname}
-            onChange={setLastname}
+            value={formData.lastname}
+            onChange={(value) => handleChange('lastname', value)}
             placeholder='Last name'
           />
 
           <TextInput
             type='email'
-            value={email}
-            onChange={setEmail}
+            value={formData.email}
+            onChange={(value) => handleChange('email', value)}
             placeholder='Email'
           />
 
           <TextInput
             type='text'
-            value={username}
-            onChange={setUsername}
+            value={formData.username}
+            onChange={(value) => handleChange('username', value)}
             placeholder='Username'
           />
 
           <TextInput
             type='password'
-            value={password}
-            onChange={setPassword}
+            value={formData.password}
+            onChange={(value) => handleChange('password', value)}
             placeholder='Password'
           />
 
           <TextInput
             type='password'
-            value={passwordRetype}
-            onChange={setPasswordRetype}
+            value={formData.passwordRetype}
+            onChange={(value) => handleChange('passwordRetype', value)}
             placeholder='Retype Password'
           />
 

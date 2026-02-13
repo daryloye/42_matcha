@@ -5,7 +5,7 @@ import { ActionButton } from '../../components/ActionButton';
 import { TextInput } from '../../components/TextInput';
 import './auth.css';
 
-export default function NewPassword() {
+export default function NewPasswordPage() {
   const [password, setPassword] = useState('');
   const [passwordRetype, setPasswordRetype] = useState('');
   const navigate = useNavigate();
