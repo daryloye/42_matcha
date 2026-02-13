@@ -1,25 +1,37 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { Login } from '../../api/api';
 import { ActionButton } from '../../components/ActionButton';
 import { TextInput } from '../../components/TextInput';
 import './auth.css';
 
-export default function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+export default function LoginPage() {
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+  });
   const navigate = useNavigate();
 
-  const handleSubmit = () => {
-    if (username === '' || password === '') {
-      toast.error('Please enter email and password');
+  const handleChange = (field: keyof typeof formData, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleSubmit = async () => {
+    if (formData.username === '' || formData.password === '') {
+      toast.error('Please enter username and password');
+      return;
     }
 
-    // simulate /auth/login request
-    else if (username === 'a' && password === 'a') {
-      toast.error('Incorrect email or password');
-    } else {
+    try {
+      await Login(formData);
+      toast('🚀 Welcome to Matcha');
       navigate('/search');
+    } catch (err: any) {
+      toast.error(err.message);
     }
   };
 
@@ -31,15 +43,15 @@ export default function Login() {
         <form>
           <TextInput
             type='text'
-            value={username}
-            onChange={setUsername}
+            value={formData.username}
+            onChange={(value) => handleChange('username', value)}
             placeholder='Username'
           />
 
           <TextInput
             type='password'
-            value={password}
-            onChange={setPassword}
+            value={formData.password}
+            onChange={(value) => handleChange('password', value)}
             placeholder='Password'
           />
 

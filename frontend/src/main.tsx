@@ -4,10 +4,10 @@ import { createRoot } from 'react-dom/client';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import './index.css';
-import Login from './pages/auth/Login';
-import NewPassword from './pages/auth/NewPassword';
-import ResetPassword from './pages/auth/ResetPassword';
-import SignUp from './pages/auth/SignUp';
+import LoginPage from './pages/auth/Login';
+import NewPasswordPage from './pages/auth/NewPassword';
+import ResetPasswordPage from './pages/auth/ResetPassword';
+import SignUpPage from './pages/auth/SignUp';
 import Account from './pages/home/Account';
 import Chat from './pages/home/Chat';
 import Profile from './pages/home/Profile';
@@ -19,10 +19,10 @@ createRoot(document.getElementById('root')!).render(
     <Provider>
       <Router>
         <Routes>
-          <Route path='/' element={<Login />} />
-          <Route path='/signup' element={<SignUp />} />
-          <Route path='/resetpassword' element={<ResetPassword />} />
-          <Route path='/newpassword' element={<NewPassword />} />
+          <Route path='/' element={<LoginPage />} />
+          <Route path='/signup' element={<SignUpPage />} />
+          <Route path='/resetpassword' element={<ResetPasswordPage />} />
+          <Route path='/newpassword' element={<NewPasswordPage />} />
           <Route path='/search' element={<Search />} />
           <Route path='/profile' element={<Profile />} />
           <Route path='/chat' element={<Chat />} />
