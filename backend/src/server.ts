@@ -14,13 +14,15 @@ import profileRouter from "./routes/profile.routes";
 
 dotenv.config(); //this reads my env file and makes variables available via process.env.PORT
 
+const allowedOrigins = ["http://localhost:5173", "http://localhost:3000"];
+
 const app: Application = express(); //Express application. Its job is to handle standard requests (HTTP).
 const httpServer = createServer(app); //Node js httpServer
 
 //this is for the handshake; a walkie talkie system for talking and pushes updates
 const io = new SocketIOServer(httpServer, {
   cors: {
-    origin: process.env.FRONTEND_URL!,
+    origin: allowedOrigins,
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -30,7 +32,7 @@ const io = new SocketIOServer(httpServer, {
 app.use(helmet()); //default security headers to help protect against various attacks
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL!,
+    origin: allowedOrigins,
     credentials: true,
   }),
 );
