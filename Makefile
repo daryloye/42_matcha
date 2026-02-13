@@ -14,6 +14,9 @@ down:
 install:
 	npm install
 
+dev:
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
 test:
 	npm --workspace $(BRUNO) run test
 
