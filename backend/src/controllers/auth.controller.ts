@@ -80,21 +80,24 @@ export const forgotPassword = async (req: Request, res: Response) : Promise <voi
     try{
         const { email }: ForgotPasswordRequest = req.body;
 
-        if(!isValidEmail(email) || !email) {
-            res.status(400).json({ error: 'Invalid email format'});
-            return;
-        }
+        // if(!isValidEmail(email) || !email) {
+        //     res.status(400).json({ error: 'Invalid email format'});
+        //     return;
+        // }
         
-        const exisitngUser = await findUserByEmail(email);
-        if (exisitngUser && exisitngUser.is_verified){
-            const reset_token = crypto.randomBytes(32).toString('hex');
-            const expires = new Date();
-            expires.setHours(expires.getHours() + 1);
-    
-            await setResetToken(email, reset_token, expires);
-            await sendPasswordResetEmail(email, exisitngUser.username, reset_token);
-        }
+        if (email && isValidEmail(email)){
 
+            const exisitngUser = await findUserByEmail(email);
+
+            if (exisitngUser && exisitngUser.is_verified){
+                const reset_token = crypto.randomBytes(32).toString('hex');
+                const expires = new Date();
+                expires.setHours(expires.getHours() + 1);
+        
+                await setResetToken(email, reset_token, expires);
+                await sendPasswordResetEmail(email, exisitngUser.username, reset_token);
+            }
+        }
         res.status(200).json({
             message: 'A password reset link has been sent'
         });
@@ -119,17 +122,17 @@ Login function
 
 export const login = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { email, password }: LoginRequest = req.body;
+        const { username, password }: LoginRequest = req.body;
 
-        if(!isValidEmail(email)) {
-            res.status(400).json({ error: 'Invalid email or password.'});
-            return;
-        }
+        // if(!isValidEmail(email)) {
+        //     res.status(400).json({ error: 'Invalid email or password.'});
+        //     return;
+        // }
         if(!isValidPassword(password)) {
             res.status(400).json({ error: 'Invalid email or password.'})
             return;
         }
-        const existingUser = await findUserByEmail(email);
+        const existingUser = await findUserByUsername(username);
 
         if(existingUser === null){
             res.status(400).json({ error: 'Invalid email or password.'});
@@ -164,6 +167,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         res.status(200).json({
             message: 'Login successful!',
             token: token,
+/*
             user: {
                 id: existingUser.id,
                 username: existingUser.username,
@@ -171,6 +175,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
                 last_name: existingUser.last_name,
                 email: existingUser.email
             }
+*/
         });
     }catch(error){
         console.error('login error: ', error);
