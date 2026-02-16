@@ -8,6 +8,7 @@ import ForgotPasswordPage from './pages/auth/ForgotPassword';
 import LoginPage from './pages/auth/Login';
 import NewPasswordPage from './pages/auth/NewPassword';
 import SignUpPage from './pages/auth/SignUp';
+import VerifyPage from './pages/auth/Verify';
 import Account from './pages/home/Account';
 import Chat from './pages/home/Chat';
 import Profile from './pages/home/Profile';
@@ -27,6 +28,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path='/profile' element={<Profile />} />
           <Route path='/chat' element={<Chat />} />
           <Route path='/account' element={<Account />} />
+          <Route path='/verify' element={<VerifyPage />} />
           <Route path='*' element={<NotFoundPage />} />
         </Routes>
       </Router>

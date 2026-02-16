@@ -12,9 +12,9 @@ import createTables from "./config/initDB";
 import authRouter from "./routes/auth.routes";
 import profileRouter from "./routes/profile.routes";
 
-dotenv.config(); //this reads my env file and makes variables available via process.env.PORT
+dotenv.config(); //this reads my env file and makes variables available via process.env.BACKEND_PORT
 
-const allowedOrigins = ["http://localhost:5173", "http://localhost:3000"];
+const allowedOrigins = `${process.env.HOSTNAME}${process.env.FRONTEND_PORT}`;
 
 const app: Application = express(); //Express application. Its job is to handle standard requests (HTTP).
 const httpServer = createServer(app); //Node js httpServer
@@ -78,8 +78,8 @@ app.use((err: Error, _req: Request, res: Response) => {
 });
 
 // this will start the server
-httpServer.listen(process.env.PORT, async () => {
-  console.log(`Server running on port ${process.env.PORT}`);
+httpServer.listen(process.env.BACKEND_PORT, async () => {
+  console.log(`Server running on port ${process.env.BACKEND_PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV}`);
 
   await testConnection(); //wrote this to test database

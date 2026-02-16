@@ -1,4 +1,33 @@
 services:
+  frontend:
+    image: node:20-alpine
+    working_dir: /app
+    environment:
+      VITE_API_URL: http://localhost:5001
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 80"
+    ports:
+      - "5173:80"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+  backend:
+    image: node:20-alpine
+    working_dir: /app
+    env_file:
+      - .env
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    depends_on:
+      database:
+        condition: service_healthy
+
   database:
     image: postgres:16-alpine
     restart: always
@@ -17,42 +46,6 @@ services:
       interval: 2s
       timeout: 3s
       retries: 30
-
-  backend:
-    image: node:20-alpine
-    working_dir: /app
-    env_file:
-      - .env
-    environment:
-      NODE_ENV: development
-      POSTGRES_HOST: database
-      POSTGRES_PORT: 5432
-      POSTGRES_DB: ${POSTGRES_DB:-matcha_db}
-      POSTGRES_USER: ${POSTGRES_USER:-matcha_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-matcha_password}
-    command: sh -c "npm install && npm run dev"
-    ports:
-      - "5001:5001"
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
-    depends_on:
-      database:
-        condition: service_healthy
-
-  frontend:
-    image: node:20-alpine
-    working_dir: /app
-    environment:
-      NODE_ENV: development
-    command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 5173"
-    ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    depends_on:
-      - backend
 
 volumes:
   postgres-data:

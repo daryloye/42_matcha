@@ -17,7 +17,7 @@ export const sendVerificationEmail = async (
   username: string,
   token: string,
 ): Promise<void> => {
-  const verificationLink = `${process.env.FRONTEND_URL}/verify?token=${token}`;
+  const verificationLink = `${process.env.HOSTNAME}${process.env.FRONTEND_PORT}/verify?token=${token}`;
 
   const htmlContent = `
         <h1>Welcome to Matcha, ${username}!</h1>
@@ -45,7 +45,7 @@ export const sendPasswordResetEmail = async (
   username: string,
   token: string,
 ): Promise<void> => {
-  const resetPasswordLink = `${process.env.FRONTEND_URL}/reset?token=${token}`;
+  const resetPasswordLink = `${process.env.HOSTNAME}${process.env.FRONTEND_PORT}/reset?token=${token}`;
 
   const htmlContent = `
         <h1>Hello ${username}!</h1>
