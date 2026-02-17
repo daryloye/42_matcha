@@ -6,7 +6,7 @@ import { ToastContainer } from 'react-toastify';
 import './index.css';
 import ForgotPasswordPage from './pages/auth/ForgotPassword';
 import LoginPage from './pages/auth/Login';
-import NewPasswordPage from './pages/auth/NewPassword';
+import ResetPasswordPage from './pages/auth/ResetPassword';
 import SignUpPage from './pages/auth/SignUp';
 import VerifyPage from './pages/auth/Verify';
 import Account from './pages/home/Account';
@@ -20,15 +20,19 @@ createRoot(document.getElementById('root')!).render(
     <Provider>
       <Router>
         <Routes>
+          {/* Auth */}
           <Route path='/' element={<LoginPage />} />
           <Route path='/signup' element={<SignUpPage />} />
-          <Route path='/resetpassword' element={<ForgotPasswordPage />} />
-          <Route path='/newpassword' element={<NewPasswordPage />} />
+          <Route path='/verify' element={<VerifyPage />} />
+          <Route path='/forgotpassword' element={<ForgotPasswordPage />} />
+          <Route path='/resetpassword' element={<ResetPasswordPage />} />
+
+          {/* Profile */}
           <Route path='/search' element={<Search />} />
           <Route path='/profile' element={<Profile />} />
           <Route path='/chat' element={<Chat />} />
           <Route path='/account' element={<Account />} />
-          <Route path='/verify' element={<VerifyPage />} />
+
           <Route path='*' element={<NotFoundPage />} />
         </Routes>
       </Router>

@@ -5,16 +5,18 @@ meta {
 }
 
 get {
-  url: http://localhost:5001/api/auth/verify?token=4b8497f220b8c27d98791dcb51edad80348ac3c910614fe193cbbb6d5bb2b67dc
+  url: {{baseUrl}}/api/auth/verify?token=invalid
   body: none
   auth: inherit
 }
 
-params:query {
-  token: 4b8497f220b8c27d98791dcb51edad80348ac3c910614fe193cbbb6d5bb2b67dc
+tests {
+  test("status 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
 }
 
 settings {
   encodeUrl: false
-  timeout: 0
+  timeout: 10000
 }

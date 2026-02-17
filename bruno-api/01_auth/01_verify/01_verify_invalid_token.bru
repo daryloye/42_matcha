@@ -1,0 +1,20 @@
+meta {
+  name: 01_verify_invalid_token
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/auth/verify?token=4b8497f220b8c27d98791dcb51edad80348ac3c910614fe193cbbb6d5bb2b67dc
+  body: none
+  auth: inherit
+}
+
+params:query {
+  token: 4b8497f220b8c27d98791dcb51edad80348ac3c910614fe193cbbb6d5bb2b67dc
+}
+
+settings {
+  encodeUrl: false
+  timeout: 0
+}

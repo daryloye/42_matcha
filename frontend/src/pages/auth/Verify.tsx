@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Verify } from '../../api/api';
+import { Verify } from '../../api/auth';
 
 export default function VerifyPage() {
   const [searchParams] = useSearchParams();
@@ -19,7 +19,7 @@ export default function VerifyPage() {
       return;
     }
 
-    async function verify() {
+    async function verify(token: string) {
       try {
         const res = await Verify(token);
         toast.info(res.message);
@@ -30,7 +30,7 @@ export default function VerifyPage() {
       }
     }
 
-    verify();
+    verify(token);
   }, [searchParams, navigate]);
 
   return null;

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Register } from '../../api/api';
+import { Register } from '../../api/auth';
 import { ActionButton } from '../../components/ActionButton';
 import { TextInput } from '../../components/TextInput';
 import './auth.css';

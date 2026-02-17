@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Login } from '../../api/api';
+import { Login } from '../../api/auth';
 import { ActionButton } from '../../components/ActionButton';
 import { TextInput } from '../../components/TextInput';
 import './auth.css';
@@ -59,7 +59,7 @@ export default function LoginPage() {
         </form>
 
         <Link to='/signup'>Create Account</Link>
-        <Link to='/resetpassword'>I forgot my password</Link>
+        <Link to='/forgotpassword'>I forgot my password</Link>
       </div>
     </div>
   );

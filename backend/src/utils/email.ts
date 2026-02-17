@@ -45,7 +45,7 @@ export const sendPasswordResetEmail = async (
   username: string,
   token: string,
 ): Promise<void> => {
-  const resetPasswordLink = `${process.env.HOSTNAME}${process.env.FRONTEND_PORT}/reset?token=${token}`;
+  const resetPasswordLink = `${process.env.HOSTNAME}${process.env.FRONTEND_PORT}/resetpassword?token=${token}`;
 
   const htmlContent = `
         <h1>Hello ${username}!</h1>

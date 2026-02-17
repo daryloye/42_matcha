@@ -1,20 +1,35 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { ForgotPassword } from '../../api/auth';
 import { ActionButton } from '../../components/ActionButton';
 import { TextInput } from '../../components/TextInput';
 import './auth.css';
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState('');
+  const [formData, setFormData] = useState({
+    email: '',
+  });
   const navigate = useNavigate();
 
-  const handleSubmit = () => {
-    if (email === '') {
+  const handleChange = (field: keyof typeof formData, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleSubmit = async () => {
+    if (formData.email === '') {
       toast.error('Please enter your email');
-    } else {
-      toast.warning('Please check your email for the reset instructions');
+    }
+
+    try {
+      const res = await ForgotPassword(formData);
+      toast.info(res.message);
       navigate('/');
+    } catch (err: any) {
+      toast.error(err.message);
     }
   };
 
@@ -26,8 +41,8 @@ export default function ForgotPasswordPage() {
         <form>
           <TextInput
             type='email'
-            value={email}
-            onChange={setEmail}
+            value={formData.email}
+            onChange={(value) => handleChange('email', value)}
             placeholder='Your email'
           />
 

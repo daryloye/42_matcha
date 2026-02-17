@@ -71,3 +71,11 @@ Register
 - if the user submits using an email that has already been registered but not yet verified, will receive "email is already registered" error. Maybe this can be changed to sending the verification email again?
 - can consider changing "invalid password" to "password is too weak"
 - (for me to fix) spamming the button will lead to errors, FE needs to block the button while waiting for the fetch
+
+Forgot Password
+
+- if user has not verified but lost the verification email, he is not able to get the password reset link
+
+Verify
+
+- why is it Get HTTP instead of Post http?
