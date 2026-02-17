@@ -31,31 +31,27 @@ paths:
           content:
             application/json:
               example:
-                accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
         "400":
           description: Missing required fields
         "401":
           description: Incorrect email or password
 
-  /auth/signup:
+  /auth/register:
     post:
       requestBody:
         required: true
         content:
           application/json:
             example:
-              firstname: "test"
-              lastname: "user"
+              first_name: "test"
+              last_name: "user"
               email: "user@email.com"
               username: "user123"
               password: "password123"
       responses:
         "200":
           description: Sign up successful
-          content:
-            application/json:
-              example:
-                accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
         "400":
           description: Invalid or missing required fields
           content:
@@ -72,7 +68,7 @@ paths:
         "409":
           description: User already exists
 
-  /auth/forgotpassword:
+  /auth/forgot-password:
     post:
       description: Request password reset email
       requestBody:
@@ -81,7 +77,6 @@ paths:
           application/json:
             example:
               email: "user@email.com"
-              username: "user123"
       responses:
         "201":
           description: Accepted
@@ -90,18 +85,16 @@ paths:
         "409":
           description: User does not exist
 
-  /auth/changepassword:
+  /auth/reset-password:
     post:
-      description: Change password after logging in
-      parameters:
-        - $ref: "#/components/parameters/BearerAuth"
+      description: Change password after getting reset email
       requestBody:
         required: true
         content:
           application/json:
             example:
-              oldPassword: "oldpassword123"
-              newPassword: "newpassword123"
+              newPassword: "oldpassword123"
+              resetToken: ""
       responses:
         "200":
           description: Password changed
@@ -119,14 +112,36 @@ paths:
                     errorCode: 1
                     message: "Password is too weak"
 
-  /auth/validate:
+  /auth/verify:
     post:
-      description: Send OTP to email for validation
+      description: Verify account after getting verification email
       parameters:
-        - $ref: "#/components/parameters/BearerAuth"
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         "201":
           description: Accepted
+
+  /profile/my-profile:
+    get:
+      parameters:
+        - $ref: "#/components/parameters/BearerAuth"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              example:
+                profile:
+                  firstname: "test_first"
+                  lastname: "test_last"
+                  username: "test_username"
+                  picture: "http://localhost:5001/image/profile.jpg"
+                isProfileCompleted: true
+                notifications: []
 
   /profile/update:
     post:

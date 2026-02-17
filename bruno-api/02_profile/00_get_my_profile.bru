@@ -1,0 +1,26 @@
+meta {
+  name: 00_get_my_profile
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/profile/my-profile
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+tests {
+  test("status 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}
+
+settings {
+  encodeUrl: false
+  timeout: 10000
+}

@@ -1,0 +1,30 @@
+meta {
+  name: 01_get_complete_profile
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/profile/complete-profile?id=1
+  body: json
+  auth: inherit
+}
+
+params:query {
+  id: 1
+}
+
+headers {
+  Content-Type: application/json
+}
+
+tests {
+  test("status 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}
+
+settings {
+  encodeUrl: false
+  timeout: 10000
+}
