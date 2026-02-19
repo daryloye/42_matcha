@@ -109,6 +109,15 @@ export const verifyUser = async(userId: number): Promise<void> => {
     await query(sql, [userId]);
 }
 
+export const deleteUserById = async(userId: number): Promise<void> => {
+   const sql = `
+      DELETE FROM users 
+      WHERE id = $1
+      `;
+
+      await query(sql, [userId]);
+}
+
  /*For the registration flow, we need:
 
 findUserByEmail(email) - Check if email already exists
