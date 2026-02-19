@@ -5,13 +5,9 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/api/profile/complete-profile?id=1
+  url: {{baseUrl}}/api/profile/update
   body: json
   auth: inherit
-}
-
-params:query {
-  id: 1
 }
 
 headers {

@@ -88,6 +88,10 @@ paths:
   /auth/reset-password:
     post:
       description: Change password after getting reset email
+      parameters:
+        - name: token
+          in: query
+          required: true
       requestBody:
         required: true
         content:
@@ -113,19 +117,19 @@ paths:
                     message: "Password is too weak"
 
   /auth/verify:
-    post:
+    get:
       description: Verify account after getting verification email
       parameters:
         - name: token
-          in: path
+          in: query
           required: true
           schema:
             type: string
       responses:
-        "201":
-          description: Accepted
+        "200":
+          description: Verified
 
-  /profile/my-profile:
+  /profile/me:
     get:
       parameters:
         - $ref: "#/components/parameters/BearerAuth"
@@ -144,28 +148,70 @@ paths:
                 notifications: []
 
   /profile/update:
+    get:
+      parameters:
+        - $ref: "#/components/parameters/BearerAuth"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              example:
+                firstname: "firstname"
+                lastname: "lastname"
+                email: "user@email.com"
+                date_of_birth: "01/01/2000"
+                gender: "male"
+                preference: "female"
+                fame: 10
+                biography: "this is my biography"
+                interest:
+                  - "one"
+                  - "two"
+                  - "three"
+                  - "four"
+                  - "five"
+                pictures:
+                  - "http://localhost:5001/image/profile.jpg"
+                  - "http://localhost:5001/image/one.jpg"
+                  - "http://localhost:5001/image/two.jpg"
+                  - "http://localhost:5001/image/three.jpg"
+                  - "http://localhost:5001/image/four.jpg"
+                location:
+                  latitude: 123
+                  longitude: 456
+
     post:
       parameters:
         - $ref: "#/components/parameters/BearerAuth"
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
               type: object
               properties:
                 gender:
                   type: string
-                sexualPreference:
+                sexual_preference:
                   type: string
                 biography:
                   type: string
-                profileImage:
+                latitude:
+                  type: number
+                  format: float
+                longitude:
+                  type: number
+                  format: float
+                location_city:
                   type: string
-                  format: base64
-            encoding:
-              profileImage:
-                contentType: image/png, image/jpeg
+            example:
+              gender: "male"
+              sexual_preference: "female"
+              biography: "Hi, I am John"
+              latitude: 1.3521
+              longitude: 103.8198
+              location_city: "Singapore"
       responses:
-        "201":
-          description: Accepted
+        "200":
+          description: Profile updated
