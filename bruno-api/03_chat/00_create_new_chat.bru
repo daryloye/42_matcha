@@ -1,0 +1,21 @@
+meta {
+  name: 00_create_new_chat
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/chat/new
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "targetUserId": 2
+  }
+}
