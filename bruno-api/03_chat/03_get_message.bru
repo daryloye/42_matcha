@@ -1,0 +1,21 @@
+meta {
+  name: 03_get_message
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/chat/messages
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "targetUserId": 1
+  }
+}

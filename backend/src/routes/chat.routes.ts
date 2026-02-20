@@ -1,9 +1,13 @@
 import { Router } from "express";
-import { handleGetOrCreateChat } from "../controllers/chat.controller";
+import {
+  handleGetMessages,
+  handlePostMessage,
+} from "../controllers/chat.controller";
 import { requireAuth } from "../middleware/auth.middleware";
 
 const router = Router();
 
-router.post("/new", requireAuth, handleGetOrCreateChat);
+router.get("/messages", requireAuth, handleGetMessages);
+router.post("/messages", requireAuth, handlePostMessage);
 
 export default router;

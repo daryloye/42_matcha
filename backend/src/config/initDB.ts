@@ -57,12 +57,14 @@ const createTables = async () => {
     );
 
     CREATE TABLE IF NOT EXISTS chat (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        id SERIAL PRIMARY KEY,
         user1_id INTEGER NOT NULL,
         user2_id INTEGER NOT NULL,
+        sender_id INTEGER NOT NULL,
+        message VARCHAR(255) NOT NULL,
+        is_read BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMP DEFAULT NOW(),
-        CHECK (user1_id < user2_id),
-        UNIQUE (user1_id, user2_id)
+        CHECK (user1_id < user2_id)
     );
 
     `;

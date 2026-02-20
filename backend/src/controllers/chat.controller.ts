@@ -1,9 +1,13 @@
 import { Response } from "express";
 import { AuthRequest } from "../middleware/auth.middleware";
-import { getOrCreateChat } from "../models/chat.model";
-import { NewChatRequest } from "../types/chat.types";
+import {
+  getMessages,
+  postMessage,
+  updateReadMessages,
+} from "../models/chat.model";
+import { GetMessagesRequest, PostMessageRequest } from "../types/chat.types";
 
-export const handleGetOrCreateChat = async (
+export const handleGetMessages = async (
   req: AuthRequest,
   res: Response,
 ): Promise<void> => {
@@ -11,21 +15,58 @@ export const handleGetOrCreateChat = async (
     const userId = req.user?.userId;
     if (!userId) {
       res.status(401).json({ error: "user not authenticated" });
+      return;
     }
 
-    const { targetUserId }: NewChatRequest = req.body;
+    // check if targetUserId is valid
+    const { targetUserId }: GetMessagesRequest = req.body;
     if (!targetUserId || targetUserId <= 0 || targetUserId === userId) {
       res.status(400).json({ error: "invalid target user id" });
+      return;
     }
 
-    // TODO: check if target user exists -> return 404
+    // check if both users are matched
 
-    // TODO: check if user is blocked by the target user -> return 403
-
-    var chatId = await getOrCreateChat(userId!, targetUserId);
-    res.status(201).json({ message: "created", chatId });
+    const messages = await getMessages(userId!, targetUserId);
+    await updateReadMessages(userId!, targetUserId);
+    res.status(200).json({ messages });
   } catch (error) {
-    console.error("failed to create new chat", error);
-    res.status(500).json({ error: "Failed to create new chat" });
+    console.error("failed to get messages", error);
+    res.status(500).json({ error: "Failed to get messages" });
+  }
+};
+
+export const handlePostMessage = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) {
+      res.status(401).json({ error: "user not authenticated" });
+      return;
+    }
+
+    const { targetUserId, message }: PostMessageRequest = req.body;
+
+    // check if targetUserId is valid
+    if (!targetUserId || targetUserId <= 0 || targetUserId === userId) {
+      res.status(400).json({ error: "invalid target user id" });
+      return;
+    }
+
+    // check if both users are matched
+
+    // check if message length is valid
+    if (message.length > 255) {
+      res.status(413).json({ error: "Message length exceeds 255 chars" });
+      return;
+    }
+
+    await postMessage(userId!, targetUserId, userId!, message);
+    res.status(201).json({ message: "message sent" });
+  } catch (error) {
+    console.error("failed to send message", error);
+    res.status(500).json({ error: "Failed to send message" });
   }
 };

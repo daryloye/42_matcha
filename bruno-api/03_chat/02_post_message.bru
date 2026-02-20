@@ -1,11 +1,11 @@
 meta {
-  name: 00_create_new_chat
+  name: 02_post_message
   type: http
   seq: 3
 }
 
 post {
-  url: {{baseUrl}}/api/chat/new
+  url: {{baseUrl}}/api/chat/messages
   body: json
   auth: inherit
 }
@@ -16,6 +16,7 @@ headers {
 
 body:json {
   {
-    "targetUserId": 2
+    "targetUserId": 2,
+    "message": "hello world"
   }
 }
