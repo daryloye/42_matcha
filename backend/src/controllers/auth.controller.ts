@@ -140,7 +140,13 @@ export const login = async (req: Request, res: Response): Promise<void> => {
             return;
         }
         if (!existingUser.is_verified){
-            res.status(400).json({ error: 'Please verify your email before loggin in.'})
+            try{
+                await sendVerificationEmail(existingUser.email, existingUser.verification_token!)
+                res.status(400).json({ error: 'Your account is not verified. A new verification email has been sent.'})
+            }catch(emailError){
+                console.error('Failed to resend verification email: ', emailError);
+                res.status(500).json({ error: 'Failed to send verification email. Please try again.' });    
+            }
             return;
         }
         const isMatch = await bcrypt.compare(password, existingUser.password_hash);
@@ -161,7 +167,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
             jwtSecret,
             {
                 expiresIn: process.env.JWT_EXPIRES_IN || '7d'
-            } as jwt.SignOptions
+            } as jwt.SignOptions 
 
         );
 
@@ -200,10 +206,12 @@ export const register = async (req: Request, res: Response): Promise <void> => {
     try{
         const { email, username, first_name, last_name, password }: RegisterRequest = req.body;
 
+        //check required field
         if(!email || !username || !first_name || !last_name || !password){
             res.status(400).json({error: 'All fields are required'});
             return;
         }
+        //validate formats first before touching the DB
         if(!isValidEmail(email)){
             res.status(400).json({error: 'Invalid email format'});
             return;
@@ -216,26 +224,23 @@ export const register = async (req: Request, res: Response): Promise <void> => {
             res.status(400).json({error: 'Password is too weak!'}); //fix 1
             return;
         }
-
-        const existingUserName = await findUserByUsername(username);
-        
-        if (existingUserName != null){
-            //username exitst
-            res.status(400).json({error: 'Username already exist'});
-            return;
-        }
-        
+        //check for dulplicates
         const existingEmail = await findUserByEmail(email);
         //fix 2 used to verify duplicate email
         if(existingEmail != null){
-            if(!existingEmail.is_verified){
-                await sendVerificationEmail(existingEmail.email, existingEmail.username, existingEmail.verification_token!);
-                res.status(200).json({ message: 'Registration successful! Please check your email to verify your account.' });
-            } else {
-                res.status(400).json({ error: 'This email is already registered.' });
-            }
+            res.status(400).json({ error: 'This email is already registered.' });
             return;
         }
+        
+
+        const existingUserName = await findUserByUsername(username);
+        
+        //username exitst
+        if (existingUserName != null){
+            res.status(400).json({error: 'Username already exist'});
+            return;
+        }
+
         const saltRounds = 10;
         const password_hash = await bcrypt.hash(password, saltRounds);
         const verification_token = crypto.randomBytes(32).toString('hex');
@@ -247,20 +252,19 @@ export const register = async (req: Request, res: Response): Promise <void> => {
         
         // Fix 3: Roll back user creation if email fails
         try {
-            await sendVerificationEmail(email, username, verification_token);
+            await sendVerificationEmail(email, verification_token);
         }catch(emailError){
             await deleteUserById(userId); //this is the rollback i implemented
             console.error("Email sending failed. User rolled back: ", emailError);
             res.status(500).json({ error: 'Failed to send verification email. Please try again.'})
             return;
         }
-        res.status(201).json({ message: 'Registration successful! Verification email resent! Please check your inbox.'});
+        res.status(201).json({ message: 'Registration successful! Please check your email to verify your account.'});
     } catch (error){
         console.log('Registration error: ', error);
         res.status(500).json({error: 'Registration failed. Please try again.'});
     }
 }
-
 
 // export const register = async (req: Request, res: Response): Promise<void> => {
 //     try{

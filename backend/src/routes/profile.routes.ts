@@ -13,5 +13,11 @@ router.get("/me", requireAuth, getOwnerProfile); // /user ? to get name and prof
 router.get("/update", requireAuth, completeProfile); // to load Profile Page
 router.post("/update", requireAuth, updateOwnProfile); // to update Profile Page
 router.get("/:id", requireAuth, getOthersProfile);
+/*
+router.post('/complete-profile', requireAuth, completeProfile);
+router.get('/my-profile', requireAuth, getOwnerProfile);
+router.post('/update', requireAuth, updateOwnProfile);
+router.get('/:id', requireAuth, getOthersProfile);
+*/
 
 export default router;

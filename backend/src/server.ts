@@ -78,8 +78,10 @@ app.use((err: Error, _req: Request, res: Response) => {
 });
 
 // this will start the server
-httpServer.listen(process.env.BACKEND_PORT, async () => {
-  console.log(`Server running on port ${process.env.BACKEND_PORT}`);
+const PORT = process.env.BACKEND_PORT || process.env.PORT || 5001;
+
+httpServer.listen(PORT, async () => {
+  console.log(`Server running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV}`);
 
   await testConnection(); //wrote this to test database

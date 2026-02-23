@@ -6,12 +6,18 @@ dotenv.config();
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
   port: parseInt(process.env.EMAIL_PORT!),
+  secure: false,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD,
   },
+  tls: {
+    rejectUnauthorized: false,
+    ciphers: 'SSLv3'
+  }
 });
 
+/*
 export const sendVerificationEmail = async (
   email: string,
   username: string,
@@ -39,6 +45,30 @@ export const sendVerificationEmail = async (
     throw error;
   }
 };
+*/
+
+export const sendVerificationEmail = async (email: string, token: string) => {
+  const domain = process.env.MAILGUN_DOMAIN;
+  const apiKey = process.env.MAILGUN_API_KEY;
+  const auth = Buffer.from(`api:${apiKey}`).toString('base64');
+
+  const response = await fetch(`https://api.mailgun.net/v3/${domain}/messages`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Basic ${auth}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+      from: `Matcha <noreply@${domain}>`,
+      to: email,
+      subject: 'Verify your Matcha Account',
+      text: `Click here to verify: http://localhost:5173/verify?token=${token}`
+    }),
+  });
+  if (!response.ok){
+    throw new Error('Failed to send email via Mailgun API');
+  }
+}
 
 export const sendPasswordResetEmail = async (
   email: string,
