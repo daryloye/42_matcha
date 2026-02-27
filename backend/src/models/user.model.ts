@@ -99,7 +99,7 @@
     return result.rows.length > 0 ? result.rows[0] : null;
  }
 
-export const verifyUser = async(userId: number): Promise<void> => {
+export const verifyUser = async(userId: string): Promise<void> => {
     const sql = `
         UPDATE users
         SET is_verified = true, verification_token = null
@@ -109,7 +109,7 @@ export const verifyUser = async(userId: number): Promise<void> => {
     await query(sql, [userId]);
 }
 
-export const deleteUserById = async(userId: number): Promise<void> => {
+export const deleteUserById = async(userId: string): Promise<void> => {
    const sql = `
       DELETE FROM users 
       WHERE id = $1

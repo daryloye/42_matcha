@@ -4,6 +4,8 @@ import {
     createBlankProfile,
     getProfileByUserId,
     updateProfile,
+    getProfileMe,
+    getProfileDetails,
     addProfilePicture,
     setProfilePicture,
     getProfilePictures,
@@ -75,8 +77,8 @@ export const getOthersProfile = async (req: AuthRequest, res: Response): Promise
             res.status(401).json({error: 'user not authenticated'});
             return;
         }
-        const targetId = parseInt(req.params.id as string);
-        if(isNaN(targetId)){
+        const { id: targetId } = req.params as { id: string };        
+        if(!targetId){
             res.status(400).json({error: 'invalid id numver'});
             return;
         }
@@ -122,3 +124,105 @@ export const updateOwnProfile = async(req: AuthRequest, res: Response): Promise<
         res.status(500).json({error: 'internal server error'})
     }
 };
+
+/*Get userId from req.user
+Check it exists
+Call the model function
+Handle null case
+Return result
+
+{
+  firstname,
+  lastname,
+  username,
+  picture,
+  isProfileCompleted
+}
+
+*/
+
+export const getMe = async(req: AuthRequest, res: Response): Promise<void> => {
+    try {
+        const userId = req.user?.userId;
+        if(!userId){
+            res.status(401).json({error: 'user not authenticated'});
+            return;
+        }
+        const meProfile = await getProfileMe(userId);
+
+        if(!meProfile){
+            res.status(404).json({error: 'user profile does not exist'});
+            return;
+        }
+        res.status(200).json({message: 'Owner\'s Profile returnted successfully', meProfile});
+    }catch(error){
+        console.error('error getting owner', error);
+        res.status(500).json({error: 'Internal server error'});
+
+    }
+
+    /*
+        as requested:
+
+        what gets returned:
+        {
+            firstname,
+            lastname,
+            username,
+            picture,
+            isProfileCompleted
+        }
+    */
+
+}
+
+export const getFullProfileDetails = async(req: AuthRequest, res: Response): Promise<void> => {
+    try {
+        const userId = req.user?.userId;
+        if(!userId){
+            res.status(401).json({error: 'user not authenticated'});
+            return;
+        }
+
+        const fullProfileDetails = await getProfileDetails(userId);
+
+        if(!fullProfileDetails){
+            res.status(404).json({error: 'user profile does not exist'});
+            return;
+        }
+        res.status(200).json({ message: 'Profile returned successfully', fullProfileDetails});
+
+    } catch (error) {
+        console.error('error getting owner', error);
+        res.status(500).json({error: 'Internal server error'});
+    }
+    /*as requested
+
+    what gets returned:
+
+        {
+                firstname: "firstname"
+                lastname: "lastname"
+                email: "user@email.com"
+                date_of_birth: "01/01/2000"
+                gender: "male"
+                preference: "female"
+                fame: 10
+                biography: "this is my biography"
+                interest:
+                  - "one"
+                  - "two"
+                  - "three"
+                  - "four"
+                  - "five"
+                pictures:
+                  - "http://localhost:5001/image/profile.jpg"
+                  - "http://localhost:5001/image/one.jpg"
+                  - "http://localhost:5001/image/two.jpg"
+                  - "http://localhost:5001/image/three.jpg"
+                  - "http://localhost:5001/image/four.jpg"
+                location:
+                  latitude: 123
+                  longitude: 456
+        }*/
+}

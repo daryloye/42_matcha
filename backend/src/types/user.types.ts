@@ -1,6 +1,6 @@
 //this is a user obhect. It is everything in the database
 export interface User {
-    id: number;
+    id: string;
     email: string;
     username: string;
     first_name: string;

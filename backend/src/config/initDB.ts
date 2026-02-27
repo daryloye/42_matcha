@@ -3,8 +3,10 @@ import { query } from "./database";
 
 const createTables = async () => {
   const sql = `
+    CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
     CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         email VARCHAR(255) UNIQUE NOT NULL,
         username VARCHAR(50) UNIQUE NOT NULL,
         first_name VARCHAR(100) NOT NULL,
@@ -19,12 +21,12 @@ const createTables = async () => {
     );
 
     CREATE TABLE IF NOT EXISTS profiles (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
         gender VARCHAR(20),
         sexual_preference VARCHAR(20) DEFAULT 'both',
         biography TEXT,
-
+        date_of_birth DATE,
         latitude DECIMAL(9, 6),
         longitude DECIMAL(9, 6),
         location_city VARCHAR(100),
@@ -35,23 +37,23 @@ const createTables = async () => {
     );
 
     CREATE TABLE IF NOT EXISTS profile_pictures (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         image_url VARCHAR(255),
         is_profile_picture BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMP DEFAULT NOW()
     );
 
     CREATE TABLE IF NOT EXISTS interests (
-        id SERIAL PRIMARY KEY,
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         name VARCHAR(50) UNIQUE NOT NULL,
         created_at TIMESTAMP DEFAULT NOW()
     );
 
     CREATE TABLE IF NOT EXISTS user_interests (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-        interest_id INTEGER NOT NULL REFERENCES interests(id) ON DELETE CASCADE,
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        interest_id UUID NOT NULL REFERENCES interests(id) ON DELETE CASCADE,
         created_at TIMESTAMP DEFAULT NOW(),
         UNIQUE(user_id, interest_id)
     );

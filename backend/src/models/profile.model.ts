@@ -21,7 +21,7 @@ interface CreateUserProfile {
 */ 
 
 
-export const createBlankProfile = async (userId: number): Promise<any> => {
+export const createBlankProfile = async (userId: string): Promise<any> => {
   const sql = `
         INSERT INTO profiles (user_id)
         VALUES ($1)
@@ -32,7 +32,7 @@ export const createBlankProfile = async (userId: number): Promise<any> => {
 };
 
 export const getProfileByUserId = async (
-  userId: number,
+  userId: string,
 ): Promise<any | null> => {
   const sql = `
         SELECT * FROM profiles where user_id = $1
@@ -71,7 +71,7 @@ export const updateProfile = async (userId: number, data: CreateUserProfile): Pr
 */
 
 export const updateProfile = async (
-  userId: number,
+  userId: string,
   data: CreateUserProfile,
 ): Promise<any | null> => {
   const updates: string[] = [];
@@ -99,7 +99,7 @@ export const updateProfile = async (
     return result.rows.length > 0 ? result.rows[0] : null;
 }
 
-export const addProfilePicture = async (userId: number, imageUrl: string): Promise<any | null> => {
+export const addProfilePicture = async (userId: string, imageUrl: string): Promise<any | null> => {
     const countSql = `SELECT COUNT (*) FROM profile_pictures WHERE user_id = $1`;
     const countResult = await query(countSql, [userId]);
     const currentCount = parseInt(countResult.rows[0].count, 10);
@@ -144,7 +144,7 @@ Use two UPDATE queries or one smart query
         created_at TIMESTAMP DEFAULT NOW()
 
 */ 
-export const setProfilePicture = async (userId: number, pictureId: number): Promise<any | null> => {
+export const setProfilePicture = async (userId: string, pictureId: string): Promise<any | null> => {
     const sql = `
         UPDATE profile_pictures
         SET is_profile_picture = (id = $2)
@@ -162,7 +162,7 @@ Order by is_profile_picture DESC (profile pic first)
 
 
 */
-export const getProfilePictures = async (userId: number): Promise <any | null> => {
+export const getProfilePictures = async (userId: string): Promise <any | null> => {
     const sql = `
         SELECT * FROM profile_pictures
         WHERE user_id = $1
@@ -173,7 +173,7 @@ export const getProfilePictures = async (userId: number): Promise <any | null> =
     return result.rows;
 }
 
-export const getPrimaryProfilePicture = async (userId: number): Promise <any | null> => {
+export const getPrimaryProfilePicture = async (userId: string): Promise <any | null> => {
     const sql = `
         SELECT * FROM profile_pictures
         WHERE user_id = $1 AND is_profile_picture = true
@@ -191,7 +191,7 @@ DELETE photo by id
 Make sure it belongs to the user (security!)
 */
 
-export const deleteProfilePicture = async(userId: number, pictureId: number): Promise <any | null> => {
+export const deleteProfilePicture = async(userId: string, pictureId: string): Promise <any | null> => {
     const sql = `
         DELETE FROM profile_pictures
         WHERE user_id = $1 AND id = $2
@@ -215,3 +215,80 @@ export const deleteProfilePicture = async(userId: number, pictureId: number): Pr
     }
     return result.rows.length > 0 ? result.rows[0]: null;
 }
+
+export const getProfileMe = async (userId: string): Promise<any | null> => {
+    const sql = `
+        SELECT 
+            u.username,
+            u.first_name,
+            u.last_name,
+            pp.image_url AS picture,
+            CASE WHEN
+                p.gender IS NOT NULL AND
+                p.sexual_preference IS NOT NULL AND
+                p.biography IS NOT NULL AND
+                (SELECT COUNT(*) FROM user_interests WHERE user_id = $1) > 0 AND
+                (SELECT COUNT(*) FROM profile_pictures WHERE user_id = $1) > 0
+            THEN true ELSE false END AS is_profile_completed
+        FROM users u
+        LEFT JOIN profiles p ON p.user_id = u.id
+        LEFT JOIN profile_pictures pp ON pp.user_id = u.id AND pp.is_profile_picture = true
+        WHERE u.id = $1
+    `;
+    const result = await query(sql, [userId]);
+    return result.rows.length > 0 ? result.rows[0] : null;
+}
+
+export const getProfileDetails = async (userId: string): Promise<any | null> => {
+    const sql = `
+        SELECT
+            u.first_name,
+            u.last_name,
+            u.email,
+            p.gender,
+            p.sexual_preference,
+            p.biography,
+            p.date_of_birth,
+            p.latitude,
+            p.longitude,
+            p.fame_rating,
+            COALESCE(
+                JSON_AGG(DISTINCT i.name) FILTER (WHERE i.name IS NOT NULL),
+                '[]'
+            ) AS interests,
+            COALESCE(
+                JSON_AGG(DISTINCT pp.image_url) FILTER (WHERE pp.image_url IS NOT NULL),
+                '[]'
+            ) AS pictures
+        FROM users u
+        LEFT JOIN profiles p ON p.user_id = u.id
+        LEFT JOIN user_interests ui ON ui.user_id = u.id
+        LEFT JOIN interests i ON i.id = ui.interest_id
+        LEFT JOIN profile_pictures pp ON pp.user_id = u.id
+        WHERE u.id = $1
+        GROUP BY u.id, p.id
+    `;
+    const result = await query(sql, [userId]);
+    return result.rows.length > 0 ? result.rows[0] : null;
+};
+
+export const updateUserInterests = async (userId: string, interestNames: string[]): Promise<void> => {
+    await query(`DELETE FROM user_interests WHERE user_id = $1`, [userId]);
+
+    if(interestNames.length === 0)
+        return;
+
+    for (const name of interestNames){
+        const interestResult = await query(
+            `INSERT INTO interests (name) VALUES ($1) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING id`,
+            [name.toLowerCase().trim()]
+        );
+        const interestId = interestResult.rows[0].id;
+
+        await query(
+            `INSERT INTO user_interests (user_id, interest_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`,
+            [userId, interestId]
+        );
+    }
+}
+

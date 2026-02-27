@@ -231,7 +231,6 @@ export const register = async (req: Request, res: Response): Promise <void> => {
             res.status(400).json({ error: 'This email is already registered.' });
             return;
         }
-        
 
         const existingUserName = await findUserByUsername(username);
         
