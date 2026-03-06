@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Verify } from '../../api/auth';
 
+// Verifies the user's registration and redirects to Home page
 export default function VerifyPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();

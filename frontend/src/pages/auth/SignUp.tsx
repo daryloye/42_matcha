@@ -2,9 +2,6 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Register } from '../../api/auth';
-import { ActionButton } from '../../components/ActionButton';
-import { TextInput } from '../../components/TextInput';
-import './auth.css';
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState({
@@ -24,7 +21,9 @@ export default function SignUpPage() {
     }));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     if (
       formData.firstname === '' ||
       formData.lastname === '' ||
@@ -52,54 +51,73 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className='page-wrapper'>
-      <div className='page-container login-container'>
+    <div className='min-h-screen flex flex-col items-center justify-center'>
+      <div className='flex flex-col items-center gap-3 px-24 py-12 bg-white/75 backdrop-blur-md rounded-3xl border-2'>
         <h1>Welcome to Matcha</h1>
 
-        <form>
-          <TextInput
+        <form
+          className='flex flex-col items-center gap-1 pt-6'
+          onSubmit={handleSubmit}
+        >
+          <input
+            className='w-full'
             type='text'
             value={formData.firstname}
-            onChange={(value) => handleChange('firstname', value)}
+            onChange={(e) => handleChange('firstname', e.target.value.trim())}
             placeholder='First name'
+            required
           />
 
-          <TextInput
+          <input
+            className='w-full'
             type='text'
             value={formData.lastname}
-            onChange={(value) => handleChange('lastname', value)}
+            onChange={(e) => handleChange('lastname', e.target.value.trim())}
             placeholder='Last name'
+            required
           />
 
-          <TextInput
+          <input
+            className='w-full'
             type='email'
             value={formData.email}
-            onChange={(value) => handleChange('email', value)}
+            onChange={(e) => handleChange('email', e.target.value.trim())}
             placeholder='Email'
+            required
           />
 
-          <TextInput
+          <input
+            className='w-full'
             type='text'
             value={formData.username}
-            onChange={(value) => handleChange('username', value)}
+            onChange={(e) => handleChange('username', e.target.value.trim())}
             placeholder='Username'
+            required
           />
 
-          <TextInput
+          <input
+            className='w-full'
             type='password'
             value={formData.password}
-            onChange={(value) => handleChange('password', value)}
+            onChange={(e) => handleChange('password', e.target.value.trim())}
             placeholder='Password'
+            required
           />
 
-          <TextInput
+          <input
+            className='w-full'
             type='password'
             value={formData.passwordRetype}
-            onChange={(value) => handleChange('passwordRetype', value)}
+            onChange={(e) =>
+              handleChange('passwordRetype', e.target.value.trim())
+            }
             placeholder='Retype Password'
+            required
           />
 
-          <ActionButton text='Create Account' onClick={handleSubmit} />
+          <button type='submit' className='submit-button'>
+            Create Account
+          </button>
         </form>
 
         <Link to='/'>Back to Login</Link>

@@ -5,7 +5,7 @@ export default function NotFoundPage() {
   const navigate = useNavigate();
 
   return (
-    <div className='page-wrapper col'>
+    <div className='min-h-screen flex flex-col items-center justify-center'>
       <h1>Page Not Found</h1>
       <br />
       <Link to='/'>

@@ -2,9 +2,6 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Login } from '../../api/auth';
-import { ActionButton } from '../../components/ActionButton';
-import { TextInput } from '../../components/TextInput';
-import './auth.css';
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -20,7 +17,9 @@ export default function LoginPage() {
     }));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     if (formData.username === '' || formData.password === '') {
       toast.error('Please enter username and password');
       return;
@@ -36,26 +35,35 @@ export default function LoginPage() {
   };
 
   return (
-    <div className='page-wrapper'>
-      <div className='page-container login-container'>
+    <div className='min-h-screen flex flex-col items-center justify-center'>
+      <div className='flex flex-col items-center gap-3 px-24 py-12 bg-white/75 backdrop-blur-md rounded-3xl border-2'>
         <h1>Welcome to Matcha</h1>
 
-        <form>
-          <TextInput
+        <form
+          className='flex flex-col items-center gap-1 pt-6'
+          onSubmit={handleSubmit}
+        >
+          <input
+            className='w-full'
             type='text'
             value={formData.username}
-            onChange={(value) => handleChange('username', value)}
+            onChange={(e) => handleChange('username', e.target.value.trim())}
             placeholder='Username'
+            required
           />
 
-          <TextInput
+          <input
+            className='w-full'
             type='password'
             value={formData.password}
-            onChange={(value) => handleChange('password', value)}
+            onChange={(e) => handleChange('password', e.target.value.trim())}
             placeholder='Password'
+            required
           />
 
-          <ActionButton text='Login' onClick={handleSubmit} />
+          <button type='submit' className='submit-button'>
+            Login
+          </button>
         </form>
 
         <Link to='/signup'>Create Account</Link>

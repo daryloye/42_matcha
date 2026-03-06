@@ -5,7 +5,7 @@ import './home.css';
 
 export function HomePageTemplate({ page }: { page: ReactNode }) {
   return (
-    <div className='page-wrapper'>
+    <div className='min-h-screen flex flex-col items-center justify-center'>
       <div className='page-container home-container'>
         <Sidebar />
         {page}

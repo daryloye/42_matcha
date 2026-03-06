@@ -2,9 +2,6 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { ForgotPassword } from '../../api/auth';
-import { ActionButton } from '../../components/ActionButton';
-import { TextInput } from '../../components/TextInput';
-import './auth.css';
 
 export default function ForgotPasswordPage() {
   const [formData, setFormData] = useState({
@@ -19,7 +16,9 @@ export default function ForgotPasswordPage() {
     }));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     if (formData.email === '') {
       toast.error('Please enter your email');
     }
@@ -34,19 +33,26 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className='page-wrapper'>
-      <div className='page-container login-container'>
+    <div className='min-h-screen flex flex-col items-center justify-center'>
+      <div className='flex flex-col items-center gap-3 px-24 py-12 bg-white/75 backdrop-blur-md rounded-3xl border-2'>
         <h1>Welcome to Matcha</h1>
 
-        <form>
-          <TextInput
+        <form
+          className='flex flex-col items-center gap-1 pt-6'
+          onSubmit={handleSubmit}
+        >
+          <input
+            className='w-full'
             type='email'
             value={formData.email}
-            onChange={(value) => handleChange('email', value)}
+            onChange={(e) => handleChange('email', e.target.value.trim())}
             placeholder='Your email'
+            required
           />
 
-          <ActionButton text='Request Reset Link' onClick={handleSubmit} />
+          <button type='submit' className='submit-button'>
+            Request Reset Link
+          </button>
         </form>
 
         <Link to='/'>Back to Login</Link>

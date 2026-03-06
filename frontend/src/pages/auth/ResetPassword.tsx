@@ -2,13 +2,11 @@ import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { ResetPassword } from '../../api/auth';
-import { ActionButton } from '../../components/ActionButton';
-import { TextInput } from '../../components/TextInput';
-import './auth.css';
 
 export default function ResetPasswordPage() {
   const navigate = useNavigate();
 
+  // Get reset password token from search parameters
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
   if (!token) {
@@ -30,7 +28,9 @@ export default function ResetPasswordPage() {
     }));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     if (formData.password === '') {
       toast.error('Please enter a password');
       return;
@@ -51,26 +51,37 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className='page-wrapper'>
-      <div className='page-container login-container'>
+    <div className='min-h-screen flex flex-col items-center justify-center'>
+      <div className='flex flex-col items-center gap-3 px-24 py-12 bg-white/75 backdrop-blur-md rounded-3xl border-2'>
         <h1>Welcome to Matcha</h1>
 
-        <form>
-          <TextInput
+        <form
+          className='flex flex-col items-center gap-1 pt-6'
+          onSubmit={handleSubmit}
+        >
+          <input
+            className='w-full'
             type='password'
             value={formData.password}
-            onChange={(value) => handleChange('password', value)}
+            onChange={(e) => handleChange('password', e.target.value.trim())}
             placeholder='Enter new password'
+            required
           />
 
-          <TextInput
+          <input
+            className='w-full'
             type='password'
             value={formData.passwordRetype}
-            onChange={(value) => handleChange('passwordRetype', value)}
+            onChange={(e) =>
+              handleChange('passwordRetype', e.target.value.trim())
+            }
             placeholder='Retype password'
+            required
           />
 
-          <ActionButton text='Reset Password' onClick={handleSubmit} />
+          <button type='submit' className='submit-button'>
+            Reset Password
+          </button>
         </form>
 
         <Link to='/'>Back to Login</Link>

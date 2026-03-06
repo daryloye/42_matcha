@@ -1,3 +1,5 @@
+@import 'tailwindcss';
+
 @font-face {
   font-family: 'Pricedown';
   src:
@@ -6,18 +8,20 @@
 }
 
 :root {
+  --color-primary: #213547;
   font-family: sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
-  color: #213547;
-  background-color: #242424;
+  color: var(--color-primary);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  accent-color: var(--color-primary);
 }
 *::-webkit-scrollbar {
   width: 5px;
@@ -59,7 +63,7 @@ h1 {
   line-height: 1.1;
   margin: 0px;
   padding: 0px;
-  color: #213547;
+  color: var(--color-primary);
 }
 
 input,
@@ -75,6 +79,27 @@ input::placeholder {
   color: grey;
 }
 
+.submit-button {
+  border-radius: 8px;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: sans-serif;
+  margin: 10px 0px 20px;
+  background-color: #5c7de0;
+  color: white;
+  width: 200px;
+  border: 1px solid black;
+}
+.submit-button:hover {
+  background-color: #b394d6;
+  cursor: pointer;
+}
+.submit-button:focus,
+.submit-button:focus-visible {
+  outline: 1px auto -webkit-focus-ring-color;
+}
+
 /* Flex direction */
 .row {
   display: flex;
@@ -85,38 +110,9 @@ input::placeholder {
   flex-direction: column;
 }
 
-/* Alignment — cross axis */
-.items-start {
-  align-items: flex-start;
-}
-.items-center {
-  align-items: center;
-}
-.items-end {
-  align-items: flex-end;
-}
-
-/* Alignment — main axis */
-.justify-start {
-  justify-content: flex-start;
-}
-.justify-center {
-  justify-content: center;
-}
-.justify-end {
-  justify-content: flex-end;
-}
-
 /* Sizing */
 .full {
   width: 100%;
-}
-
-.page-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
 }
 
 .page-container {
@@ -125,8 +121,4 @@ input::placeholder {
   border-radius: 20px;
   border: 3px #213547 solid;
   box-sizing: border-box;
-}
-
-.error-message {
-  color: red;
 }
