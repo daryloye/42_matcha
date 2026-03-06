@@ -1,12 +1,10 @@
-import type { FormEvent } from 'react';
 import { toast } from 'react-toastify';
-import { ActionButton } from '../../components/ActionButton';
-import { HomePageTemplate } from '../../components/home/HomePageTemplate';
 import { ProfileInterestTags } from '../../components/profile/ProfileInterestTags';
 import { ProfileLocation } from '../../components/profile/ProfileLocation';
 import { ProfileSelectionButtons } from '../../components/profile/ProfileSelectionButtons';
 import { ProfileUploadPictures } from '../../components/profile/ProfileUploadPictures';
 import { genderAtom, genderPreferenceAtom } from '../../utils/atoms';
+import { HomePageTemplate } from './HomePageTemplate';
 import styles from './Profile.module.css';
 
 export default function Profile() {
@@ -14,17 +12,16 @@ export default function Profile() {
 }
 
 function ProfilePage() {
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = () => {
     toast.success('Profile updated');
-    event.preventDefault();
   };
 
   return (
-    <div className='home-page-layout'>
+    <div>
       <h1>Profile</h1>
 
       <div className={styles.profile}>
-        <form onSubmit={handleSubmit}>
+        <form>
           <h2>Profile Picture</h2>
 
           <h2>Fame</h2>
@@ -86,11 +83,13 @@ function ProfilePage() {
           <h2>Location</h2>
           <ProfileLocation />
 
-          <ActionButton
-            type='submit'
-            text='Update Profile'
-            onClick={() => handleSubmit}
-          />
+          <button
+            type='button'
+            className='submit-button'
+            onClick={handleSubmit}
+          >
+            Update Profile
+          </button>
         </form>
       </div>
     </div>

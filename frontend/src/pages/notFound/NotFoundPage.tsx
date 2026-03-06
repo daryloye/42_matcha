@@ -1,5 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { ActionButton } from '../../components/ActionButton';
+import { useNavigate } from 'react-router-dom';
 
 export default function NotFoundPage() {
   const navigate = useNavigate();
@@ -8,9 +7,13 @@ export default function NotFoundPage() {
     <div className='min-h-screen flex flex-col items-center justify-center'>
       <h1>Page Not Found</h1>
       <br />
-      <Link to='/'>
-        <ActionButton text='Back to Home' onClick={() => navigate('/')} />
-      </Link>
+      <button
+        type='button'
+        className='submit-button'
+        onClick={() => navigate('/')}
+      >
+        Back to Home
+      </button>
     </div>
   );
 }

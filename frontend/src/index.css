@@ -9,6 +9,9 @@
 
 :root {
   --color-primary: #213547;
+  --color-secondary: grey;
+  --color-link: #5c7de0;
+  --color-link-hover: #b394d6;
   font-family: sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -20,37 +23,34 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  accent-color: var(--color-primary);
 }
+
+/* Scrollbar */
 *::-webkit-scrollbar {
   width: 5px;
+  height: 5px;
 }
 *::-webkit-scrollbar-track {
   background: transparent;
 }
 *::-webkit-scrollbar-thumb {
-  background: #888;
+  background: var(--color-secondary);
   border-radius: 5px;
 }
 *::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: var(--color-primary);
 }
 
 a {
   font-weight: 500;
-  color: #5c7de0;
+  color: var(--color-link);
   text-decoration: underline;
 }
 a:hover {
-  color: #b394d6;
+  color: var(--color-link-hover);
 }
 
 body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-
   background-image: url('./assets/background.png');
   background-size: cover;
   background-repeat: no-repeat;
@@ -66,17 +66,27 @@ h1 {
   color: var(--color-primary);
 }
 
+.home-sidebar h1:hover {
+  color: var(--color-link-hover);
+}
+.home-sidebar a,
+.home-sidebar a:visited,
+.home-sidebar a:hover,
+.home-sidebar a:active {
+  text-decoration: none;
+}
+
 input,
 textarea {
   background-color: rgba(255, 255, 255, 0.7);
-  color: #242424;
+  color: var(--color-primary);
   border-radius: 5px;
-  border: 1px solid grey;
+  border: 1px solid var(--color-primary);
   padding: 10px;
   font-family: sans-serif;
 }
 input::placeholder {
-  color: grey;
+  color: var(--color-secondary);
 }
 
 .submit-button {
@@ -86,39 +96,16 @@ input::placeholder {
   font-weight: 500;
   font-family: sans-serif;
   margin: 10px 0px 20px;
-  background-color: #5c7de0;
+  background-color: var(--color-link);
   color: white;
   width: 200px;
-  border: 1px solid black;
+  border: 1px solid var(--color-primary);
 }
 .submit-button:hover {
-  background-color: #b394d6;
+  background-color: var(--color-link-hover);
   cursor: pointer;
 }
 .submit-button:focus,
 .submit-button:focus-visible {
   outline: 1px auto -webkit-focus-ring-color;
-}
-
-/* Flex direction */
-.row {
-  display: flex;
-  flex-direction: row;
-}
-.col {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Sizing */
-.full {
-  width: 100%;
-}
-
-.page-container {
-  background-color: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(8px);
-  border-radius: 20px;
-  border: 3px #213547 solid;
-  box-sizing: border-box;
 }

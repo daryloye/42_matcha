@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify';
 import { ActionButton } from '../../components/ActionButton';
-import { HomePageTemplate } from '../../components/home/HomePageTemplate';
+import { HomePageTemplate } from './HomePageTemplate';
 
 export default function Account() {
   return <HomePageTemplate page={<AccountPage />} />;
