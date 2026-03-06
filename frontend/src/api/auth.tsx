@@ -1,3 +1,5 @@
+import { useAtom } from 'jotai';
+import { authorizationAtom } from '../utils/atoms';
 import { GetHTTP, PostHTTP } from './httpClient';
 
 export async function Login(params: any) {
@@ -59,6 +61,18 @@ export async function ResetPassword(params: any) {
     JSON.stringify({
       newPassword: params.password,
       resetToken: params.token,
+    }),
+  );
+}
+
+export async function GetBasicProfile() {
+  const [authorizationToken] = useAtom(authorizationAtom);
+
+  return await GetHTTP(
+    `/api/profile/me`,
+    new Headers({
+      'Content-Type': 'application/json',
+      Authorization: authorizationToken,
     }),
   );
 }

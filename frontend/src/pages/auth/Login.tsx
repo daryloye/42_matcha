@@ -1,9 +1,11 @@
+import { useAtom } from 'jotai';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Login } from '../../api/auth';
 import { ActionButton } from '../../components/ActionButton';
 import { TextInput } from '../../components/TextInput';
+import { authorizationAtom } from '../../utils/atoms';
 import './auth.css';
 
 export default function LoginPage() {
@@ -11,6 +13,7 @@ export default function LoginPage() {
     username: '',
     password: '',
   });
+  const [, setAuthorizationToken] = useAtom(authorizationAtom);
   const navigate = useNavigate();
 
   const handleChange = (field: keyof typeof formData, value: string) => {
@@ -27,7 +30,8 @@ export default function LoginPage() {
     }
 
     try {
-      await Login(formData);
+      const response = await Login(formData);
+      setAuthorizationToken(response.token);
       toast('🚀 Welcome to Matcha');
       navigate('/search');
     } catch (err: any) {

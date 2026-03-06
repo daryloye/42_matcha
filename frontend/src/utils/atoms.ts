@@ -1,5 +1,12 @@
 import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
 import type { ChatItem, PictureItem } from './types';
+
+// Authorization token
+export const authorizationAtom = atomWithStorage('authorizationToken', '');
+
+// Basic Profile
+export const basicProfileAtom = atom<any>(null);
 
 // Profile Page
 export const genderAtom = atom<string>('Male');
