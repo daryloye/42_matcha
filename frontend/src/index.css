@@ -23,6 +23,17 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --rs-primary-50: #eef2ff;
+  --rs-primary-100: #dce4ff;
+  --rs-primary-200: #bccaff;
+  --rs-primary-300: #9cb0ff;
+  --rs-primary-400: #7c97f0;
+  --rs-primary-500: #5c7de0;
+  --rs-primary-600: #4a66b8;
+  --rs-primary-700: #384f90;
+  --rs-primary-800: #273867;
+  --rs-primary-900: #16223f;
 }
 
 /* Scrollbar */

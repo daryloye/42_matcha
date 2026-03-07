@@ -1,52 +1,69 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import {
+  Button,
+  Form,
+  Notification,
+  PasswordInput,
+  Schema,
+  useToaster,
+} from 'rsuite';
 import { Register } from '../../api/auth';
+import { FormField } from '../../components/FormField';
+
+const { StringType } = Schema.Types;
+const model = Schema.Model({
+  firstname: StringType().isRequired('First name is required'),
+  lastname: StringType().isRequired('Last name is required'),
+  email: StringType()
+    .isEmail('Please enter a vaild email')
+    .isRequired('Email is required'),
+  username: StringType().isRequired('Username is required'),
+  password: StringType().isRequired('Password is required'),
+  confirmPassword: StringType()
+    .isRequired('Please retype password')
+    .addRule((value, data) => value === data.password, 'Passwords must match'),
+});
 
 export default function SignUpPage() {
-  const [formData, setFormData] = useState({
+  const [loading, setLoading] = useState(false);
+  const [formValue, setFormValue] = useState({
     firstname: '',
     lastname: '',
     email: '',
     username: '',
     password: '',
-    passwordRetype: '',
+    confirmPassword: '',
   });
+
+  const toaster = useToaster();
   const navigate = useNavigate();
 
-  const handleChange = (field: keyof typeof formData, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (
-      formData.firstname === '' ||
-      formData.lastname === '' ||
-      formData.email === '' ||
-      formData.username === '' ||
-      formData.password === '' ||
-      formData.passwordRetype === ''
-    ) {
-      toast.error('Please fill in all fields');
-      return;
-    }
-
-    if (formData.password !== formData.passwordRetype) {
-      toast.error('Passwords do not match');
-      return;
-    }
+  const handleSubmit = async () => {
+    setLoading(true);
 
     try {
-      const res = await Register(formData);
-      toast.info(res.message);
+      const res = await Register({
+        firstname: formValue.firstname,
+        lastname: formValue.lastname,
+        email: formValue.email,
+        username: formValue.username,
+        password: formValue.password,
+      });
+      toaster.push(
+        <Notification type='info' closable>
+          {res.message}
+        </Notification>,
+      );
       navigate('/');
     } catch (err: any) {
-      toast.error(err.message);
+      toaster.push(
+        <Notification type='error' closable>
+          {err.message}
+        </Notification>,
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -55,70 +72,51 @@ export default function SignUpPage() {
       <div className='flex flex-col items-center gap-3 px-24 py-12 bg-white/75 backdrop-blur-md rounded-3xl border-2'>
         <h1>Welcome to Matcha</h1>
 
-        <form
-          className='flex flex-col items-center gap-1 pt-6'
+        <Form
+          fluid
+          formValue={formValue}
+          model={model}
+          onChange={(value) =>
+            setFormValue({
+              firstname: value.firstname.trim(),
+              lastname: value.lastname.trim(),
+              email: value.email.trim(),
+              username: value.username.trim(),
+              password: value.password.trim(),
+              confirmPassword: value.confirmPassword.trim(),
+            })
+          }
           onSubmit={handleSubmit}
+          className='flex flex-col items-center pt-6'
         >
-          <input
-            className='w-full'
-            type='text'
-            value={formData.firstname}
-            onChange={(e) => handleChange('firstname', e.target.value.trim())}
-            placeholder='First name'
-            required
-          />
+          <Form.Stack spacing={5}>
+            <FormField name='firstname' placeholder='Firstname' />
+            <FormField name='lastname' placeholder='Lastname' />
+            <FormField name='email' placeholder='Email' />
+            <FormField name='username' placeholder='Username' />
+            <FormField
+              name='password'
+              accepter={PasswordInput}
+              placeholder='Password'
+            />
+            <FormField
+              name='confirmPassword'
+              accepter={PasswordInput}
+              placeholder='Confirm Password'
+            />
 
-          <input
-            className='w-full'
-            type='text'
-            value={formData.lastname}
-            onChange={(e) => handleChange('lastname', e.target.value.trim())}
-            placeholder='Last name'
-            required
-          />
-
-          <input
-            className='w-full'
-            type='email'
-            value={formData.email}
-            onChange={(e) => handleChange('email', e.target.value.trim())}
-            placeholder='Email'
-            required
-          />
-
-          <input
-            className='w-full'
-            type='text'
-            value={formData.username}
-            onChange={(e) => handleChange('username', e.target.value.trim())}
-            placeholder='Username'
-            required
-          />
-
-          <input
-            className='w-full'
-            type='password'
-            value={formData.password}
-            onChange={(e) => handleChange('password', e.target.value.trim())}
-            placeholder='Password'
-            required
-          />
-
-          <input
-            className='w-full'
-            type='password'
-            value={formData.passwordRetype}
-            onChange={(e) =>
-              handleChange('passwordRetype', e.target.value.trim())
-            }
-            placeholder='Retype Password'
-            required
-          />
-
-          <button type='submit' className='submit-button'>
-            Create Account
-          </button>
-        </form>
+            <Form.Group className='my-4'>
+              <Button
+                type='submit'
+                appearance='primary'
+                loading={loading}
+                block
+              >
+                Create Account
+              </Button>
+            </Form.Group>
+          </Form.Stack>
+        </Form>
 
         <Link to='/'>Back to Login</Link>
       </div>

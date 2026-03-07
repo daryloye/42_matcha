@@ -1,34 +1,46 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { Button, Form, Notification, Schema, useToaster } from 'rsuite';
 import { ForgotPassword } from '../../api/auth';
+import { FormField } from '../../components/FormField';
+
+const { StringType } = Schema.Types;
+const model = Schema.Model({
+  email: StringType()
+    .isEmail('Please enter a vaild email')
+    .isRequired('Email is required'),
+});
 
 export default function ForgotPasswordPage() {
-  const [formData, setFormData] = useState({
+  const [loading, setLoading] = useState(false);
+  const [formValue, setFormValue] = useState({
     email: '',
   });
+
+  const toaster = useToaster();
   const navigate = useNavigate();
 
-  const handleChange = (field: keyof typeof formData, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (formData.email === '') {
-      toast.error('Please enter your email');
-    }
+  const handleSubmit = async () => {
+    setLoading(true);
 
     try {
-      const res = await ForgotPassword(formData);
-      toast.info(res.message);
+      const res = await ForgotPassword({
+        email: formValue.email,
+      });
+      toaster.push(
+        <Notification type='info' closable>
+          {res.message}
+        </Notification>,
+      );
       navigate('/');
     } catch (err: any) {
-      toast.error(err.message);
+      toaster.push(
+        <Notification type='error' closable>
+          {err.message}
+        </Notification>,
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -37,23 +49,33 @@ export default function ForgotPasswordPage() {
       <div className='flex flex-col items-center gap-3 px-24 py-12 bg-white/75 backdrop-blur-md rounded-3xl border-2'>
         <h1>Welcome to Matcha</h1>
 
-        <form
-          className='flex flex-col items-center gap-1 pt-6'
+        <Form
+          fluid
+          formValue={formValue}
+          model={model}
+          onChange={(value) =>
+            setFormValue({
+              email: value.email.trim(),
+            })
+          }
           onSubmit={handleSubmit}
+          className='flex flex-col items-center pt-6'
         >
-          <input
-            className='w-full'
-            type='email'
-            value={formData.email}
-            onChange={(e) => handleChange('email', e.target.value.trim())}
-            placeholder='Your email'
-            required
-          />
+          <Form.Stack spacing={5}>
+            <FormField name='email' placeholder='Your email' />
 
-          <button type='submit' className='submit-button'>
-            Request Reset Link
-          </button>
-        </form>
+            <Form.Group className='my-4'>
+              <Button
+                type='submit'
+                appearance='primary'
+                loading={loading}
+                block
+              >
+                Request Reset Link
+              </Button>
+            </Form.Group>
+          </Form.Stack>
+        </Form>
 
         <Link to='/'>Back to Login</Link>
       </div>

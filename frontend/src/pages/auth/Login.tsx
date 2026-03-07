@@ -1,36 +1,54 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import {
+  Button,
+  Form,
+  Notification,
+  PasswordInput,
+  Schema,
+  useToaster,
+} from 'rsuite';
 import { Login } from '../../api/auth';
+import { FormField } from '../../components/FormField';
+
+const { StringType } = Schema.Types;
+const model = Schema.Model({
+  username: StringType().isRequired('Username is required'),
+  password: StringType().isRequired('Password is required'),
+});
 
 export default function LoginPage() {
-  const [formData, setFormData] = useState({
+  const [loading, setLoading] = useState(false);
+  const [formValue, setFormValue] = useState({
     username: '',
     password: '',
   });
+
+  const toaster = useToaster();
   const navigate = useNavigate();
 
-  const handleChange = (field: keyof typeof formData, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (formData.username === '' || formData.password === '') {
-      toast.error('Please enter username and password');
-      return;
-    }
+  const handleSubmit = async () => {
+    setLoading(true);
 
     try {
-      await Login(formData);
-      toast('🚀 Welcome to Matcha');
+      await Login({
+        username: formValue.username,
+        password: formValue.password,
+      });
+      toaster.push(
+        <Notification type='success' closable>
+          Welcome to Matcha
+        </Notification>,
+      );
       navigate('/search');
     } catch (err: any) {
-      toast.error(err.message);
+      toaster.push(
+        <Notification type='error' closable>
+          {err.message}
+        </Notification>,
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -39,32 +57,39 @@ export default function LoginPage() {
       <div className='flex flex-col items-center gap-3 px-24 py-12 bg-white/75 backdrop-blur-md rounded-3xl border-2'>
         <h1>Welcome to Matcha</h1>
 
-        <form
-          className='flex flex-col items-center gap-1 pt-6'
+        <Form
+          fluid
+          formValue={formValue}
+          model={model}
+          onChange={(value) =>
+            setFormValue({
+              username: value.username.trim(),
+              password: value.password.trim(),
+            })
+          }
           onSubmit={handleSubmit}
+          className='flex flex-col items-center pt-6'
         >
-          <input
-            className='w-full'
-            type='text'
-            value={formData.username}
-            onChange={(e) => handleChange('username', e.target.value.trim())}
-            placeholder='Username'
-            required
-          />
+          <Form.Stack spacing={5}>
+            <FormField name='username' placeholder='Username' />
+            <FormField
+              name='password'
+              accepter={PasswordInput}
+              placeholder='Password'
+            />
 
-          <input
-            className='w-full'
-            type='password'
-            value={formData.password}
-            onChange={(e) => handleChange('password', e.target.value.trim())}
-            placeholder='Password'
-            required
-          />
-
-          <button type='submit' className='submit-button'>
-            Login
-          </button>
-        </form>
+            <Form.Group className='my-4'>
+              <Button
+                type='submit'
+                appearance='primary'
+                loading={loading}
+                block
+              >
+                Login
+              </Button>
+            </Form.Group>
+          </Form.Stack>
+        </Form>
 
         <Link to='/signup'>Create Account</Link>
         <Link to='/forgotpassword'>I forgot my password</Link>
