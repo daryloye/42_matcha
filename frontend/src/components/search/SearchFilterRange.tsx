@@ -1,6 +1,4 @@
-import RangeSliderModule from 'react-range-slider-input';
-import 'react-range-slider-input/dist/style.css';
-const RangeSlider = (RangeSliderModule as any).default || RangeSliderModule;
+import { RangeSlider } from 'rsuite';
 
 export function SearchFilterRange({
   label,
@@ -9,9 +7,9 @@ export function SearchFilterRange({
   onChange,
 }: {
   label: string;
-  range: number[];
-  values: number[];
-  onChange: (value: number[]) => void;
+  range: [number, number];
+  values: [number, number];
+  onChange: (value: [number, number]) => void;
 }) {
   return (
     <div className='flex-1'>
@@ -25,7 +23,7 @@ export function SearchFilterRange({
         min={range[0]}
         max={range[1]}
         value={values}
-        onInput={onChange}
+        onChange={onChange}
       />
     </div>
   );

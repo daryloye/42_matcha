@@ -1,13 +1,18 @@
+import CalendarIcon from '@rsuite/icons/Calendar';
+import HeartIcon from '@rsuite/icons/Heart';
+import LocationIcon from '@rsuite/icons/Location';
+import TagIcon from '@rsuite/icons/Tag';
 import { useState } from 'react';
+import { Card, Input, Tag, TagGroup, TagInput, VStack } from 'rsuite';
 import profilePic from '../../assets/profilePic2.png';
+import { SearchFilterRange } from '../../components/search/SearchFilterRange';
+import { SearchSortDropdown } from '../../components/search/SearchSortDropdown';
 import { HomePageTemplate } from './HomePageTemplate';
-import { SearchFilterRange } from './components/SearchFilterRange';
-import { SearchSortDropdown } from './components/SearchSortDropdown';
 
 const profilesJson = [
   {
     id: 1,
-    name: 'User1',
+    name: 'very-very-very-very-long-name',
     image: profilePic,
     age: 25,
     fame: 1,
@@ -103,31 +108,24 @@ const profilesJson = [
   },
 ];
 
-const sortDefaultState = [{ value: 0, label: 'None' }];
+const sortOptions = [
+  { value: 0, label: 'None' },
+  { value: 1, label: 'Low-to-high' },
+  { value: -1, label: 'High-to-low' },
+];
 
-const ageRangeLimit = (() => {
+function getRange<T extends keyof (typeof profilesJson)[number]>(
+  field: T,
+): [number, number] {
   const [min, max] = profilesJson.reduce(
-    ([min, max], p) => [Math.min(min, p.age), Math.max(max, p.age)],
+    ([min, max], p) => [
+      Math.min(min, Number(p[field])),
+      Math.max(max, Number(p[field])),
+    ],
     [Infinity, -Infinity],
   );
   return [Math.round(min), Math.round(max)];
-})();
-
-const distanceRangeLimit = (() => {
-  const [min, max] = profilesJson.reduce(
-    ([min, max], p) => [Math.min(min, p.distance), Math.max(max, p.distance)],
-    [Infinity, -Infinity],
-  );
-  return [Math.round(min), Math.round(max)];
-})();
-
-const fameRangeLimit = (() => {
-  const [min, max] = profilesJson.reduce(
-    ([min, max], p) => [Math.min(min, p.fame), Math.max(max, p.fame)],
-    [Infinity, -Infinity],
-  );
-  return [Math.round(min), Math.round(max)];
-})();
+}
 
 export default function Search() {
   return <HomePageTemplate page={<SearchPage />} />;
@@ -136,15 +134,16 @@ export default function Search() {
 function SearchPage() {
   const [searchUser, setSearchUser] = useState('');
 
-  const [sortByAge, setSortByAge] = useState(sortDefaultState);
-  const [sortByDistance, setSortByDistance] = useState(sortDefaultState);
-  const [sortByFame, setSortByFame] = useState(sortDefaultState);
-  const [sortByTags, setSortByTags] = useState(sortDefaultState);
+  const [sortByAge, setSortByAge] = useState(sortOptions[0]);
+  const [sortByDistance, setSortByDistance] = useState(sortOptions[0]);
+  const [sortByFame, setSortByFame] = useState(sortOptions[0]);
+  const [sortByTags, setSortByTags] = useState(sortOptions[0]);
 
-  const [ageRange, setAgeRange] = useState<number[]>(ageRangeLimit);
-  const [distanceRange, setDistanceRange] =
-    useState<number[]>(distanceRangeLimit);
-  const [fameRange, setFameRange] = useState<number[]>(fameRangeLimit);
+  const [ageRange, setAgeRange] = useState(getRange('age'));
+  const [distanceRange, setDistanceRange] = useState(getRange('distance'));
+  const [fameRange, setFameRange] = useState(getRange('fame'));
+
+  const [tagFilter, setTagFilter] = useState<string[]>([]);
 
   const filtered = profilesJson.filter(
     (p) =>
@@ -154,33 +153,34 @@ function SearchPage() {
       p.distance >= distanceRange[0] &&
       p.distance <= distanceRange[1] &&
       p.fame >= fameRange[0] &&
-      p.fame <= fameRange[1],
+      p.fame <= fameRange[1] &&
+      tagFilter.every((tag) => p.tags.includes(tag)),
   );
 
   const sorted = [...filtered].sort((a, b): number => {
-    if (sortByAge[0].value === 1) {
+    if (sortByAge.value === 1) {
       const r = a.age - b.age;
       if (r !== 0) return r;
     }
-    if (sortByAge[0].value === -1) {
+    if (sortByAge.value === -1) {
       const r = b.age - a.age;
       if (r !== 0) return r;
     }
 
-    if (sortByFame[0].value === 1) {
+    if (sortByFame.value === 1) {
       const r = a.fame - b.fame;
       if (r !== 0) return r;
     }
-    if (sortByFame[0].value === -1) {
+    if (sortByFame.value === -1) {
       const r = b.fame - a.fame;
       if (r !== 0) return r;
     }
 
-    if (sortByDistance[0].value === 1) {
+    if (sortByDistance.value === 1) {
       const r = a.distance - b.distance;
       if (r !== 0) return r;
     }
-    if (sortByDistance[0].value === -1) {
+    if (sortByDistance.value === -1) {
       const r = b.distance - a.distance;
       if (r !== 0) return r;
     }
@@ -194,87 +194,113 @@ function SearchPage() {
 
       <div className='flex flex-col mt-5 gap-3'>
         {/* Search Bar */}
-        <input
-          className='w-full'
-          type='text'
-          value={searchUser}
-          onChange={(e) => setSearchUser(e.target.value)}
+        <Input
           placeholder='Search for user'
-          color='grey'
+          value={searchUser}
+          onChange={setSearchUser}
         />
 
         {/* Sort Options */}
-        <div className='flex flex-row items-center gap-5 w-full'>
+        <div className='grid grid-cols-4 gap-10'>
           <SearchSortDropdown
             label='Sort by age:'
-            values={sortByAge}
-            onChange={setSortByAge}
+            options={sortOptions}
+            value={sortByAge}
+            onClick={setSortByAge}
           />
 
           <SearchSortDropdown
             label='Sort by distance:'
-            values={sortByDistance}
-            onChange={setSortByDistance}
+            options={sortOptions}
+            value={sortByDistance}
+            onClick={setSortByDistance}
           />
 
           <SearchSortDropdown
             label='Sort by fame:'
-            values={sortByFame}
-            onChange={setSortByFame}
+            options={sortOptions}
+            value={sortByFame}
+            onClick={setSortByFame}
           />
 
           <SearchSortDropdown
-            label='Sort by common tags:'
-            values={sortByTags}
-            onChange={setSortByTags}
+            label='Sort by tags:'
+            options={sortOptions}
+            value={sortByTags}
+            onClick={setSortByTags}
           />
         </div>
 
         {/* Filter Options */}
-        <div className='flex flex-row items-center gap-5 w-full'>
+        <div className='grid grid-cols-4 gap-10'>
           <SearchFilterRange
             label='Age range:'
-            range={ageRangeLimit}
+            range={getRange('age')}
             values={ageRange}
             onChange={setAgeRange}
           />
 
           <SearchFilterRange
             label='Distance range:'
-            range={distanceRangeLimit}
+            range={getRange('distance')}
             values={distanceRange}
             onChange={setDistanceRange}
           />
 
           <SearchFilterRange
             label='Fame range:'
-            range={fameRangeLimit}
+            range={getRange('fame')}
             values={fameRange}
             onChange={setFameRange}
           />
+
+          <VStack>
+            <p className='text-sm'>Filter for tags:</p>
+            <TagInput
+              value={tagFilter}
+              trigger={['Space', 'Comma', 'Enter']}
+              placeholder='Add a space after each tag'
+              onChange={(value) => setTagFilter([...value])}
+            />
+          </VStack>
         </div>
 
         {/* Search Results */}
         <div className='mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8'>
           {sorted.map((c) => (
-            <button
-              className='flex flex-col p-4 items-center rounded-3xl border-2 cursor-pointer transition-colors hover:bg-[var(--color-link-hover)]'
-              type='button'
+            <Card
               key={c.id}
+              shaded
+              as='button'
+              className='text-left transition transform active:scale-95 hover:scale-[1.02]'
             >
-              <img src={c.image} className='w-32 h-32 rounded-full' />
-              <h2 className='text-lg font-bold py-2 truncate'>{c.name}</h2>
-              <p className='italic'>Age: {c.age}</p>
-              <p className='italic'>{c.fame}❤️</p>
-              <p className='italic'>{c.distance} km away</p>
-              <div className='flex flex-wrap gap-2 justify-center w-full min-w-0'>
-                {c.tags.map((t) => (
-                  <p className='truncate max-w-full min-w-0 bg-pink-200 rounded-sm border px-1'>
-                    #{t}
-                  </p>
-                ))}
-              </div>
-            </button>
+              <img src={c.image} alt='Shadow' />
+              <Card.Header>
+                <p className='text-xl font-bold truncate'>{c.name}</p>
+              </Card.Header>
+              <Card.Body>
+                <VStack>
+                  <Tag color='violet' size='lg' className='opacity-70'>
+                    <CalendarIcon /> Age: {c.age}
+                  </Tag>
+                  <Tag color='cyan' size='lg' className='opacity-80'>
+                    <LocationIcon /> {c.distance} km away
+                  </Tag>
+                  <Tag color='red' size='lg'>
+                    <HeartIcon /> {c.fame}
+                  </Tag>
+                </VStack>
+              </Card.Body>
+              <Card.Footer>
+                <TagGroup className='flex flex-wrap w-full'>
+                  {c.tags.map((t) => (
+                    <Tag key={t} color='pink' className='tag-ellipsis'>
+                      <TagIcon /> {t}
+                    </Tag>
+                  ))}
+                </TagGroup>
+              </Card.Footer>
+            </Card>
           ))}
         </div>
       </div>

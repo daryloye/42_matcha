@@ -87,6 +87,25 @@ h1 {
   text-decoration: none;
 }
 
+.rs-card {
+  background: transparent !important;
+  border: 1px solid var(--color-primary) !important;
+}
+
+.tag-ellipsis {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.tag-ellipsis .rs-tag-text {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--color-primary);
+}
+
 input,
 textarea {
   background-color: rgba(255, 255, 255, 0.7);

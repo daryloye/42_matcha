@@ -1,4 +1,3 @@
-import { toast } from 'react-toastify';
 import { ProfileInterestTags } from '../../components/profile/ProfileInterestTags';
 import { ProfileLocation } from '../../components/profile/ProfileLocation';
 import { ProfileSelectionButtons } from '../../components/profile/ProfileSelectionButtons';
@@ -13,7 +12,7 @@ export default function Profile() {
 
 function ProfilePage() {
   const handleSubmit = () => {
-    toast.success('Profile updated');
+    // toast.success('Profile updated');
   };
 
   return (

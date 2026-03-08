@@ -2,7 +2,6 @@ import { Provider } from 'jotai';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
 import { CustomProvider } from 'rsuite';
 import 'rsuite/dist/rsuite.min.css';
 import './index.css';
@@ -16,6 +15,7 @@ import Chat from './pages/home/Chat';
 import Profile from './pages/home/Profile';
 import Search from './pages/home/Search';
 import NotFoundPage from './pages/notFound/NotFoundPage';
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <CustomProvider>
@@ -38,18 +38,6 @@ createRoot(document.getElementById('root')!).render(
             <Route path='*' element={<NotFoundPage />} />
           </Routes>
         </Router>
-        <ToastContainer
-          position='top-right'
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme='colored'
-        />
       </Provider>
     </CustomProvider>
   </StrictMode>,
