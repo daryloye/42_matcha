@@ -90,8 +90,8 @@ export default function SignUpPage() {
           className='flex flex-col items-center pt-6'
         >
           <Form.Stack spacing={5}>
-            <FormField name='firstname' placeholder='Firstname' />
-            <FormField name='lastname' placeholder='Lastname' />
+            <FormField name='firstname' placeholder='First name' />
+            <FormField name='lastname' placeholder='Last name' />
             <FormField name='email' placeholder='Email' />
             <FormField name='username' placeholder='Username' />
             <FormField
