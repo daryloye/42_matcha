@@ -3,10 +3,17 @@ import HeartIcon from '@rsuite/icons/Heart';
 import LocationIcon from '@rsuite/icons/Location';
 import TagIcon from '@rsuite/icons/Tag';
 import { useState } from 'react';
-import { Card, Input, Tag, TagGroup, TagInput, VStack } from 'rsuite';
+import {
+  Card,
+  Input,
+  SelectPicker,
+  Tag,
+  TagGroup,
+  TagInput,
+  VStack,
+} from 'rsuite';
 import profilePic from '../../assets/profilePic2.png';
 import { SearchFilterRange } from '../../components/search/SearchFilterRange';
-import { SearchSortDropdown } from '../../components/search/SearchSortDropdown';
 import { HomePageTemplate } from './HomePageTemplate';
 
 const profilesJson = [
@@ -134,10 +141,10 @@ export default function Search() {
 function SearchPage() {
   const [searchUser, setSearchUser] = useState('');
 
-  const [sortByAge, setSortByAge] = useState(sortOptions[0]);
-  const [sortByDistance, setSortByDistance] = useState(sortOptions[0]);
-  const [sortByFame, setSortByFame] = useState(sortOptions[0]);
-  const [sortByTags, setSortByTags] = useState(sortOptions[0]);
+  const [sortByAge, setSortByAge] = useState<number | null>(0);
+  const [sortByDistance, setSortByDistance] = useState<number | null>(0);
+  const [sortByFame, setSortByFame] = useState<number | null>(0);
+  const [sortByTags, setSortByTags] = useState<number | null>(0);
 
   const [ageRange, setAgeRange] = useState(getRange('age'));
   const [distanceRange, setDistanceRange] = useState(getRange('distance'));
@@ -158,29 +165,29 @@ function SearchPage() {
   );
 
   const sorted = [...filtered].sort((a, b): number => {
-    if (sortByAge.value === 1) {
+    if (sortByAge === 1) {
       const r = a.age - b.age;
       if (r !== 0) return r;
     }
-    if (sortByAge.value === -1) {
+    if (sortByAge === -1) {
       const r = b.age - a.age;
       if (r !== 0) return r;
     }
 
-    if (sortByFame.value === 1) {
+    if (sortByFame === 1) {
       const r = a.fame - b.fame;
       if (r !== 0) return r;
     }
-    if (sortByFame.value === -1) {
+    if (sortByFame === -1) {
       const r = b.fame - a.fame;
       if (r !== 0) return r;
     }
 
-    if (sortByDistance.value === 1) {
+    if (sortByDistance === 1) {
       const r = a.distance - b.distance;
       if (r !== 0) return r;
     }
-    if (sortByDistance.value === -1) {
+    if (sortByDistance === -1) {
       const r = b.distance - a.distance;
       if (r !== 0) return r;
     }
@@ -192,7 +199,7 @@ function SearchPage() {
     <div>
       <h1>Search</h1>
 
-      <div className='flex flex-col mt-5 gap-3'>
+      <div className='flex flex-col mt-5 gap-4'>
         {/* Search Bar */}
         <Input
           placeholder='Search for user'
@@ -200,39 +207,46 @@ function SearchPage() {
           onChange={setSearchUser}
         />
 
-        {/* Sort Options */}
-        <div className='grid grid-cols-4 gap-10'>
-          <SearchSortDropdown
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4'>
+          {/* Sort Options */}
+
+          <SelectPicker
             label='Sort by age:'
-            options={sortOptions}
+            data={sortOptions}
             value={sortByAge}
-            onClick={setSortByAge}
+            onChange={setSortByAge}
+            cleanable={false}
+            searchable={false}
           />
 
-          <SearchSortDropdown
+          <SelectPicker
             label='Sort by distance:'
-            options={sortOptions}
+            data={sortOptions}
             value={sortByDistance}
-            onClick={setSortByDistance}
+            onChange={setSortByDistance}
+            cleanable={false}
+            searchable={false}
           />
 
-          <SearchSortDropdown
+          <SelectPicker
             label='Sort by fame:'
-            options={sortOptions}
+            data={sortOptions}
             value={sortByFame}
-            onClick={setSortByFame}
+            onChange={setSortByFame}
+            cleanable={false}
+            searchable={false}
           />
 
-          <SearchSortDropdown
+          <SelectPicker
             label='Sort by tags:'
-            options={sortOptions}
+            data={sortOptions}
             value={sortByTags}
-            onClick={setSortByTags}
+            onChange={setSortByTags}
+            cleanable={false}
+            searchable={false}
           />
-        </div>
 
-        {/* Filter Options */}
-        <div className='grid grid-cols-4 gap-10'>
+          {/* Filter Options */}
           <SearchFilterRange
             label='Age range:'
             range={getRange('age')}

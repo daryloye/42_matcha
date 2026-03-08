@@ -9,7 +9,6 @@ import {
   useToaster,
 } from 'rsuite';
 import { Login } from '../../api/auth';
-import { FormField } from '../../components/FormField';
 
 const { StringType } = Schema.Types;
 const model = Schema.Model({
@@ -71,8 +70,8 @@ export default function LoginPage() {
           className='flex flex-col items-center pt-6'
         >
           <Form.Stack spacing={5}>
-            <FormField name='username' placeholder='Username' />
-            <FormField
+            <Form.Control name='username' placeholder='Username' />
+            <Form.Control
               name='password'
               accepter={PasswordInput}
               placeholder='Password'

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Form, Notification, Schema, useToaster } from 'rsuite';
 import { ForgotPassword } from '../../api/auth';
-import { FormField } from '../../components/FormField';
 
 const { StringType } = Schema.Types;
 const model = Schema.Model({
@@ -62,7 +61,7 @@ export default function ForgotPasswordPage() {
           className='flex flex-col items-center pt-6'
         >
           <Form.Stack spacing={5}>
-            <FormField name='email' placeholder='Your email' />
+            <Form.Control name='email' placeholder='Your email' />
 
             <Form.Group className='my-4'>
               <Button

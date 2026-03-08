@@ -9,7 +9,6 @@ import {
   useToaster,
 } from 'rsuite';
 import { ResetPassword } from '../../api/auth';
-import { FormField } from '../../components/FormField';
 
 const { StringType } = Schema.Types;
 const model = Schema.Model({
@@ -86,12 +85,12 @@ export default function ResetPasswordPage() {
           className='flex flex-col items-center pt-6'
         >
           <Form.Stack spacing={5}>
-            <FormField
+            <Form.Control
               name='password'
               accepter={PasswordInput}
               placeholder='Password'
             />
-            <FormField
+            <Form.Control
               name='confirmPassword'
               accepter={PasswordInput}
               placeholder='Confirm Password'
