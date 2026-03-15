@@ -5,6 +5,7 @@ export const profilesJson = [
   {
     id: 1,
     name: 'very-very-very-very-long-name',
+    gender: 'Female',
     image: profilePic,
     age: 25,
     fame: 1,
@@ -20,6 +21,7 @@ export const profilesJson = [
   {
     id: 2,
     name: 'User2',
+    gender: 'Female',
     image: profilePic,
     age: 30,
     fame: 2,
@@ -29,6 +31,7 @@ export const profilesJson = [
   {
     id: 3,
     name: 'User3',
+    gender: 'Male',
     image: profilePic,
     age: 67,
     fame: 3,
@@ -38,6 +41,7 @@ export const profilesJson = [
   {
     id: 4,
     name: 'User1',
+    gender: 'Other',
     image: profilePic,
     age: 25,
     fame: 1,
@@ -47,6 +51,7 @@ export const profilesJson = [
   {
     id: 5,
     name: 'User2',
+    gender: 'Female',
     image: profilePic,
     age: 30,
     fame: 2,
@@ -56,6 +61,7 @@ export const profilesJson = [
   {
     id: 6,
     name: 'User3',
+    gender: 'Female',
     image: profilePic,
     age: 67,
     fame: 3,
@@ -65,6 +71,7 @@ export const profilesJson = [
   {
     id: 7,
     name: 'User1',
+    gender: 'Female',
     image: profilePic,
     age: 25,
     fame: 1,
@@ -74,6 +81,7 @@ export const profilesJson = [
   {
     id: 8,
     name: 'User2',
+    gender: 'Female',
     image: profilePic,
     age: 30,
     fame: 2,
@@ -83,6 +91,7 @@ export const profilesJson = [
   {
     id: 9,
     name: 'User3',
+    gender: 'Female',
     image: profilePic,
     age: 67,
     fame: 3,
@@ -92,6 +101,7 @@ export const profilesJson = [
   {
     id: 10,
     name: 'User3',
+    gender: 'Female',
     image: profilePic,
     age: 67,
     fame: 3,

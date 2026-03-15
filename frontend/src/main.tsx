@@ -13,6 +13,7 @@ import Account from './pages/home/Account';
 import Chat from './pages/home/Chat';
 import Profile from './pages/home/Profile';
 import Search from './pages/home/Search';
+import Users from './pages/home/Users';
 import NotFoundPage from './pages/notFound/NotFoundPage';
 
 createRoot(document.getElementById('root')!).render(
@@ -32,6 +33,9 @@ createRoot(document.getElementById('root')!).render(
           <Route path='/profile' element={<Profile />} />
           <Route path='/chat' element={<Chat />} />
           <Route path='/account' element={<Account />} />
+
+          {/* Users */}
+          <Route path='/users/:id' element={<Users />} />
 
           <Route path='*' element={<NotFoundPage />} />
         </Routes>

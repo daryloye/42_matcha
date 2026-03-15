@@ -8,7 +8,11 @@ export default function NotFoundPage() {
     <div className='min-h-screen flex flex-col items-center justify-center'>
       <h1>Page Not Found</h1>
       <br />
-      <Button type='submit' appearance='primary' onClick={() => navigate('/')}>
+      <Button
+        type='submit'
+        appearance='primary'
+        onClick={() => navigate('/search')}
+      >
         Back to Home
       </Button>
     </div>

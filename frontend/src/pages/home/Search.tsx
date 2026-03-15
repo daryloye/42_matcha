@@ -3,6 +3,8 @@ import HeartIcon from '@rsuite/icons/Heart';
 import LocationIcon from '@rsuite/icons/Location';
 import TagIcon from '@rsuite/icons/Tag';
 import { useState } from 'react';
+import { MdPersonOutline } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
 import {
   Card,
   Input,
@@ -34,6 +36,8 @@ function SearchPage() {
 
   const filtered = getFilteredProfiles(profilesJson, filters);
   const sorted = getSortedProfiles(filtered, sortBy);
+
+  const navigate = useNavigate();
 
   return (
     <div>
@@ -142,6 +146,7 @@ function SearchPage() {
               key={c.id}
               shaded
               as='button'
+              onClick={() => navigate(`/users/${c.id}`)}
               className='text-left transition transform active:scale-95 hover:scale-[1.02]'
             >
               <img src={c.image} alt='Shadow' />
@@ -150,8 +155,11 @@ function SearchPage() {
               </Card.Header>
               <Card.Body>
                 <VStack>
+                  <Tag color='green' size='lg' className='opacity-70'>
+                    <MdPersonOutline className='inline' /> {c.gender}
+                  </Tag>
                   <Tag color='violet' size='lg' className='opacity-70'>
-                    <CalendarIcon /> Age: {c.age}
+                    <CalendarIcon /> {c.age} years old
                   </Tag>
                   <Tag color='cyan' size='lg' className='opacity-80'>
                     <LocationIcon /> {c.distance} km away
