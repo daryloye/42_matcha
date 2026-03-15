@@ -1,27 +1,67 @@
 import HeartIcon from '@rsuite/icons/Heart';
 import NoticeIcon from '@rsuite/icons/Notice';
-import { useState, type ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState, type ReactNode } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Avatar,
   Badge,
   HStack,
   IconButton,
   Message,
+  Notification,
   Popover,
   Tag,
+  useToaster,
   VStack,
   Whisper,
 } from 'rsuite';
+import { GetBasicProfile } from '../../api/profile';
 import profilePic from '../../assets/profilePic2.png';
+import { deleteToken, getToken } from '../../utils/token';
+import type { BasicProfile } from '../../utils/types';
 
 export function HomePageTemplate({ page }: { page: ReactNode }) {
+  const [basicProfile, setBasicProfile] = useState<BasicProfile | null>(null);
+  const toaster = useToaster();
+  const navigate = useNavigate();
+
+  // Get user profile
+  useEffect(() => {
+    const token = getToken();
+    if (!token) {
+      navigate('/');
+      return;
+    }
+
+    async function fetchBasicProfile() {
+      try {
+        const res = await GetBasicProfile(token!);
+        setBasicProfile(res.profile);
+        console.log('Profile retrieved');
+      } catch (err: any) {
+        toaster.push(
+          <Notification type='error' closable>
+            {err.message}
+          </Notification>,
+        );
+        navigate('/');
+      }
+    }
+
+    fetchBasicProfile();
+
+    const interval = setInterval(fetchBasicProfile, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
+  if (!basicProfile) return null;
+
   return (
     <div className='h-screen flex flex-col px-12 pt-8 pb-4'>
       <div className='flex-1 min-h-0'>
         <div className='flex h-full flex-col py-8 md:flex-row bg-white/75 backdrop-blur-md rounded-3xl border-3 overflow-hidden'>
           <div className='w-full md:w-[25%] md:min-w-[220px] md:max-w-[320px] shrink-0 px-8 overflow-y-scroll'>
-            <Sidebar />
+            <Sidebar profile={basicProfile} />
           </div>
 
           <div className='flex-1 min-w-0 px-8 border-l-4 overflow-y-scroll hidden md:block'>
@@ -35,7 +75,7 @@ export function HomePageTemplate({ page }: { page: ReactNode }) {
   );
 }
 
-function Sidebar() {
+function Sidebar({ profile }: { profile: BasicProfile }) {
   const [messages, setMessages] = useState([
     { key: 1, value: 'You have a new follower.' },
     { key: 2, value: 'User1 wants to chat.' },
@@ -99,9 +139,8 @@ function Sidebar() {
         </Whisper>
       </HStack>
 
-      <p className='text-center text-xl font-bold truncate'>
-        Your nameYour nameYour nameYour nameYour nameYour nameYour nameYour
-        nameYour nameYour name
+      <p className='text-xl font-bold truncate'>
+        Welcome back, {profile.first_name}!
       </p>
 
       <NavigationLinks />
@@ -128,7 +167,7 @@ function NavigationLinks() {
         <h1>Account</h1>
       </Link>
 
-      <Link to='/'>
+      <Link to='/' onClick={() => deleteToken()}>
         <h1>Logout</h1>
       </Link>
     </VStack>

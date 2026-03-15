@@ -9,6 +9,7 @@ import {
   useToaster,
 } from 'rsuite';
 import { Login } from '../../api/auth';
+import { setToken } from '../../utils/token';
 
 const { StringType } = Schema.Types;
 const model = Schema.Model({
@@ -30,10 +31,11 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await Login({
+      const res = await Login({
         username: formValue.username,
         password: formValue.password,
       });
+      setToken(res.token);
       toaster.push(
         <Notification type='success' closable>
           Welcome to Matcha
