@@ -1,3 +1,4 @@
+import { useAtom } from 'jotai';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -9,12 +10,19 @@ import {
   useToaster,
 } from 'rsuite';
 import { Login } from '../../api/auth';
+<<<<<<< HEAD
+import { ActionButton } from '../../components/ActionButton';
+import { TextInput } from '../../components/TextInput';
+import { authorizationAtom } from '../../utils/atoms';
+import './auth.css';
+=======
 
 const { StringType } = Schema.Types;
 const model = Schema.Model({
   username: StringType().isRequired('Username is required'),
   password: StringType().isRequired('Password is required'),
 });
+>>>>>>> main
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
@@ -22,14 +30,23 @@ export default function LoginPage() {
     username: '',
     password: '',
   });
+<<<<<<< HEAD
+  const [, setAuthorizationToken] = useAtom(authorizationAtom);
+=======
 
   const toaster = useToaster();
+>>>>>>> main
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
     setLoading(true);
 
     try {
+<<<<<<< HEAD
+      const response = await Login(formData);
+      setAuthorizationToken(response.token);
+      toast('🚀 Welcome to Matcha');
+=======
       await Login({
         username: formValue.username,
         password: formValue.password,
@@ -39,6 +56,7 @@ export default function LoginPage() {
           Welcome to Matcha
         </Notification>,
       );
+>>>>>>> main
       navigate('/search');
     } catch (err: any) {
       toaster.push(

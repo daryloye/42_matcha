@@ -1,0 +1,32 @@
+meta {
+  name: 01_get_invalid_message
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/chat/messages
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "targetUserId": -1
+  }
+}
+
+tests {
+  test("status 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}
+
+settings {
+  encodeUrl: false
+  timeout: 10000
+}

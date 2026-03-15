@@ -57,6 +57,27 @@ const createTables = async () => {
         created_at TIMESTAMP DEFAULT NOW(),
         UNIQUE(user_id, interest_id)
     );
+
+    CREATE TABLE IF NOT EXISTS chat (
+        id SERIAL PRIMARY KEY,
+        user1_id INTEGER NOT NULL,
+        user2_id INTEGER NOT NULL,
+        sender_id INTEGER NOT NULL,
+        message VARCHAR(255) NOT NULL,
+        is_read BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT NOW(),
+        CHECK (user1_id < user2_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS matches (
+        id SERIAL PRIMARY KEY,
+        user1_id INTEGER NOT NULL,
+        user2_id INTEGER NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW(),
+        CHECK (user1_id < user2_id),
+        UNIQUE (user1_id, user2_id)
+    );
+
     `;
 
   try {

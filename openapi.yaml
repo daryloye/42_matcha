@@ -145,7 +145,7 @@ paths:
                   username: "test_username"
                   picture: "http://localhost:5001/image/profile.jpg"
                 isProfileCompleted: true
-                notifications: []
+                notifications: "..."
 
   /profile/update:
     get:
@@ -215,3 +215,44 @@ paths:
       responses:
         "200":
           description: Profile updated
+
+  /chat/messages:
+    post:
+      parameters:
+        - $ref: "#/components/parameters/BearerAuth"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              targetUserId: 5
+              message: "hello world"
+      responses:
+        "201":
+          description: Created
+        "403":
+          description: Forbidden
+
+    get:
+      parameters:
+        - $ref: "#/components/parameters/BearerAuth"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              targetUserId: 5
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              example:
+                messages:
+                  user1_id: 1
+                  user2_id: 2
+                  sender_id: 1
+                  messages: "hello world"
+                  created_at: "2026-02-20"
+        "403":
+          description: Forbidden

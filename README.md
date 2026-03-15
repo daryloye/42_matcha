@@ -69,7 +69,7 @@ Register
 
 - if the registration fails because the email is invalid, and then the user submits again, will receive "username already exist" error. In this case the info should not have been added to the DB so that the user can resubmit the form.
 - if the user submits using an email that has already been registered but not yet verified, will receive "email is already registered" error. Maybe this can be changed to sending the verification email again?
-- can consider changing "invalid password" to "password is too weak"
+
 - (for me to fix) spamming the button will lead to errors, FE needs to block the button while waiting for the fetch
 
 Forgot Password

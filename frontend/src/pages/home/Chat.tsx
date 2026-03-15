@@ -5,6 +5,29 @@ import { selectedChatAtom } from '../../utils/atoms';
 import styles from './Chat.module.css';
 import { HomePageTemplate } from './HomePageTemplate';
 
+// const chatMenu = [
+//   {
+//     conversationId: 111,
+//     otherUserId: 1,
+//     lastMessage:
+//     lastCreatedTime:
+//     unreadCount: 3
+//   }
+// ]
+
+// const conversation = [
+//   {
+//     id: 1,
+//     from: 'user',
+//     message: 'hello'
+//   },
+//   {
+//     id: 2,
+//     from: 'me',
+//     message: 'hello back'
+//   }
+// ]
+
 const chatSidebarJson = [
   {
     id: 1,

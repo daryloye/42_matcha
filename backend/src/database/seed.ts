@@ -36,30 +36,28 @@ export async function seedAdmin() {
       await query(
         `INSERT INTO profile_pictures (user_id, is_profile_picture, image_url)
               VALUES ($1, $2, $3)`,
-        [adminId, true, 'https://via.placeholder.com/150'],
+        [adminId, true, "https://via.placeholder.com/150"],
       );
 
-      const interestNames = ['coffee', 'hiking', 'coding'];
+      const interestNames = ["coffee", "hiking", "coding"];
 
       for (const name of interestNames) {
-          const interestResult = await query(
-              `INSERT INTO interests (name) VALUES ($1) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING id`,
-              [name]
-          );
-          const interestId = interestResult.rows[0].id;
-          await query(
-              `INSERT INTO user_interests (user_id, interest_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`,
-              [adminId, interestId]
-          );
+        const interestResult = await query(
+          `INSERT INTO interests (name) VALUES ($1) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING id`,
+          [name],
+        );
+        const interestId = interestResult.rows[0].id;
+        await query(
+          `INSERT INTO user_interests (user_id, interest_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`,
+          [adminId, interestId],
+        );
       }
 
       console.log("✅ Admin account and profile seeded!");
-
     } else {
       console.log("⚠️ Admin already exists. No changes made.");
     }
   } catch (error) {
     console.error("❌ seeding error: ", error);
   }
-
 }

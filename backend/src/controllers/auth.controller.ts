@@ -1,22 +1,31 @@
-import { Request, Response } from 'express';
-import  bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import  crypto from 'crypto';
-import { 
-    findUserByEmail, 
-    findUserByUsername, 
-    createUser, 
-    findUserByVerificationToken, 
-    verifyUser,
-    updatePassword,
-    setResetToken,
-    findUserByResetToken,
-    clearResetToken,
-    deleteUserById
-} from '../models/user.model';
-import { isValidEmail, isValidUserName, isValidPassword } from '../utils/validation';
-import { sendPasswordResetEmail, sendVerificationEmail } from '../utils/email';
-import { RegisterRequest, LoginRequest, ForgotPasswordRequest, ResetPasswordRequest } from '../types/user.types';
+import { Request, Response } from "express";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import crypto from "crypto";
+import {
+  findUserByEmail,
+  findUserByUsername,
+  createUser,
+  findUserByVerificationToken,
+  verifyUser,
+  updatePassword,
+  setResetToken,
+  findUserByResetToken,
+  clearResetToken,
+  deleteUserById,
+} from "../models/user.model";
+import {
+  isValidEmail,
+  isValidUserName,
+  isValidPassword,
+} from "../utils/validation";
+import { sendPasswordResetEmail, sendVerificationEmail } from "../utils/email";
+import {
+  RegisterRequest,
+  LoginRequest,
+  ForgotPasswordRequest,
+  ResetPasswordRequest,
+} from "../types/user.types";
 
 /*
     // 1. Get token and new password from request
@@ -28,27 +37,30 @@ import { RegisterRequest, LoginRequest, ForgotPasswordRequest, ResetPasswordRequ
     // 7. Clear reset token
     // 8. Return success
 */
-export const resetPassword = async (req: Request, res: Response) : Promise <void> => {
-    try {
-        const { newPassword, resetToken }  :ResetPasswordRequest = req.body;
-        if(!isValidPassword(newPassword) || !newPassword){
-            res.status(400).json({ error: 'invalid password format'});
-            return;
-        }
-        if(!resetToken){
-            res.status(400).json({ error: 'Reset token is required'})
-            return;
-        }
-        const existingUser = await findUserByResetToken(resetToken);
-        if(!existingUser){
-            res.status(400).json({ error: 'invalid or expired reset token'})
-            return;
-        }
-        const saltRounds = 10;
-        const password_hash = await bcrypt.hash(newPassword, saltRounds);
-        await updatePassword(existingUser.id, password_hash);
-        await clearResetToken(existingUser.id);
-        /*
+export const resetPassword = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { newPassword, resetToken }: ResetPasswordRequest = req.body;
+    if (!isValidPassword(newPassword) || !newPassword) {
+      res.status(400).json({ error: "invalid password format" });
+      return;
+    }
+    if (!resetToken) {
+      res.status(400).json({ error: "Reset token is required" });
+      return;
+    }
+    const existingUser = await findUserByResetToken(resetToken);
+    if (!existingUser) {
+      res.status(400).json({ error: "invalid or expired reset token" });
+      return;
+    }
+    const saltRounds = 10;
+    const password_hash = await bcrypt.hash(newPassword, saltRounds);
+    await updatePassword(existingUser.id, password_hash);
+    await clearResetToken(existingUser.id);
+    /*
         // const currentTime = new Date();
         // currentTime.setHours(currentTime.getHours());
         if(existingUser && existingUser.reset_token_expires > currentTime){
@@ -58,12 +70,12 @@ export const resetPassword = async (req: Request, res: Response) : Promise <void
             await clearResetToken(existingUser.id);
         }
 */
-        res.status(200).json({message:' Password updated.'})
-    } catch (error) {
-        console.error('Reset password error: ', error);
-        res.status(500).json({ error: 'Internal server error' })
-    }
-}
+    res.status(200).json({ message: " Password updated." });
+  } catch (error) {
+    console.error("Reset password error: ", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 /*
 ## Password Reset Flow (What We'll Build Next)
@@ -77,37 +89,38 @@ export const resetPassword = async (req: Request, res: Response) : Promise <void
 7. User enters new password
 8. Backend verifies token, updates password
 */
-export const forgotPassword = async (req: Request, res: Response) : Promise <void> => {
-    try{
-        const { email }: ForgotPasswordRequest = req.body;
+export const forgotPassword = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { email }: ForgotPasswordRequest = req.body;
 
-        // if(!isValidEmail(email) || !email) {
-        //     res.status(400).json({ error: 'Invalid email format'});
-        //     return;
-        // }
-        
-        if (email && isValidEmail(email)){
+    // if(!isValidEmail(email) || !email) {
+    //     res.status(400).json({ error: 'Invalid email format'});
+    //     return;
+    // }
 
-            const exisitngUser = await findUserByEmail(email);
+    if (email && isValidEmail(email)) {
+      const exisitngUser = await findUserByEmail(email);
 
-            if (exisitngUser && exisitngUser.is_verified){
-                const reset_token = crypto.randomBytes(32).toString('hex');
-                const expires = new Date();
-                expires.setHours(expires.getHours() + 1);
-        
-                await setResetToken(email, reset_token, expires);
-                await sendPasswordResetEmail(email, exisitngUser.username, reset_token);
-            }
-        }
-        res.status(200).json({
-            message: 'A password reset link has been sent'
-        });
+      if (exisitngUser && exisitngUser.is_verified) {
+        const reset_token = crypto.randomBytes(32).toString("hex");
+        const expires = new Date();
+        expires.setHours(expires.getHours() + 1);
 
-    }catch (error){
-        console.error('Forgot password error: ', error);
-        res.status(500).json({ error: 'Internal server error. Please try again.' });
+        await setResetToken(email, reset_token, expires);
+        await sendPasswordResetEmail(email, exisitngUser.username, reset_token);
+      }
     }
-}
+    res.status(200).json({
+      message: "A password reset link has been sent",
+    });
+  } catch (error) {
+    console.error("Forgot password error: ", error);
+    res.status(500).json({ error: "Internal server error. Please try again." });
+  }
+};
 
 /*
 Login function
@@ -122,59 +135,69 @@ Login function
 */
 
 export const login = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const { username, password }: LoginRequest = req.body;
+  try {
+    const { username, password }: LoginRequest = req.body;
 
-        // if(!isValidEmail(email)) {
-        //     res.status(400).json({ error: 'Invalid email or password.'});
-        //     return;
-        // }
-        if(!isValidPassword(password)) {
-            res.status(400).json({ error: 'Invalid email or password.'})
-            return;
-        }
-        const existingUser = await findUserByUsername(username);
+    // if(!isValidEmail(email)) {
+    //     res.status(400).json({ error: 'Invalid email or password.'});
+    //     return;
+    // }
+    if (!isValidPassword(password)) {
+      res.status(400).json({ error: "Invalid email or password." });
+      return;
+    }
+    const existingUser = await findUserByUsername(username);
 
-        if(existingUser === null){
-            res.status(400).json({ error: 'Invalid email or password.'});
-            return;
-        }
-        if (!existingUser.is_verified){
-            try{
-                await sendVerificationEmail(existingUser.email, existingUser.verification_token!)
-                res.status(400).json({ error: 'Your account is not verified. A new verification email has been sent.'})
-            }catch(emailError){
-                console.error('Failed to resend verification email: ', emailError);
-                res.status(500).json({ error: 'Failed to send verification email. Please try again.' });    
-            }
-            return;
-        }
-        const isMatch = await bcrypt.compare(password, existingUser.password_hash);
-
-        if(!isMatch){
-            res.status(400).json({ error: 'Invalid email or password.'})
-            return;
-        }
-        const jwtSecret = process.env.JWT_SECRET;
-        if(!jwtSecret)
-            throw new Error('JWT_SECRET is not defined');
-        const token = jwt.sign(
-            {
-                userId: existingUser.id,
-                email: existingUser.email,
-                username: existingUser.username
-            },
-            jwtSecret,
-            {
-                expiresIn: process.env.JWT_EXPIRES_IN || '7d'
-            } as jwt.SignOptions 
-
+    if (existingUser === null) {
+      res.status(400).json({ error: "Invalid email or password." });
+      return;
+    }
+    if (!existingUser.is_verified) {
+      try {
+        await sendVerificationEmail(
+          existingUser.email,
+          existingUser.verification_token!,
         );
+        res
+          .status(400)
+          .json({
+            error:
+              "Your account is not verified. A new verification email has been sent.",
+          });
+      } catch (emailError) {
+        console.error("Failed to resend verification email: ", emailError);
+        res
+          .status(500)
+          .json({
+            error: "Failed to send verification email. Please try again.",
+          });
+      }
+      return;
+    }
+    const isMatch = await bcrypt.compare(password, existingUser.password_hash);
 
-        res.status(200).json({
-            message: 'Login successful!',
-            token: token,
-/*
+    if (!isMatch) {
+      res.status(400).json({ error: "Invalid email or password." });
+      return;
+    }
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) throw new Error("JWT_SECRET is not defined");
+    const token = jwt.sign(
+      {
+        userId: existingUser.id,
+        email: existingUser.email,
+        username: existingUser.username,
+      },
+      jwtSecret,
+      {
+        expiresIn: process.env.JWT_EXPIRES_IN || "7d",
+      } as jwt.SignOptions,
+    );
+
+    res.status(200).json({
+      message: "Login successful!",
+      token: token,
+      /*
             user: {
                 id: existingUser.id,
                 username: existingUser.username,
@@ -183,11 +206,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
                 email: existingUser.email
             }
 */
-        });
-    }catch(error){
-        console.error('login error: ', error);
-        res.status(500).json({ error: 'Internal Server Error' })
-    }
+    });
+  } catch (error) {
+    console.error("login error: ", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
 /*what register needs to do:
@@ -202,68 +225,90 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 8. Return success response
 */
 
-export const register = async (req: Request, res: Response): Promise <void> => {
-    try{
-        const { email, username, first_name, last_name, password }: RegisterRequest = req.body;
+export const register = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const {
+      email,
+      username,
+      first_name,
+      last_name,
+      password,
+    }: RegisterRequest = req.body;
 
-        //check required field
-        if(!email || !username || !first_name || !last_name || !password){
-            res.status(400).json({error: 'All fields are required'});
-            return;
-        }
-        //validate formats first before touching the DB
-        if(!isValidEmail(email)){
-            res.status(400).json({error: 'Invalid email format'});
-            return;
-        }
-        if(!isValidUserName(username)){
-            res.status(400).json({error: 'Invalid username'});
-            return;
-        }
-        if(!isValidPassword(password)){
-            res.status(400).json({error: 'Password is too weak!'}); //fix 1
-            return;
-        }
-        //check for dulplicates
-        const existingEmail = await findUserByEmail(email);
-        //fix 2 used to verify duplicate email
-        if(existingEmail != null){
-            res.status(400).json({ error: 'This email is already registered.' });
-            return;
-        }
-
-        const existingUserName = await findUserByUsername(username);
-        
-        //username exitst
-        if (existingUserName != null){
-            res.status(400).json({error: 'Username already exist'});
-            return;
-        }
-
-        const saltRounds = 10;
-        const password_hash = await bcrypt.hash(password, saltRounds);
-        const verification_token = crypto.randomBytes(32).toString('hex');
-
-        const userData = { email, username, first_name, last_name, password_hash, verification_token };
-        const result = await createUser(userData);
-        const userId = result.rows[0].id;
-        console.log(`✅ User created with id: ${userId}`);
-        
-        // Fix 3: Roll back user creation if email fails
-        try {
-            await sendVerificationEmail(email, verification_token);
-        }catch(emailError){
-            await deleteUserById(userId); //this is the rollback i implemented
-            console.error("Email sending failed. User rolled back: ", emailError);
-            res.status(500).json({ error: 'Failed to send verification email. Please try again.'})
-            return;
-        }
-        res.status(201).json({ message: 'Registration successful! Please check your email to verify your account.'});
-    } catch (error){
-        console.log('Registration error: ', error);
-        res.status(500).json({error: 'Registration failed. Please try again.'});
+    //check required field
+    if (!email || !username || !first_name || !last_name || !password) {
+      res.status(400).json({ error: "All fields are required" });
+      return;
     }
-}
+    //validate formats first before touching the DB
+    if (!isValidEmail(email)) {
+      res.status(400).json({ error: "Invalid email format" });
+      return;
+    }
+    if (!isValidUserName(username)) {
+      res.status(400).json({ error: "Invalid username" });
+      return;
+    }
+    if (!isValidPassword(password)) {
+      res.status(400).json({ error: "Password is too weak!" }); //fix 1
+      return;
+    }
+    //check for dulplicates
+    const existingEmail = await findUserByEmail(email);
+    //fix 2 used to verify duplicate email
+    if (existingEmail != null) {
+      res.status(400).json({ error: "This email is already registered." });
+      return;
+    }
+
+    const existingUserName = await findUserByUsername(username);
+
+    //username exitst
+    if (existingUserName != null) {
+      res.status(400).json({ error: "Username already exist" });
+      return;
+    }
+
+    const saltRounds = 10;
+    const password_hash = await bcrypt.hash(password, saltRounds);
+    const verification_token = crypto.randomBytes(32).toString("hex");
+
+    const userData = {
+      email,
+      username,
+      first_name,
+      last_name,
+      password_hash,
+      verification_token,
+    };
+    const result = await createUser(userData);
+    const userId = result.rows[0].id;
+    console.log(`✅ User created with id: ${userId}`);
+
+    // Fix 3: Roll back user creation if email fails
+    try {
+      await sendVerificationEmail(email, verification_token);
+    } catch (emailError) {
+      await deleteUserById(userId); //this is the rollback i implemented
+      console.error("Email sending failed. User rolled back: ", emailError);
+      res
+        .status(500)
+        .json({
+          error: "Failed to send verification email. Please try again.",
+        });
+      return;
+    }
+    res
+      .status(201)
+      .json({
+        message:
+          "Registration successful! Please check your email to verify your account.",
+      });
+  } catch (error) {
+    console.log("Registration error: ", error);
+    res.status(500).json({ error: "Registration failed. Please try again." });
+  }
+};
 
 // export const register = async (req: Request, res: Response): Promise<void> => {
 //     try{
@@ -301,16 +346,16 @@ export const register = async (req: Request, res: Response): Promise <void> => {
 //             res.status(400).json({error: 'email is already registered'});
 //             return;
 //         }
-        
+
 //         // 4. Hash password
 //         // TODO: Use bcrypt
 //         const saltRounds = 10;
 //         const password_hash = await bcrypt.hash(password, saltRounds);
-        
+
 //         // 5. Generate verification token
 //         // TODO: Use crypto
 //         const verification_token = crypto.randomBytes(32).toString('hex');
-        
+
 //         // 6. Save user to database
 //         // TODO: Call createUser
 //         const userData = {
@@ -324,13 +369,13 @@ export const register = async (req: Request, res: Response): Promise <void> => {
 //         const result = await createUser(userData);
 //         const userId = result.rows[0].id;
 //         console.log(`✅ User created with id: ${userId}`);
-        
+
 //         // 7. Send verification email
 //         // TODO: Call sendVerificationEmail
 //         await sendVerificationEmail(email, username, verification_token);
 //         // 8. Return success response
 //         res.status(201).json({
-//             message: 'Registration successful! Please check your email to verify your account.' 
+//             message: 'Registration successful! Please check your email to verify your account.'
 //         });
 //     } catch (error){
 //         console.error('Registration error: ', error);
@@ -338,29 +383,34 @@ export const register = async (req: Request, res: Response): Promise <void> => {
 //     }
 // }
 
-
-
-export const verify = async(req: Request, res: Response): Promise<void>=>{
-    try{
-        const { token } = req.query;
-        if(!token || typeof token !== 'string'){
-            res.status(400).json({ error: 'Missing or invalid token'})
-            return
-        }
-        const user = await findUserByVerificationToken(token);
-        if(!user){
-            res.status(400).json({ error: 'User do not exist'});
-            return;
-        }
-        if(user.is_verified){
-            res.status(400).json({ error: 'User\'s email is already registered'})
-            return;
-        }
-        const userId =  user.id; 
-        await verifyUser(userId)
-        res.status(200).json({message: 'Email verified successfully! You can now log in.'})
-    }catch(error){
-        console.error("Verification error", error);
-        res.status(500).json({ error: 'Internal server error. Verificatition failed. Please try again.'});
-    };
-}
+export const verify = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { token } = req.query;
+    if (!token || typeof token !== "string") {
+      res.status(400).json({ error: "Missing or invalid token" });
+      return;
+    }
+    const user = await findUserByVerificationToken(token);
+    if (!user) {
+      res.status(400).json({ error: "User do not exist" });
+      return;
+    }
+    if (user.is_verified) {
+      res.status(400).json({ error: "User's email is already registered" });
+      return;
+    }
+    const userId = user.id;
+    await verifyUser(userId);
+    res
+      .status(200)
+      .json({ message: "Email verified successfully! You can now log in." });
+  } catch (error) {
+    console.error("Verification error", error);
+    res
+      .status(500)
+      .json({
+        error:
+          "Internal server error. Verificatition failed. Please try again.",
+      });
+  }
+};
