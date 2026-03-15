@@ -12,188 +12,28 @@ import {
   TagInput,
   VStack,
 } from 'rsuite';
-import profilePic from '../../assets/profilePic2.png';
 import { SearchFilterRange } from '../../components/search/SearchFilterRange';
+import type { SearchFilters, SearchSort } from '../../utils/types';
 import { HomePageTemplate } from './HomePageTemplate';
-
-const profilesJson = [
-  {
-    id: 1,
-    name: 'very-very-very-very-long-name',
-    image: profilePic,
-    age: 25,
-    fame: 1,
-    distance: 10.1,
-    tags: [
-      'car',
-      'animals',
-      'very-very-long-words',
-      'dogs',
-      'very-very-longer-longer- longer-words',
-    ],
-  },
-  {
-    id: 2,
-    name: 'User2',
-    image: profilePic,
-    age: 30,
-    fame: 2,
-    distance: 15.0,
-    tags: ['car', 'animals'],
-  },
-  {
-    id: 3,
-    name: 'User3',
-    image: profilePic,
-    age: 67,
-    fame: 3,
-    distance: 12.0,
-    tags: ['car', 'animals'],
-  },
-  {
-    id: 4,
-    name: 'User1',
-    image: profilePic,
-    age: 25,
-    fame: 1,
-    distance: 10.1,
-    tags: ['car', 'animals'],
-  },
-  {
-    id: 5,
-    name: 'User2',
-    image: profilePic,
-    age: 30,
-    fame: 2,
-    distance: 15.0,
-    tags: ['car', 'animals'],
-  },
-  {
-    id: 6,
-    name: 'User3',
-    image: profilePic,
-    age: 67,
-    fame: 3,
-    distance: 12.0,
-    tags: ['car', 'animals'],
-  },
-  {
-    id: 7,
-    name: 'User1',
-    image: profilePic,
-    age: 25,
-    fame: 1,
-    distance: 10.1,
-    tags: ['car', 'animals'],
-  },
-  {
-    id: 8,
-    name: 'User2',
-    image: profilePic,
-    age: 30,
-    fame: 2,
-    distance: 15.0,
-    tags: ['car', 'animals'],
-  },
-  {
-    id: 9,
-    name: 'User3',
-    image: profilePic,
-    age: 67,
-    fame: 3,
-    distance: 12.0,
-    tags: ['car', 'animals'],
-  },
-  {
-    id: 10,
-    name: 'User3',
-    image: profilePic,
-    age: 67,
-    fame: 3,
-    distance: 12.0,
-    tags: ['car', 'animals'],
-  },
-];
-
-const sortOptions = [
-  { value: 0, label: 'None' },
-  { value: 1, label: 'Low-to-high' },
-  { value: -1, label: 'High-to-low' },
-];
-
-function getRange<T extends keyof (typeof profilesJson)[number]>(
-  field: T,
-): [number, number] {
-  const [min, max] = profilesJson.reduce(
-    ([min, max], p) => [
-      Math.min(min, Number(p[field])),
-      Math.max(max, Number(p[field])),
-    ],
-    [Infinity, -Infinity],
-  );
-  return [Math.round(min), Math.round(max)];
-}
+import {
+  baseFilters,
+  baseSorts,
+  getFilteredProfiles,
+  getSortedProfiles,
+  profilesJson,
+  sortOptions,
+} from './SearchUtils';
 
 export default function Search() {
   return <HomePageTemplate page={<SearchPage />} />;
 }
 
 function SearchPage() {
-  const [searchUser, setSearchUser] = useState('');
+  const [filters, setFilters] = useState<SearchFilters>(baseFilters);
+  const [sortBy, setSortBy] = useState<SearchSort>(baseSorts);
 
-  const [sortByAge, setSortByAge] = useState<number | null>(0);
-  const [sortByDistance, setSortByDistance] = useState<number | null>(0);
-  const [sortByFame, setSortByFame] = useState<number | null>(0);
-  const [sortByTags, setSortByTags] = useState<number | null>(0);
-
-  const [ageRange, setAgeRange] = useState(getRange('age'));
-  const [distanceRange, setDistanceRange] = useState(getRange('distance'));
-  const [fameRange, setFameRange] = useState(getRange('fame'));
-
-  const [tagFilter, setTagFilter] = useState<string[]>([]);
-
-  const filtered = profilesJson.filter(
-    (p) =>
-      p.name.toLowerCase().startsWith(searchUser.toLowerCase()) &&
-      p.age >= ageRange[0] &&
-      p.age <= ageRange[1] &&
-      p.distance >= distanceRange[0] &&
-      p.distance <= distanceRange[1] &&
-      p.fame >= fameRange[0] &&
-      p.fame <= fameRange[1] &&
-      tagFilter.every((tag) => p.tags.includes(tag)),
-  );
-
-  const sorted = [...filtered].sort((a, b): number => {
-    if (sortByAge === 1) {
-      const r = a.age - b.age;
-      if (r !== 0) return r;
-    }
-    if (sortByAge === -1) {
-      const r = b.age - a.age;
-      if (r !== 0) return r;
-    }
-
-    if (sortByFame === 1) {
-      const r = a.fame - b.fame;
-      if (r !== 0) return r;
-    }
-    if (sortByFame === -1) {
-      const r = b.fame - a.fame;
-      if (r !== 0) return r;
-    }
-
-    if (sortByDistance === 1) {
-      const r = a.distance - b.distance;
-      if (r !== 0) return r;
-    }
-    if (sortByDistance === -1) {
-      const r = b.distance - a.distance;
-      if (r !== 0) return r;
-    }
-
-    return 0;
-  });
+  const filtered = getFilteredProfiles(profilesJson, filters);
+  const sorted = getSortedProfiles(filtered, sortBy);
 
   return (
     <div>
@@ -203,8 +43,8 @@ function SearchPage() {
         {/* Search Bar */}
         <Input
           placeholder='Search for user'
-          value={searchUser}
-          onChange={setSearchUser}
+          value={filters.name}
+          onChange={(value) => setFilters((prev) => ({ ...prev, name: value }))}
         />
 
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4'>
@@ -213,8 +53,10 @@ function SearchPage() {
           <SelectPicker
             label='Sort by age:'
             data={sortOptions}
-            value={sortByAge}
-            onChange={setSortByAge}
+            value={sortBy.age}
+            onChange={(value) =>
+              setSortBy((prev) => ({ ...prev, age: value! }))
+            }
             cleanable={false}
             searchable={false}
           />
@@ -222,8 +64,10 @@ function SearchPage() {
           <SelectPicker
             label='Sort by distance:'
             data={sortOptions}
-            value={sortByDistance}
-            onChange={setSortByDistance}
+            value={sortBy.distance}
+            onChange={(value) =>
+              setSortBy((prev) => ({ ...prev, distance: value! }))
+            }
             cleanable={false}
             searchable={false}
           />
@@ -231,8 +75,10 @@ function SearchPage() {
           <SelectPicker
             label='Sort by fame:'
             data={sortOptions}
-            value={sortByFame}
-            onChange={setSortByFame}
+            value={sortBy.fame}
+            onChange={(value) =>
+              setSortBy((prev) => ({ ...prev, fame: value! }))
+            }
             cleanable={false}
             searchable={false}
           />
@@ -240,41 +86,51 @@ function SearchPage() {
           <SelectPicker
             label='Sort by tags:'
             data={sortOptions}
-            value={sortByTags}
-            onChange={setSortByTags}
+            value={sortBy.tags}
+            onChange={(value) =>
+              setSortBy((prev) => ({ ...prev, tags: value! }))
+            }
             cleanable={false}
             searchable={false}
           />
 
           {/* Filter Options */}
           <SearchFilterRange
-            label='Age range:'
-            range={getRange('age')}
-            values={ageRange}
-            onChange={setAgeRange}
+            label='Age ranges:'
+            range={baseFilters.age}
+            values={filters.age}
+            onChange={(value) =>
+              setFilters((prev) => ({ ...prev, age: value }))
+            }
           />
 
           <SearchFilterRange
-            label='Distance range:'
-            range={getRange('distance')}
-            values={distanceRange}
-            onChange={setDistanceRange}
+            label='Distance ranges:'
+            range={baseFilters.distance}
+            values={filters.distance}
+            onChange={(value) =>
+              setFilters((prev) => ({ ...prev, distance: value }))
+            }
           />
 
           <SearchFilterRange
-            label='Fame range:'
-            range={getRange('fame')}
-            values={fameRange}
-            onChange={setFameRange}
+            label='Fame ranges:'
+            range={baseFilters.fame}
+            values={filters.fame}
+            onChange={(value) =>
+              setFilters((prev) => ({ ...prev, fame: value }))
+            }
           />
 
           <VStack>
             <p className='text-sm'>Filter for tags:</p>
             <TagInput
-              value={tagFilter}
+              value={filters.tags}
               trigger={['Space', 'Comma', 'Enter']}
               placeholder='Add a space after each tag'
-              onChange={(value) => setTagFilter([...value])}
+              onChange={(value) =>
+                setFilters((prev) => ({ ...prev, tags: [...value] }))
+              }
             />
           </VStack>
         </div>
@@ -307,7 +163,7 @@ function SearchPage() {
               </Card.Body>
               <Card.Footer>
                 <TagGroup className='flex flex-wrap w-full'>
-                  {c.tags.map((t) => (
+                  {c.tags.map((t: string) => (
                     <Tag key={t} color='pink' className='tag-ellipsis'>
                       <TagIcon /> {t}
                     </Tag>

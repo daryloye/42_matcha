@@ -11,6 +11,21 @@ export type ChatItem = {
   messages: { from: string; message: string }[];
 };
 
+export type SearchFilters = {
+  name: string;
+  age: [number, number];
+  distance: [number, number];
+  fame: [number, number];
+  tags: string[];
+};
+
+export type SearchSort = {
+  age: number;
+  distance: number;
+  fame: number;
+  tags: number;
+};
+
 export type BasicProfile = {
   username: string;
   first_name: string;
