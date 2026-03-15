@@ -222,15 +222,13 @@ export const getFullProfileDetails = async (
       return;
     }
 
-    const fullProfileDetails = await getProfileDetails(userId);
+    const profile = await getProfileDetails(userId);
 
-    if (!fullProfileDetails) {
+    if (!profile) {
       res.status(404).json({ error: "user profile does not exist" });
       return;
     }
-    res
-      .status(200)
-      .json({ message: "Profile returned successfully", fullProfileDetails });
+    res.status(200).json({ message: "Profile returned successfully", profile });
   } catch (error) {
     console.error("error getting owner", error);
     res.status(500).json({ error: "Internal server error" });

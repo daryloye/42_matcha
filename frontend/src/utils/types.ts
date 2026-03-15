@@ -18,3 +18,15 @@ export type BasicProfile = {
   picture: string;
   is_profile_completed: boolean;
 };
+
+export type ProfileForm = {
+  firstname: string;
+  lastname: string;
+  email: string;
+  dateOfBirth: Date;
+  gender: string;
+  preference: string;
+  biography: string;
+  interests: string[];
+  pictures: any;
+};

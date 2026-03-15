@@ -16,7 +16,6 @@ import {
   Whisper,
 } from 'rsuite';
 import { GetBasicProfile } from '../../api/profile';
-import profilePic from '../../assets/profilePic2.png';
 import { deleteToken, getToken } from '../../utils/token';
 import type { BasicProfile } from '../../utils/types';
 
@@ -117,7 +116,7 @@ function Sidebar({ profile }: { profile: BasicProfile }) {
   return (
     <div className='home-sidebar flex flex-col gap-4'>
       <HStack spacing={15}>
-        <Avatar src={profilePic} size='xl' circle />
+        <Avatar src={profile.picture} size='xl' circle />
 
         <Tag color='red' size='lg'>
           <HeartIcon /> 3

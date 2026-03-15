@@ -6,10 +6,7 @@ export async function Login(params: any) {
     new Headers({
       'Content-Type': 'application/json',
     }),
-    JSON.stringify({
-      username: params.username,
-      password: params.password,
-    }),
+    JSON.stringify(params),
   );
 }
 
@@ -19,13 +16,7 @@ export async function Register(params: any) {
     new Headers({
       'Content-Type': 'application/json',
     }),
-    JSON.stringify({
-      last_name: params.lastname,
-      first_name: params.firstname,
-      email: params.email,
-      username: params.username,
-      password: params.password,
-    }),
+    JSON.stringify(params),
   );
 }
 
@@ -44,21 +35,16 @@ export async function ForgotPassword(params: any) {
     new Headers({
       'Content-Type': 'application/json',
     }),
-    JSON.stringify({
-      email: params.email,
-    }),
+    JSON.stringify(params),
   );
 }
 
 export async function ResetPassword(params: any) {
   return await PostHTTP(
-    `/api/auth/reset-password`,
+    '/api/auth/reset-password',
     new Headers({
       'Content-Type': 'application/json',
     }),
-    JSON.stringify({
-      newPassword: params.password,
-      resetToken: params.token,
-    }),
+    JSON.stringify(params),
   );
 }

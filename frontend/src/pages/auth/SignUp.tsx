@@ -43,8 +43,8 @@ export default function SignUpPage() {
 
     try {
       const res = await Register({
-        firstname: formValue.firstname,
-        lastname: formValue.lastname,
+        first_name: formValue.firstname,
+        last_name: formValue.lastname,
         email: formValue.email,
         username: formValue.username,
         password: formValue.password,

@@ -46,8 +46,8 @@ export default function ResetPasswordPage() {
 
     try {
       const res = await ResetPassword({
-        password: formValue.password,
-        token: token,
+        newPassword: formValue.password,
+        resetToken: token,
       });
       toaster.push(
         <Notification type='info' closable>

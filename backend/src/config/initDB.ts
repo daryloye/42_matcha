@@ -5,7 +5,13 @@ const createTables = async () => {
   const sql = `
     CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-    CREATE TABLE IF NOT EXISTS users (
+    DROP TABLE IF EXISTS users CASCADE;
+    DROP TABLE IF EXISTS profiles CASCADE;
+    DROP TABLE IF EXISTS profile_pictures CASCADE;
+    DROP TABLE IF EXISTS interests CASCADE;
+    DROP TABLE IF EXISTS user_interests CASCADE;
+
+    CREATE TABLE users (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         email VARCHAR(255) UNIQUE NOT NULL,
         username VARCHAR(50) UNIQUE NOT NULL,
@@ -20,7 +26,7 @@ const createTables = async () => {
         updated_at TIMESTAMP DEFAULT NOW()
     );
 
-    CREATE TABLE IF NOT EXISTS profiles (
+    CREATE TABLE profiles (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
         gender VARCHAR(20),
@@ -36,7 +42,7 @@ const createTables = async () => {
         updated_at TIMESTAMP DEFAULT NOW()
     );
 
-    CREATE TABLE IF NOT EXISTS profile_pictures (
+    CREATE TABLE profile_pictures (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         image_url VARCHAR(255),
@@ -44,13 +50,13 @@ const createTables = async () => {
         created_at TIMESTAMP DEFAULT NOW()
     );
 
-    CREATE TABLE IF NOT EXISTS interests (
+    CREATE TABLE interests (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         name VARCHAR(50) UNIQUE NOT NULL,
         created_at TIMESTAMP DEFAULT NOW()
     );
 
-    CREATE TABLE IF NOT EXISTS user_interests (
+    CREATE TABLE user_interests (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         interest_id UUID NOT NULL REFERENCES interests(id) ON DELETE CASCADE,

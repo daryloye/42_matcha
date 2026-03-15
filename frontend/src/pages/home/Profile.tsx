@@ -1,73 +1,74 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { RxAvatar, RxCamera } from 'react-icons/rx';
+import { useNavigate } from 'react-router-dom';
 import {
-  ArrayType,
   Box,
   Button,
   DatePicker,
-  DateType,
   Form,
   Loader,
   Notification,
-  Schema,
   SelectPicker,
-  StringType,
   TagInput,
   Textarea,
   Uploader,
   useToaster,
 } from 'rsuite';
+import { GetFullProfile, UpdateProfile } from '../../api/profile';
 import { ProfileLocation } from '../../components/profile/ProfileLocation';
+import { getToken } from '../../utils/token';
+import type { ProfileForm } from '../../utils/types';
 import { HomePageTemplate } from './HomePageTemplate';
+import { genderData, model, preferenceData } from './ProfileUtils';
 
 export default function Profile() {
   return <HomePageTemplate page={<ProfilePage />} />;
 }
 
-const genderData = [
-  { value: 'male', label: 'Male' },
-  { value: 'female', label: 'Female' },
-];
-
-const preferenceData = [
-  { value: 'male', label: 'Male' },
-  { value: 'female', label: 'Female' },
-  { value: 'both', label: 'Both' },
-];
-
-const model = Schema.Model({
-  firstname: StringType().isRequired('First name is required'),
-  lastname: StringType().isRequired('Last name is required'),
-  email: StringType()
-    .isEmail('Please enter a vaild email')
-    .isRequired('Email is required'),
-  dateOfBirth: DateType().isRequired('Date of birth is required'),
-  gender: StringType().isRequired('Gender is required'),
-  preference: StringType().isRequired('Preference is required'),
-  interests: ArrayType()
-    .maxLength(5, 'Maximum 5 tags allowed')
-    .of(StringType().maxLength(20, 'Max 20 characters for each tag')),
-});
-
 function ProfilePage() {
   const [loading, setLoading] = useState(false);
-  const [formValue, setFormValue] = useState({
-    firstname: '',
-    lastname: '',
-    email: '',
-    dateOfBirth: null as Date | null,
-    gender: null as string | null,
-    preference: null as string | null,
-    biography: '',
-    interests: null as string[] | null,
-    pictures: null,
-  });
+  const [formValue, setFormValue] = useState<ProfileForm | null>(null);
 
   const [uploading, setUploading] = useState(false);
   const [fileInfo, setFileInfo] = useState<any>(null);
   const [position, setPosition] = useState(null);
 
   const toaster = useToaster();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = getToken();
+    if (!token) {
+      navigate('/');
+      return;
+    }
+
+    async function fetchProfile() {
+      try {
+        const res = await GetFullProfile(token!);
+        setFormValue({
+          firstname: res.profile.first_name,
+          lastname: res.profile.last_name,
+          email: res.profile.email,
+          dateOfBirth: new Date(res.profile.date_of_birth),
+          gender: res.profile.gender,
+          preference: res.profile.sexual_preference,
+          biography: res.profile.biography,
+          interests: res.profile.interests,
+          pictures: res.profile.pictures,
+        });
+      } catch (err: any) {
+        toaster.push(
+          <Notification type='error' closable>
+            {err.message}
+          </Notification>,
+        );
+        navigate('/');
+      }
+    }
+
+    fetchProfile();
+  }, []);
 
   const handleChange = (value: any) => {
     setFormValue({
@@ -85,24 +86,43 @@ function ProfilePage() {
 
   const handleSubmit = async () => {
     setLoading(true);
-    toaster.push(
-      <Notification type='success' closable>
-        Profile updated
-        <p>Firstname: {formValue.firstname}</p>
-        <p>Lastname: {formValue.lastname}</p>
-        <p>Email: {formValue.email}</p>
-        <p>Date of birth: {formValue.dateOfBirth?.toLocaleDateString()}</p>
-        <p>Gender: {formValue.gender}</p>
-        <p>Preference: {formValue.preference}</p>
-        <p>Biography: {formValue.biography}</p>
-        <p>Interests:</p>
-        {formValue.interests?.map((i) => (
-          <p>- {i}</p>
-        ))}
-      </Notification>,
-    );
-    setLoading(false);
+
+    const token = getToken();
+    if (!token) {
+      navigate('/');
+      return;
+    }
+
+    try {
+      await UpdateProfile(token, {
+        firstname: formValue?.firstname,
+        lastname: formValue?.lastname,
+        email: formValue?.email,
+        date_of_birth: formValue?.dateOfBirth,
+        gender: formValue?.gender,
+        sexual_preference: formValue?.preference,
+        biography: formValue?.biography,
+        interests: formValue?.interests,
+        pictures: formValue?.pictures,
+      });
+
+      toaster.push(
+        <Notification type='success' closable>
+          Profile updated
+        </Notification>,
+      );
+    } catch (err: any) {
+      toaster.push(
+        <Notification type='error' closable>
+          {err.message}
+        </Notification>,
+      );
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (!formValue) return null;
 
   return (
     <div>

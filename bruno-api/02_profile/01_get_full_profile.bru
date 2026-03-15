@@ -1,11 +1,11 @@
 meta {
-  name: 01_get_complete_profile
+  name: 01_get_full_profile
   type: http
   seq: 2
 }
 
-post {
-  url: {{baseUrl}}/api/profile/update
+get {
+  url: {{baseUrl}}/api/profile/details
   body: json
   auth: inherit
 }

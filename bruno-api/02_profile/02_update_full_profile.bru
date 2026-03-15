@@ -1,0 +1,45 @@
+meta {
+  name: 02_update_full_profile
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/profile/update
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "firstname": "firstname",
+    "lastname": "lastname",
+    "email": "email@test.com",
+    "date_of_birth": "2025-01-01T00:00:00.000Z",
+    "gender": "male",
+    "sexual_preference": "female",
+    "biography": "test biography",
+    "interests": [
+      "testing",
+      "1",
+      "2",
+      "3"
+    ],
+    "pictures": null
+  }
+}
+
+tests {
+  test("status 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}
+
+settings {
+  encodeUrl: false
+  timeout: 10000
+}
