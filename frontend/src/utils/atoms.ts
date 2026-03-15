@@ -1,4 +1,5 @@
 import { atom } from 'jotai';
+<<<<<<< HEAD
 import { atomWithStorage } from 'jotai/utils';
 import type { ChatItem, PictureItem } from './types';
 
@@ -15,6 +16,9 @@ export const biographyAtom = atom<string>('');
 export const tagListAtom = atom<string[]>(['hello', 'world']);
 export const picturesAtom = atom<PictureItem[]>([]);
 export const locationAtom = atom<any>(null);
+=======
+import type { ChatItem } from './types';
+>>>>>>> main
 
 // Chat Page
 export const selectedChatAtom = atom<ChatItem | null>(null);

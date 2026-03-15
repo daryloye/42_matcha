@@ -1,53 +1,80 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { Button, Form, Notification, Schema, useToaster } from 'rsuite';
 import { ForgotPassword } from '../../api/auth';
-import { ActionButton } from '../../components/ActionButton';
-import { TextInput } from '../../components/TextInput';
-import './auth.css';
+
+const { StringType } = Schema.Types;
+const model = Schema.Model({
+  email: StringType()
+    .isEmail('Please enter a vaild email')
+    .isRequired('Email is required'),
+});
 
 export default function ForgotPasswordPage() {
-  const [formData, setFormData] = useState({
+  const [loading, setLoading] = useState(false);
+  const [formValue, setFormValue] = useState({
     email: '',
   });
+
+  const toaster = useToaster();
   const navigate = useNavigate();
 
-  const handleChange = (field: keyof typeof formData, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
   const handleSubmit = async () => {
-    if (formData.email === '') {
-      toast.error('Please enter your email');
-    }
+    setLoading(true);
 
     try {
-      const res = await ForgotPassword(formData);
-      toast.info(res.message);
+      const res = await ForgotPassword({
+        email: formValue.email,
+      });
+      toaster.push(
+        <Notification type='info' closable>
+          {res.message}
+        </Notification>,
+      );
       navigate('/');
     } catch (err: any) {
-      toast.error(err.message);
+      toaster.push(
+        <Notification type='error' closable>
+          {err.message}
+        </Notification>,
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className='page-wrapper'>
-      <div className='page-container login-container'>
+    <div className='min-h-screen flex flex-col items-center justify-center'>
+      <div className='flex flex-col items-center gap-3 px-24 py-12 bg-white/75 backdrop-blur-md rounded-3xl border-2'>
         <h1>Welcome to Matcha</h1>
 
-        <form>
-          <TextInput
-            type='email'
-            value={formData.email}
-            onChange={(value) => handleChange('email', value)}
-            placeholder='Your email'
-          />
+        <Form
+          fluid
+          formValue={formValue}
+          model={model}
+          onChange={(value) =>
+            setFormValue({
+              email: value.email.trim(),
+            })
+          }
+          onSubmit={handleSubmit}
+          className='flex flex-col items-center pt-6'
+        >
+          <Form.Stack spacing={5}>
+            <Form.Control name='email' placeholder='Your email' />
 
-          <ActionButton text='Request Reset Link' onClick={handleSubmit} />
-        </form>
+            <Form.Group className='my-4'>
+              <Button
+                type='submit'
+                appearance='primary'
+                loading={loading}
+                block
+              >
+                Request Reset Link
+              </Button>
+            </Form.Group>
+          </Form.Stack>
+        </Form>
 
         <Link to='/'>Back to Login</Link>
       </div>

@@ -15,6 +15,7 @@ install:
 	npm install
 
 dev:
+	echo "Starting development environment on http://localhost:5173/"
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
 
 test:

@@ -2,7 +2,7 @@
   "name": "bruno-api",
   "private": true,
   "devDependencies": {
-    "@usebruno/cli": "^3.0.3"
+    "@usebruno/cli": "^1.39.0"
   },
   "scripts": {
     "test": "bru run . -r --tests-only --env matcha"

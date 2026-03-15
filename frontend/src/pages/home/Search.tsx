@@ -1,12 +1,25 @@
+import CalendarIcon from '@rsuite/icons/Calendar';
+import HeartIcon from '@rsuite/icons/Heart';
+import LocationIcon from '@rsuite/icons/Location';
+import TagIcon from '@rsuite/icons/Tag';
 import { useState } from 'react';
+import {
+  Card,
+  Input,
+  SelectPicker,
+  Tag,
+  TagGroup,
+  TagInput,
+  VStack,
+} from 'rsuite';
 import profilePic from '../../assets/profilePic2.png';
-import { HomePageTemplate } from '../../components/home/HomePageTemplate';
-import styles from './Search.module.css';
+import { SearchFilterRange } from '../../components/search/SearchFilterRange';
+import { HomePageTemplate } from './HomePageTemplate';
 
 const profilesJson = [
   {
     id: 1,
-    name: 'User1',
+    name: 'very-very-very-very-long-name',
     image: profilePic,
     age: 25,
     fame: 1,
@@ -16,7 +29,7 @@ const profilesJson = [
       'animals',
       'very-very-long-words',
       'dogs',
-      'very-very-longer-words',
+      'very-very-longer-longer- longer-words',
     ],
   },
   {
@@ -102,50 +115,206 @@ const profilesJson = [
   },
 ];
 
+const sortOptions = [
+  { value: 0, label: 'None' },
+  { value: 1, label: 'Low-to-high' },
+  { value: -1, label: 'High-to-low' },
+];
+
+function getRange<T extends keyof (typeof profilesJson)[number]>(
+  field: T,
+): [number, number] {
+  const [min, max] = profilesJson.reduce(
+    ([min, max], p) => [
+      Math.min(min, Number(p[field])),
+      Math.max(max, Number(p[field])),
+    ],
+    [Infinity, -Infinity],
+  );
+  return [Math.round(min), Math.round(max)];
+}
+
 export default function Search() {
   return <HomePageTemplate page={<SearchPage />} />;
 }
 
 function SearchPage() {
   const [searchUser, setSearchUser] = useState('');
-  const filtered = profilesJson.filter((profile) =>
-    profile.name.toLowerCase().startsWith(searchUser.toLowerCase()),
+
+  const [sortByAge, setSortByAge] = useState<number | null>(0);
+  const [sortByDistance, setSortByDistance] = useState<number | null>(0);
+  const [sortByFame, setSortByFame] = useState<number | null>(0);
+  const [sortByTags, setSortByTags] = useState<number | null>(0);
+
+  const [ageRange, setAgeRange] = useState(getRange('age'));
+  const [distanceRange, setDistanceRange] = useState(getRange('distance'));
+  const [fameRange, setFameRange] = useState(getRange('fame'));
+
+  const [tagFilter, setTagFilter] = useState<string[]>([]);
+
+  const filtered = profilesJson.filter(
+    (p) =>
+      p.name.toLowerCase().startsWith(searchUser.toLowerCase()) &&
+      p.age >= ageRange[0] &&
+      p.age <= ageRange[1] &&
+      p.distance >= distanceRange[0] &&
+      p.distance <= distanceRange[1] &&
+      p.fame >= fameRange[0] &&
+      p.fame <= fameRange[1] &&
+      tagFilter.every((tag) => p.tags.includes(tag)),
   );
 
+  const sorted = [...filtered].sort((a, b): number => {
+    if (sortByAge === 1) {
+      const r = a.age - b.age;
+      if (r !== 0) return r;
+    }
+    if (sortByAge === -1) {
+      const r = b.age - a.age;
+      if (r !== 0) return r;
+    }
+
+    if (sortByFame === 1) {
+      const r = a.fame - b.fame;
+      if (r !== 0) return r;
+    }
+    if (sortByFame === -1) {
+      const r = b.fame - a.fame;
+      if (r !== 0) return r;
+    }
+
+    if (sortByDistance === 1) {
+      const r = a.distance - b.distance;
+      if (r !== 0) return r;
+    }
+    if (sortByDistance === -1) {
+      const r = b.distance - a.distance;
+      if (r !== 0) return r;
+    }
+
+    return 0;
+  });
+
   return (
-    <div className='home-page-layout'>
+    <div>
       <h1>Search</h1>
-      <div className={styles.searchContainer}>
-        <input
-          type='text'
-          value={searchUser}
-          onChange={(e) => setSearchUser(e.target.value.trim())}
+
+      <div className='flex flex-col mt-5 gap-4'>
+        {/* Search Bar */}
+        <Input
           placeholder='Search for user'
-          className={styles.searchUserInput}
+          value={searchUser}
+          onChange={setSearchUser}
         />
 
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4'>
+          {/* Sort Options */}
+
+          <SelectPicker
+            label='Sort by age:'
+            data={sortOptions}
+            value={sortByAge}
+            onChange={setSortByAge}
+            cleanable={false}
+            searchable={false}
+          />
+
+          <SelectPicker
+            label='Sort by distance:'
+            data={sortOptions}
+            value={sortByDistance}
+            onChange={setSortByDistance}
+            cleanable={false}
+            searchable={false}
+          />
+
+          <SelectPicker
+            label='Sort by fame:'
+            data={sortOptions}
+            value={sortByFame}
+            onChange={setSortByFame}
+            cleanable={false}
+            searchable={false}
+          />
+
+          <SelectPicker
+            label='Sort by tags:'
+            data={sortOptions}
+            value={sortByTags}
+            onChange={setSortByTags}
+            cleanable={false}
+            searchable={false}
+          />
+
+          {/* Filter Options */}
+          <SearchFilterRange
+            label='Age range:'
+            range={getRange('age')}
+            values={ageRange}
+            onChange={setAgeRange}
+          />
+
+          <SearchFilterRange
+            label='Distance range:'
+            range={getRange('distance')}
+            values={distanceRange}
+            onChange={setDistanceRange}
+          />
+
+          <SearchFilterRange
+            label='Fame range:'
+            range={getRange('fame')}
+            values={fameRange}
+            onChange={setFameRange}
+          />
+
+          <VStack>
+            <p className='text-sm'>Filter for tags:</p>
+            <TagInput
+              value={tagFilter}
+              trigger={['Space', 'Comma', 'Enter']}
+              placeholder='Add a space after each tag'
+              onChange={(value) => setTagFilter([...value])}
+            />
+          </VStack>
+        </div>
+
         {/* Search Results */}
-        <div className={styles.searchResultsGrid}>
-          {filtered.map((c) => (
-            <button
-              type='button'
+        <div className='mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8'>
+          {sorted.map((c) => (
+            <Card
               key={c.id}
-              className={styles.searchResultsItem}
+              shaded
+              as='button'
+              className='text-left transition transform active:scale-95 hover:scale-[1.02]'
             >
-              <img
-                src={c.image}
-                className={styles.searchResultsProfilePicture}
-              />
-              <h2>{c.name}</h2>
-              <p>Age: {c.age}</p>
-              <p>{c.fame}❤️</p>
-              <p>{c.distance} km away</p>
-              <div className={styles.tags}>
-                {c.tags.map((t) => (
-                  <p>#{t}</p>
-                ))}
-              </div>
-            </button>
+              <img src={c.image} alt='Shadow' />
+              <Card.Header>
+                <p className='text-xl font-bold truncate'>{c.name}</p>
+              </Card.Header>
+              <Card.Body>
+                <VStack>
+                  <Tag color='violet' size='lg' className='opacity-70'>
+                    <CalendarIcon /> Age: {c.age}
+                  </Tag>
+                  <Tag color='cyan' size='lg' className='opacity-80'>
+                    <LocationIcon /> {c.distance} km away
+                  </Tag>
+                  <Tag color='red' size='lg'>
+                    <HeartIcon /> {c.fame}
+                  </Tag>
+                </VStack>
+              </Card.Body>
+              <Card.Footer>
+                <TagGroup className='flex flex-wrap w-full'>
+                  {c.tags.map((t) => (
+                    <Tag key={t} color='pink' className='tag-ellipsis'>
+                      <TagIcon /> {t}
+                    </Tag>
+                  ))}
+                </TagGroup>
+              </Card.Footer>
+            </Card>
           ))}
         </div>
       </div>

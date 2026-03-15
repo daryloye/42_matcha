@@ -2,7 +2,8 @@ import { Provider } from 'jotai';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
+import { CustomProvider } from 'rsuite';
+import 'rsuite/dist/rsuite.min.css';
 import './index.css';
 import ForgotPasswordPage from './pages/auth/ForgotPassword';
 import LoginPage from './pages/auth/Login';
@@ -17,37 +18,27 @@ import NotFoundPage from './pages/notFound/NotFoundPage';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Provider>
-      <Router>
-        <Routes>
-          {/* Auth */}
-          <Route path='/' element={<LoginPage />} />
-          <Route path='/signup' element={<SignUpPage />} />
-          <Route path='/verify' element={<VerifyPage />} />
-          <Route path='/forgotpassword' element={<ForgotPasswordPage />} />
-          <Route path='/resetpassword' element={<ResetPasswordPage />} />
+    <CustomProvider>
+      <Provider>
+        <Router>
+          <Routes>
+            {/* Auth */}
+            <Route path='/' element={<LoginPage />} />
+            <Route path='/signup' element={<SignUpPage />} />
+            <Route path='/verify' element={<VerifyPage />} />
+            <Route path='/forgotpassword' element={<ForgotPasswordPage />} />
+            <Route path='/resetpassword' element={<ResetPasswordPage />} />
 
-          {/* Profile */}
-          <Route path='/search' element={<Search />} />
-          <Route path='/profile' element={<Profile />} />
-          <Route path='/chat' element={<Chat />} />
-          <Route path='/account' element={<Account />} />
+            {/* Profile */}
+            <Route path='/search' element={<Search />} />
+            <Route path='/profile' element={<Profile />} />
+            <Route path='/chat' element={<Chat />} />
+            <Route path='/account' element={<Account />} />
 
-          <Route path='*' element={<NotFoundPage />} />
-        </Routes>
-      </Router>
-      <ToastContainer
-        position='top-right'
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme='colored'
-      />
-    </Provider>
+            <Route path='*' element={<NotFoundPage />} />
+          </Routes>
+        </Router>
+      </Provider>
+    </CustomProvider>
   </StrictMode>,
 );

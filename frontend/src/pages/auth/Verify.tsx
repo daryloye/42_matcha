@@ -1,10 +1,12 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { Notification, useToaster } from 'rsuite';
 import { Verify } from '../../api/auth';
 
+// Verifies the user's registration and redirects to Home page
 export default function VerifyPage() {
   const [searchParams] = useSearchParams();
+  const toaster = useToaster();
   const navigate = useNavigate();
   const ran = useRef(false);
 
@@ -14,7 +16,11 @@ export default function VerifyPage() {
 
     const token = searchParams.get('token');
     if (!token) {
-      toast.error('Invalid verification link');
+      toaster.push(
+        <Notification type='error' closable>
+          Invalid verification link
+        </Notification>,
+      );
       navigate('/');
       return;
     }
@@ -22,9 +28,17 @@ export default function VerifyPage() {
     async function verify(token: string) {
       try {
         const res = await Verify(token);
-        toast.info(res.message);
+        toaster.push(
+          <Notification type='info' closable>
+            {res.message}
+          </Notification>,
+        );
       } catch (err: any) {
-        toast.error(err.message);
+        toaster.push(
+          <Notification type='error' closable>
+            {err.message}
+          </Notification>,
+        );
       } finally {
         navigate('/');
       }

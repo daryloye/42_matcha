@@ -1,77 +1,113 @@
 import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import {
+  Button,
+  Form,
+  Notification,
+  PasswordInput,
+  Schema,
+  useToaster,
+} from 'rsuite';
 import { ResetPassword } from '../../api/auth';
-import { ActionButton } from '../../components/ActionButton';
-import { TextInput } from '../../components/TextInput';
-import './auth.css';
+
+const { StringType } = Schema.Types;
+const model = Schema.Model({
+  password: StringType().isRequired('Password is required'),
+  confirmPassword: StringType()
+    .isRequired('Please retype password')
+    .addRule((value, data) => value === data.password, 'Passwords must match'),
+});
 
 export default function ResetPasswordPage() {
+  const [loading, setLoading] = useState(false);
+  const [formValue, setFormValue] = useState({
+    password: '',
+    confirmPassword: '',
+  });
+
+  const toaster = useToaster();
   const navigate = useNavigate();
 
+  // Get reset password token from search parameters
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
   if (!token) {
-    toast.error('Invalid token');
+    toaster.push(
+      <Notification type='error' closable>
+        Invalid token
+      </Notification>,
+    );
     navigate('/');
     return;
   }
 
-  const [formData, setFormData] = useState({
-    password: '',
-    passwordRetype: '',
-    token: token,
-  });
-
-  const handleChange = (field: keyof typeof formData, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
   const handleSubmit = async () => {
-    if (formData.password === '') {
-      toast.error('Please enter a password');
-      return;
-    }
-
-    if (formData.password !== formData.passwordRetype) {
-      toast.error('Passwords do not match');
-      return;
-    }
+    setLoading(true);
 
     try {
-      const res = await ResetPassword(formData);
-      toast.info(res.message);
+      const res = await ResetPassword({
+        password: formValue.password,
+        token: token,
+      });
+      toaster.push(
+        <Notification type='info' closable>
+          {res.message}
+        </Notification>,
+      );
       navigate('/');
     } catch (err: any) {
-      toast.error(err.message);
+      toaster.push(
+        <Notification type='error' closable>
+          {err.message}
+        </Notification>,
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className='page-wrapper'>
-      <div className='page-container login-container'>
+    <div className='min-h-screen flex flex-col items-center justify-center'>
+      <div className='flex flex-col items-center gap-3 px-24 py-12 bg-white/75 backdrop-blur-md rounded-3xl border-2'>
         <h1>Welcome to Matcha</h1>
 
-        <form>
-          <TextInput
-            type='password'
-            value={formData.password}
-            onChange={(value) => handleChange('password', value)}
-            placeholder='Enter new password'
-          />
+        <Form
+          fluid
+          formValue={formValue}
+          model={model}
+          onChange={(value) =>
+            setFormValue({
+              password: value.password.trim(),
+              confirmPassword: value.confirmPassword.trim(),
+            })
+          }
+          onSubmit={handleSubmit}
+          className='flex flex-col items-center pt-6'
+        >
+          <Form.Stack spacing={5}>
+            <Form.Control
+              name='password'
+              accepter={PasswordInput}
+              placeholder='Password'
+            />
+            <Form.Control
+              name='confirmPassword'
+              accepter={PasswordInput}
+              placeholder='Confirm Password'
+            />
 
-          <TextInput
-            type='password'
-            value={formData.passwordRetype}
-            onChange={(value) => handleChange('passwordRetype', value)}
-            placeholder='Retype password'
-          />
-
-          <ActionButton text='Reset Password' onClick={handleSubmit} />
-        </form>
+            <Form.Group className='my-4'>
+              <Button
+                type='submit'
+                appearance='primary'
+                loading={loading}
+                block
+              >
+                Reset Password
+              </Button>
+            </Form.Group>
+          </Form.Stack>
+        </Form>
 
         <Link to='/'>Back to Login</Link>
       </div>

@@ -1,3 +1,5 @@
+@import 'tailwindcss';
+
 @font-face {
   font-family: 'Pricedown';
   src:
@@ -6,47 +8,60 @@
 }
 
 :root {
+  --color-primary: #213547;
+  --color-secondary: grey;
+  --color-link: #5c7de0;
+  --color-link-hover: #b394d6;
   font-family: sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
-  color: #213547;
-  background-color: #242424;
+  color: var(--color-primary);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --rs-primary-50: #eef2ff;
+  --rs-primary-100: #dce4ff;
+  --rs-primary-200: #bccaff;
+  --rs-primary-300: #9cb0ff;
+  --rs-primary-400: #7c97f0;
+  --rs-primary-500: #5c7de0;
+  --rs-primary-600: #4a66b8;
+  --rs-primary-700: #384f90;
+  --rs-primary-800: #273867;
+  --rs-primary-900: #16223f;
 }
+
+/* Scrollbar */
 *::-webkit-scrollbar {
   width: 5px;
+  height: 5px;
 }
 *::-webkit-scrollbar-track {
   background: transparent;
 }
 *::-webkit-scrollbar-thumb {
-  background: #888;
+  background: var(--color-secondary);
   border-radius: 5px;
 }
 *::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: var(--color-primary);
 }
 
 a {
   font-weight: 500;
-  color: #5c7de0;
+  color: var(--color-link);
   text-decoration: underline;
 }
 a:hover {
-  color: #b394d6;
+  color: var(--color-link-hover);
 }
 
 body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-
   background-image: url('./assets/background.png');
   background-size: cover;
   background-repeat: no-repeat;
@@ -59,74 +74,34 @@ h1 {
   line-height: 1.1;
   margin: 0px;
   padding: 0px;
-  color: #213547;
+  color: var(--color-primary);
 }
 
-input,
-textarea {
-  background-color: rgba(255, 255, 255, 0.7);
-  color: #242424;
-  border-radius: 5px;
-  border: 1px solid grey;
-  padding: 10px;
-  font-family: sans-serif;
+.home-sidebar h1:hover {
+  color: var(--color-link-hover);
 }
-input::placeholder {
-  color: grey;
+.home-sidebar a,
+.home-sidebar a:visited,
+.home-sidebar a:hover,
+.home-sidebar a:active {
+  text-decoration: none;
 }
 
-/* Flex direction */
-.row {
-  display: flex;
-  flex-direction: row;
-}
-.col {
-  display: flex;
-  flex-direction: column;
+.rs-card {
+  background: transparent !important;
+  border: 1px solid var(--color-primary) !important;
 }
 
-/* Alignment — cross axis */
-.items-start {
-  align-items: flex-start;
-}
-.items-center {
-  align-items: center;
-}
-.items-end {
-  align-items: flex-end;
+.tag-ellipsis {
+  max-width: 100%;
+  overflow: hidden;
 }
 
-/* Alignment — main axis */
-.justify-start {
-  justify-content: flex-start;
-}
-.justify-center {
-  justify-content: center;
-}
-.justify-end {
-  justify-content: flex-end;
-}
-
-/* Sizing */
-.full {
-  width: 100%;
-}
-
-.page-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-.page-container {
-  background-color: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(8px);
-  border-radius: 20px;
-  border: 3px #213547 solid;
-  box-sizing: border-box;
-}
-
-.error-message {
-  color: red;
+.tag-ellipsis .rs-tag-text {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--color-primary);
 }

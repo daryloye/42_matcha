@@ -1,4 +1,3 @@
-import { useAtom } from 'jotai';
 import type { Marker as LeafletMarker } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useMemo, useRef } from 'react';
@@ -10,10 +9,14 @@ import {
   useMap,
   useMapEvents,
 } from 'react-leaflet';
-import { locationAtom } from '../../utils/atoms';
 
-function LocationMarker() {
-  const [position, setPosition] = useAtom(locationAtom);
+function LocationMarker({
+  position,
+  setPosition,
+}: {
+  position: any;
+  setPosition: (value: any) => void;
+}) {
   const markerRef = useRef<LeafletMarker | null>(null);
 
   const eventHandlers = useMemo(
@@ -58,7 +61,13 @@ function LocationMarker() {
   );
 }
 
-export function ProfileLocation() {
+export function ProfileLocation({
+  position,
+  setPosition,
+}: {
+  position: any;
+  setPosition: () => void;
+}) {
   return (
     <MapContainer
       center={[25.791, -80.13]}
@@ -70,7 +79,7 @@ export function ProfileLocation() {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
       />
-      <LocationMarker />
+      <LocationMarker position={position} setPosition={setPosition} />
     </MapContainer>
   );
 }

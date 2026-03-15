@@ -1,9 +1,9 @@
 import { useAtom } from 'jotai';
 import { useEffect, useRef } from 'react';
 import profilePic from '../../assets/profilePic2.png';
-import { HomePageTemplate } from '../../components/home/HomePageTemplate';
 import { selectedChatAtom } from '../../utils/atoms';
 import styles from './Chat.module.css';
+import { HomePageTemplate } from './HomePageTemplate';
 
 // const chatMenu = [
 //   {

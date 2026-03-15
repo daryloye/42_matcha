@@ -1,16 +1,16 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { ActionButton } from '../../components/ActionButton';
+import { useNavigate } from 'react-router-dom';
+import { Button } from 'rsuite';
 
 export default function NotFoundPage() {
   const navigate = useNavigate();
 
   return (
-    <div className='page-wrapper col'>
+    <div className='min-h-screen flex flex-col items-center justify-center'>
       <h1>Page Not Found</h1>
       <br />
-      <Link to='/'>
-        <ActionButton text='Back to Home' onClick={() => navigate('/')} />
-      </Link>
+      <Button type='submit' appearance='primary' onClick={() => navigate('/')}>
+        Back to Home
+      </Button>
     </div>
   );
 }
