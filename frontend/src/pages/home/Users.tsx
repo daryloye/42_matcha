@@ -171,8 +171,8 @@ function UsersPage() {
       </VStack>
 
       <div className='flex flex-col mt-5 gap-4'>
-        <Image rounded src={profile.image} alt='Shadow' width={500} />
-        <VStack>
+        <Image rounded src={profile.image} alt='Shadow' width={300} />
+        <HStack>
           <Tag color='green' size='lg' className='opacity-70'>
             <MdPersonOutline className='inline' /> {profile.gender}
           </Tag>
@@ -185,7 +185,7 @@ function UsersPage() {
           <Tag color='red' size='lg'>
             <HeartIcon /> {profile.fame}
           </Tag>
-        </VStack>
+        </HStack>
 
         <TagGroup className='flex flex-wrap w-full'>
           {profile.tags.map((t: string) => (
@@ -195,7 +195,7 @@ function UsersPage() {
           ))}
         </TagGroup>
 
-        <VStack className='mt-12 w-full max-w-xs'>
+        <VStack className='mt-5 w-full max-w-xs'>
           <div className='flex flex-col gap-3 w-full'>
             <Button
               type='button'

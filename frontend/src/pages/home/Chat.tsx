@@ -1,8 +1,8 @@
 import { useAtom } from 'jotai';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Avatar, Badge, HStack, Tag, Textarea, VStack } from 'rsuite';
 import profilePic from '../../assets/profilePic2.png';
 import { selectedChatAtom } from '../../utils/atoms';
-import styles from './Chat.module.css';
 import { HomePageTemplate } from './HomePageTemplate';
 
 const chatSidebarJson = [
@@ -59,11 +59,13 @@ export default function Chat() {
 
 function ChatPage() {
   return (
-    <div className='home-page-layout col'>
+    <div>
       <h1>Chat</h1>
-      <div className={styles.chatContainer}>
-        <ChatSidebar />
-        <ChatSelected />
+      <div className='flex-1 mt-5 min-h-0 border'>
+        <div className='flex flex-row h-[65vh]'>
+          <ChatSidebar />
+          <ChatSelected />
+        </div>
       </div>
     </div>
   );
@@ -73,26 +75,28 @@ function ChatSidebar() {
   const [selectedChat, setSelectedChat] = useAtom(selectedChatAtom);
 
   return (
-    <div className={styles.chatSidebarContainer}>
+    <div className='flex flex-col w-[35%] h-full overflow-y-auto border-r'>
       {chatSidebarJson.map((c) => (
-        <button
-          type='button'
+        <div
+          role='button'
+          tabIndex={0}
           key={c.id}
-          className={styles.chatSidebarItem}
-          style={{
-            backgroundColor: c.id === selectedChat?.id ? '#b394d6' : 'inherit',
-          }}
+          className={`flex items-center gap-3 p-2 w-full overflow-hidden text-left border-b ${
+            c.id === selectedChat?.id
+              ? 'bg-[var(--color-link-hover)]'
+              : 'hover:bg-[rgba(179,148,214,0.25)]'
+          }`}
           onClick={() => {
             setSelectedChat(c);
           }}
         >
-          <img src={c.image} className={styles.chatProfilePicture} />
+          <Avatar src={c.image} size='lg' circle className='shrink-0' />
 
-          <div className={styles.chatSidebarItemText}>
-            <h2>{c.name}</h2>
-            <p>{c.messages?.at(-1)?.message}</p>
-          </div>
-        </button>
+          <VStack className='flex-1 min-w-0 overflow-hidden'>
+            <p className='text-xl w-full font-bold truncate'>{c.name}</p>
+            <p className='w-full truncate'>{c.messages?.at(-1)?.message}</p>
+          </VStack>
+        </div>
       ))}
     </div>
   );
@@ -100,21 +104,24 @@ function ChatSidebar() {
 
 function ChatSelected() {
   const [selectedChat, setSelectedChat] = useAtom(selectedChatAtom);
-  const inputRef = useRef<HTMLTextAreaElement | null>(null);
+  const [message, setMessage] = useState<string>('');
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  const handleKeyDown = (e: any) => {
+  const handleSendMessage = (e: any) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
 
-      const text = inputRef.current?.value;
-      if (!selectedChat || !text || !text.trim()) return;
+      if (!selectedChat || !message || !message.trim()) return;
 
       setSelectedChat({
         ...selectedChat,
-        messages: [...selectedChat.messages, { from: 'user', message: text }],
+        messages: [
+          ...selectedChat.messages,
+          { from: 'user', message: message },
+        ],
       });
-      inputRef.current!.value = '';
+
+      setMessage('');
     }
   };
 
@@ -123,40 +130,60 @@ function ChatSelected() {
     [selectedChat?.messages],
   );
 
-  if (!selectedChat) return null;
+  if (!selectedChat)
+    return (
+      <div className='flex flex-1 items-center justify-center h-full'>
+        <h1>select a chat</h1>
+      </div>
+    );
 
   return (
-    <div className={styles.chatSelectedContainer}>
+    <div className='flex flex-col flex-1 h-full overflow-hidden'>
       {/* Header */}
-      <div className={styles.chatSelectedHeader}>
-        <img src={selectedChat.image} className={styles.chatProfilePicture} />
-        <div className={styles.chatSidebarItemText}>
-          <h2>{selectedChat.name}</h2>
-          <p>{selectedChat.status}</p>
-        </div>
-      </div>
+      <HStack background='var(--color-link-hover)' className='p-2 shrink-0'>
+        <Avatar src={selectedChat.image} size='lg' circle />
+
+        <VStack className='overflow-hidden'>
+          <p className='text-xl font-bold w-full truncate'>
+            {selectedChat.name}
+          </p>
+
+          {/* Online Status */}
+          <HStack>
+            <Badge compact size='lg' color={1 ? 'green' : 'red'} />
+            <p>Online {1 ? '' : 'last seen'}</p>
+          </HStack>
+        </VStack>
+      </HStack>
 
       {/* Messages */}
-      <div className={styles.chatBox}>
+      <div className='flex-1 min-h-0 flex flex-col gap-2 p-2 overflow-y-auto'>
         {selectedChat.messages.map((item, idx) => (
           <div
             key={idx}
-            className={
-              item.from === 'user' ? styles.chatBoxUser : styles.chatBoxOther
-            }
+            className={`flex ${item.from === 'user' ? 'justify-end pl-20' : 'justify-start pr-20'}`}
           >
-            <p>{item.message}</p>
+            <Tag
+              color={item.from === 'user' ? 'lightblue' : 'white'}
+              size='lg'
+              className='break-all whitespace-pre-wrap'
+            >
+              {item.message}
+            </Tag>
           </div>
         ))}
         <div ref={messagesEndRef} />
       </div>
 
       {/* Message input */}
-      <textarea
-        className={styles.chatInput}
+      <Textarea
         placeholder='Message'
-        ref={inputRef}
-        onKeyDown={handleKeyDown}
+        rows={1}
+        value={message}
+        onChange={setMessage}
+        onKeyDown={handleSendMessage}
+        size='lg'
+        className='shrink-0'
       />
     </div>
   );
