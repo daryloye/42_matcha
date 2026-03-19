@@ -26,6 +26,7 @@ import {
 import profilePic from '../../assets/profilePic2.png';
 import { getToken } from '../../utils/token';
 import { HomePageTemplate } from './HomePageTemplate';
+import { UpdateMatchStatus } from '../../api/match';
 
 export default function Users() {
   return <HomePageTemplate page={<UsersPage />} />;
@@ -57,6 +58,8 @@ function UsersPage() {
           {like ? `Unliked ${profile.name}` : `Liked ${profile.name}`}
         </Notification>,
       );
+      const res = await UpdateMatchStatus(token!, {action: 'unlike', targetId: 'fc13066f-fe36-4c6f-a858-28ad2f364862'});
+      console.log(res);
       setLike(!like);
       setConnected(!connected);
     } catch (err: any) {

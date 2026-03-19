@@ -10,6 +10,7 @@ const createTables = async () => {
     DROP TABLE IF EXISTS profile_pictures CASCADE;
     DROP TABLE IF EXISTS interests CASCADE;
     DROP TABLE IF EXISTS user_interests CASCADE;
+    DROP TABLE IF EXISTS relationships;
 
     CREATE TABLE users (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -62,6 +63,15 @@ const createTables = async () => {
         interest_id UUID NOT NULL REFERENCES interests(id) ON DELETE CASCADE,
         created_at TIMESTAMP DEFAULT NOW(),
         UNIQUE(user_id, interest_id)
+    );
+
+    CREATE TABLE relationships (
+        id SERIAL PRIMARY KEY,
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        target_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        status VARCHAR(50) NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW(),
+        UNIQUE(user_id, target_user_id, status)
     );
     `;
 
