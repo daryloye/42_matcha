@@ -2,7 +2,7 @@ import CalendarIcon from '@rsuite/icons/Calendar';
 import HeartIcon from '@rsuite/icons/Heart';
 import LocationIcon from '@rsuite/icons/Location';
 import TagIcon from '@rsuite/icons/Tag';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IoChatbubbleEllipses } from 'react-icons/io5';
 import {
   MdBlock,
@@ -26,42 +26,61 @@ import {
 import profilePic from '../../assets/profilePic2.png';
 import { getToken } from '../../utils/token';
 import { HomePageTemplate } from './HomePageTemplate';
-import { UpdateMatchStatus } from '../../api/match';
+import { GetMatchStatus, UpdateMatchStatus } from '../../api/match';
+import type { MatchStatus } from '../../utils/types';
 
 export default function Users() {
   return <HomePageTemplate page={<UsersPage />} />;
 }
 
 function UsersPage() {
-  const { id } = useParams();
-
+  const [matchStatus, setMatchStatus] = useState<MatchStatus | null>(null);
   const [loading, setLoading] = useState(false);
-  const [like, setLike] = useState(false);
-  const [connected, setConnected] = useState(false);
-  const [block, setBlock] = useState(false);
 
   const toaster = useToaster();
   const navigate = useNavigate();
+  
+  // const { id } = useParams();
+  const targetId = "450d84f8-c8ae-4842-a87d-b9a0839ab2a8";
 
-  const handleLike = async () => {
-    setLoading(true);
+  const fetchMatchStatus = async () => {
     const token = getToken();
-
     if (!token) {
       navigate('/');
       return;
     }
 
     try {
+      const res = await GetMatchStatus(token, targetId);
+      setMatchStatus(res);
+    } catch (err: any) {
       toaster.push(
-        <Notification type='info' closable>
-          {like ? `Unliked ${profile.name}` : `Liked ${profile.name}`}
+        <Notification type='error' closable>
+          {err.message}
         </Notification>,
       );
-      const res = await UpdateMatchStatus(token!, {action: 'unlike', targetId: 'fc13066f-fe36-4c6f-a858-28ad2f364862'});
-      console.log(res);
-      setLike(!like);
-      setConnected(!connected);
+    }
+  }
+
+  const handleUpdateStatus = async (action: string) => {
+    setLoading(true);
+    const token = getToken();
+    if (!token) {
+      navigate('/');
+      return;
+    }
+
+    if (action === 'report') {
+      toaster.push(
+        <Notification type='info' closable>
+          Reported {profile.name}
+        </Notification>,
+      );
+    }
+
+    try {
+      await UpdateMatchStatus(token, {action: action, targetId: targetId});
+      await fetchMatchStatus();
     } catch (err: any) {
       toaster.push(
         <Notification type='error' closable>
@@ -99,163 +118,174 @@ function UsersPage() {
     }
   };
 
-  const handleBlock = async () => {
-    setLoading(true);
-
-    const token = getToken();
-    if (!token) {
-      navigate('/');
-      return;
-    }
-
-    try {
-      toaster.push(
-        <Notification type='info' closable>
-          {block ? `Unblocked ${profile.name}` : `Blocked ${profile.name}`}
-        </Notification>,
-      );
-      setBlock(!block);
-    } catch (err: any) {
-      toaster.push(
-        <Notification type='error' closable>
-          {err.message}
-        </Notification>,
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleReport = async () => {
-    setLoading(true);
-
-    const token = getToken();
-    if (!token) {
-      navigate('/');
-      return;
-    }
-
-    try {
-      toaster.push(
-        <Notification type='info' closable>
-          Reported {profile.name}
-        </Notification>,
-      );
-    } catch (err: any) {
-      toaster.push(
-        <Notification type='error' closable>
-          {err.message}
-        </Notification>,
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  useEffect(() => { fetchMatchStatus() }, []);
+  
+  if (!matchStatus) return null;
+  
   return (
     <div>
-      <VStack>
-        <h1>{profile.name}</h1>
-        <HStack>
-          <Badge compact size='lg' color={profile.online ? 'green' : 'red'} />
-          <p>Online {profile.online ? '' : profile.lastSeen}</p>
-        </HStack>
+      <UserProfileHeader matchStatus={matchStatus}/>
+
+      <div className='flex flex-col mt-5 gap-4'>
+        <UserProfileBody />
+
+        <UserProfileMatchButtons matchStatus={matchStatus} loading={loading} handleChat={handleChat} handleUpdateStatus={handleUpdateStatus} />
+      </div>
+    </div>
+  );
+}
+
+function UserProfileHeader({matchStatus}: {matchStatus: MatchStatus}) {
+  return (
+    <VStack>
+      <h1>{profile.name}</h1>
+      <HStack>
+        <Badge compact size='lg' color={profile.online ? 'green' : 'red'} />
+        <p>Online {profile.online ? '' : profile.lastSeen}</p>
+      </HStack>
+      {matchStatus.isConnected ? (
         <HStack>
           <Badge
             compact
             size='lg'
-            color={profile.connected ? 'green' : 'red'}
-            content={
-              profile.connected ? <MdCheck size={12} /> : <MdClose size={12} />
-            }
+            color='green'
+            content={<MdCheck size={12} />}
           />
-          <p>{profile.connected ? 'Connected' : 'Not connected'}</p>
+          <p>Connected</p>
         </HStack>
-      </VStack>
-
-      <div className='flex flex-col mt-5 gap-4'>
-        <Image rounded src={profile.image} alt='Shadow' width={300} />
+      ) : (
         <HStack>
-          <Tag color='green' size='lg' className='opacity-70'>
-            <MdPersonOutline className='inline' /> {profile.gender}
-          </Tag>
-          <Tag color='violet' size='lg' className='opacity-70'>
-            <CalendarIcon /> Age: {profile.age}
-          </Tag>
-          <Tag color='cyan' size='lg' className='opacity-80'>
-            <LocationIcon /> {profile.distance} km away
-          </Tag>
-          <Tag color='red' size='lg'>
-            <HeartIcon /> {profile.fame}
-          </Tag>
+          <Badge
+            compact
+            size='lg'
+            color='red'
+            content={<MdClose size={12} />}
+          />
+          <p>Not connected</p>
         </HStack>
+      )}
+    </VStack>
+  );
+}
 
-        <TagGroup className='flex flex-wrap w-full'>
-          {profile.tags.map((t: string) => (
-            <Tag key={t} color='pink' className='tag-ellipsis'>
-              <TagIcon /> {t}
-            </Tag>
-          ))}
-        </TagGroup>
+function UserProfileBody() {
+  return (
+    <>
+      <Image rounded src={profile.image} alt='Shadow' width={300} />
+      <HStack>
+        <Tag color='green' size='lg' className='opacity-70'>
+          <MdPersonOutline className='inline' /> {profile.gender}
+        </Tag>
+        <Tag color='violet' size='lg' className='opacity-70'>
+          <CalendarIcon /> Age: {profile.age}
+        </Tag>
+        <Tag color='cyan' size='lg' className='opacity-80'>
+          <LocationIcon /> {profile.distance} km away
+        </Tag>
+        <Tag color='red' size='lg'>
+          <HeartIcon /> {profile.fame}
+        </Tag>
+      </HStack>
 
-        <VStack className='mt-5 w-full max-w-xs'>
-          <div className='flex flex-col gap-3 w-full'>
-            <Button
-              type='button'
-              appearance={like ? 'ghost' : 'primary'}
-              size='lg'
-              color='blue'
-              className='w-full rounded-2xl font-semibold shadow-md hover:shadow-lg transition'
-              loading={loading}
-              onClick={handleLike}
-            >
-              <HeartIcon />{' '}
-              <span className='ml-2'>{like ? 'Unlike' : 'Like'}</span>
-            </Button>
+      <TagGroup className='flex flex-wrap w-full'>
+        {profile.tags.map((t: string) => (
+          <Tag key={t} color='pink' className='tag-ellipsis'>
+            <TagIcon /> {t}
+          </Tag>
+        ))}
+      </TagGroup>
+    </>
+  );
+}
 
-            <Button
-              type='button'
-              appearance='primary'
-              size='lg'
-              color='green'
-              className='w-full rounded-2xl font-semibold border border-green-500 hover:bg-green-50 transition'
-              loading={loading}
-              disabled={!connected}
-              onClick={handleChat}
-            >
-              <IoChatbubbleEllipses />
-              <span className='ml-2'>Chat</span>
-            </Button>
+function UserProfileMatchButtons({
+  matchStatus,
+  loading,
+  handleChat,
+  handleUpdateStatus,
+}: {
+  matchStatus: MatchStatus,
+  loading: boolean,
+  handleChat: any,
+  handleUpdateStatus: any
+}) {
+  return (
+    <>
+      <VStack className='mt-5 w-full max-w-xs'>
+        <div className='flex flex-col gap-3 w-full'>
+          {/* Like / Unlike */}
+          <Button
+            type='button'
+            appearance={matchStatus.hasLikedTarget ? 'ghost' : 'primary'}
+            size='lg'
+            color='blue'
+            className='w-full rounded-2xl font-semibold transition'
+            loading={loading}
+            disabled={matchStatus.isBlockingTarget}
+            onClick={() => {
+              matchStatus.hasLikedTarget
+                ? handleUpdateStatus('unlike')
+                : handleUpdateStatus('like');
+            }}
+          >
+            <HeartIcon />{' '}
+            <span className='ml-2'>
+              {matchStatus.hasLikedTarget ? 'Unlike' : 'Like'}
+            </span>
+          </Button>
 
-            <Button
-              type='button'
-              appearance={block ? 'ghost' : 'primary'}
-              size='lg'
-              color='orange'
-              className='w-full rounded-2xl font-semibold border border-red-400 hover:bg-red-50 transition'
-              loading={loading}
-              onClick={handleBlock}
-            >
-              <MdBlock />
-              <span className='ml-2'>{block ? 'Unblock' : 'Block'}</span>
-            </Button>
+          {/* Chat */}
+          <Button
+            type='button'
+            appearance='primary'
+            size='lg'
+            color='green'
+            className='w-full rounded-2xl font-semibold transition'
+            loading={loading}
+            disabled={!matchStatus.isConnected || matchStatus.isBlockingTarget}
+            onClick={handleChat}
+          >
+            <IoChatbubbleEllipses />
+            <span className='ml-2'>Chat</span>
+          </Button>
 
-            <Button
-              type='button'
-              appearance='primary'
-              size='lg'
-              color='red'
-              className='w-full rounded-2xl font-semibold border border-red-400 hover:bg-red-50 transition'
-              loading={loading}
-              onClick={handleReport}
-            >
-              <MdReport />
-              <span className='ml-2'>Report</span>
-            </Button>
-          </div>
-        </VStack>
-      </div>
-    </div>
+          {/* Block / Unblock */}
+          <Button
+            type='button'
+            appearance={matchStatus.isBlockingTarget ? 'ghost' : 'primary'}
+            size='lg'
+            color='orange'
+            className='w-full rounded-2xl font-semibold transition'
+            loading={loading}
+            onClick={() => {
+              matchStatus.isBlockingTarget
+                ? handleUpdateStatus('unblock')
+                : (handleUpdateStatus('block'),
+                  handleUpdateStatus('unlike'));
+            }}
+          >
+            <MdBlock />
+            <span className='ml-2'>
+              {matchStatus.isBlockingTarget ? 'Unblock' : 'Block'}
+            </span>
+          </Button>
+
+          {/* Report */}
+          <Button
+            type='button'
+            appearance='primary'
+            size='lg'
+            color='red'
+            className='w-full rounded-2xl font-semibold transition'
+            loading={loading}
+            onClick={() => handleUpdateStatus('report')}
+          >
+            <MdReport />
+            <span className='ml-2'>Report</span>
+          </Button>
+        </div>
+      </VStack>
+    </>
   );
 }
 

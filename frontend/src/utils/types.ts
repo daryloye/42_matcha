@@ -45,3 +45,10 @@ export type ProfileForm = {
   interests: string[];
   pictures: any;
 };
+
+export type MatchStatus = {
+  isConnected: boolean;
+  hasLikedTarget: boolean;
+  isBlockingTarget: boolean;
+  isBlockedByTarget: boolean;
+}

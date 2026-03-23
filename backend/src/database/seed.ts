@@ -9,12 +9,12 @@ export async function seedAdmin() {
 
     const userResult = await query(
       `
-                INSERT INTO users (email, username, first_name, last_name, password_hash, is_verified)
-                VALUES ($1, $2, $3, $4, $5, $6)
+                INSERT INTO users (id, email, username, first_name, last_name, password_hash, is_verified)
+                VALUES ($1, $2, $3, $4, $5, $6, $7)
                 ON CONFLICT (email) DO NOTHING
                 RETURNING id `,
 
-      [adminEmail, "admin", "Admin", "Matcha", hashedPassword, true],
+      ["db9d9fd2-ce4e-4654-83d7-1a9e087d1982", adminEmail, "admin", "Admin", "Matcha", hashedPassword, true],
     );
 
     if (userResult.rows.length > 0) {
@@ -54,6 +54,18 @@ export async function seedAdmin() {
       }
 
       console.log("✅ Admin account and profile seeded!");
+
+
+      // seed another profile
+      await query(
+      `
+                INSERT INTO users (id, email, username, first_name, last_name, password_hash, is_verified)
+                VALUES ($1, $2, $3, $4, $5, $6, $7)
+                ON CONFLICT (email) DO NOTHING
+                RETURNING id `,
+
+      ["450d84f8-c8ae-4842-a87d-b9a0839ab2a8", "test@email.com", "test", "Test", "User", hashedPassword, true],
+    );
 
     } else {
       console.log("⚠️ Admin already exists. No changes made.");

@@ -1,0 +1,38 @@
+meta {
+  name: 00_login_another_user
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/auth/login
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "username": "admin",
+    "password": "MatchaAdmin2026!"
+  }
+}
+
+script:post-response {
+  const body = res.getBody();
+  bru.setEnvVar("token", body.token);
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}
+
+settings {
+  encodeUrl: false
+  timeout: 10000
+}

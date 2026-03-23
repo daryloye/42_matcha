@@ -8,6 +8,7 @@ export const createMatchStatus = async (
   const sql = `
         INSERT INTO relationships (user_id, target_user_id, status)
         VALUES ($1, $2, $3)
+        ON CONFLICT DO NOTHING
     `;
   const result = await query(sql, [userId, targetId, status]);
   return result.rows.length > 0 ? result.rows[0] : null;
@@ -24,8 +25,7 @@ export const deleteMatchStatus = async (
         AND target_user_id = $2
         AND status = $3
     `;
-  const result = await query(sql, [userId, targetId, status]);
-  return result.rows.length > 0 ? result.rows[0] : null;
+  await query(sql, [userId, targetId, status]);
 };
 
 export const getMatchStatus = async (
@@ -38,7 +38,7 @@ export const getMatchStatus = async (
         AND target_user_id = $2
     `;
   const result = await query(sql, [userId, targetId]);
-  return result.rows.length > 0 ? result.rows[0] : null;
+  return result.rows.length > 0 ? result.rows.map(row => row.status) : null;
 };
 
 export const getTargetIdsWithStatus = async (
