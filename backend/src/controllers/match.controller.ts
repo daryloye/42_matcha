@@ -38,7 +38,7 @@ export const updateMatchHandler = async (
     }
 
     // TODO: handle fame updating
-    
+
     switch (action) {
       case LIKE:
       case BLOCK:
@@ -93,12 +93,17 @@ export const getMatchStatusHandler = async (
 
     const statusFromUser = await getMatchStatus(userId, targetId);
     const statusFromTarget = await getMatchStatus(targetId, userId);
-    
+
+    if (statusFromTarget?.includes('block')) {
+      res.status(200).json({ isBlockedByTarget: true });
+      return;
+    }
+
     res.status(200).json({ 
       isConnected: statusFromUser?.includes('like') && statusFromTarget?.includes('like') || false,
       hasLikedTarget: statusFromUser?.includes('like') || false,
       isBlockingTarget: statusFromUser?.includes('block') || false,
-      isBlockedByTarget: statusFromTarget?.includes('block') || false,
+      isBlockedByTarget: false,
     });
   } catch (error) {
     console.error("error updating match status", error);

@@ -121,7 +121,15 @@ function UsersPage() {
   useEffect(() => { fetchMatchStatus() }, []);
   
   if (!matchStatus) return null;
-  
+
+  if (matchStatus.isBlockedByTarget) {
+    return (
+      <VStack>
+      <h1>{profile.name}</h1>
+      <p className='mt-5'>You have been blocked by this user</p>
+      </VStack>
+    )
+  }
   return (
     <div>
       <UserProfileHeader matchStatus={matchStatus}/>
