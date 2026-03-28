@@ -11,6 +11,7 @@ const createTables = async () => {
     DROP TABLE IF EXISTS interests CASCADE;
     DROP TABLE IF EXISTS user_interests CASCADE;
     DROP TABLE IF EXISTS relationships;
+    DROP TABLE IF EXISTS chat;
 
     CREATE TABLE users (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -72,6 +73,14 @@ const createTables = async () => {
         status VARCHAR(50) NOT NULL,
         created_at TIMESTAMP DEFAULT NOW(),
         UNIQUE(user_id, target_user_id, status)
+    );
+
+    CREATE TABLE chat (
+        id SERIAL PRIMARY KEY,
+        from_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        to_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        message TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW()
     );
     `;
 

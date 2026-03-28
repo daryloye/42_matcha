@@ -1,9 +1,12 @@
-import { useAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
-import { Avatar, Badge, HStack, Tag, Textarea, VStack } from 'rsuite';
+import { Avatar, Badge, HStack, Tag, Textarea, VStack, useToaster, Notification } from 'rsuite';
 import profilePic from '../../assets/profilePic2.png';
-import { selectedChatAtom } from '../../utils/atoms';
 import { HomePageTemplate } from './HomePageTemplate';
+import type { ChatItem } from '../../utils/types';
+import { getToken } from '../../utils/token';
+import { useNavigate } from 'react-router-dom';
+import { GetConnectedUsers } from '../../api/match';
+import { GetMessages, SendMessage } from '../../api/chat';
 
 const chatSidebarJson = [
   {
@@ -53,27 +56,62 @@ const chatSidebarJson = [
   },
 ];
 
+const test_user = '450d84f8-c8ae-4842-a87d-b9a0839ab2a8';
+
 export default function Chat() {
   return <HomePageTemplate page={<ChatPage />} />;
 }
 
 function ChatPage() {
+  const [selectedChat, setSelectedChat] = useState<ChatItem | null>(null);
+  const [selectedChatId, setselectedChatId] = useState<string>('');
+  const [connetedUsers, setConnectedUsers] = useState<String[]>([]);  
+
+  const toaster = useToaster();
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    const token = getToken();
+    if (!token) {
+      navigate('/');
+      return;
+    }
+
+    async function fetchConnectedUsers() {
+      try {
+        const res = await GetConnectedUsers(token!);
+        console.log(res['connectedUsers']);
+
+        setConnectedUsers(res['connectedUsers']);
+      } catch (err: any) {
+        toaster.push(
+          <Notification type='error' closable>
+            {err.message}
+          </Notification>,
+        );
+      }
+    }
+
+    fetchConnectedUsers();
+
+    const interval = setInterval(fetchConnectedUsers, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div>
       <h1>Chat</h1>
       <div className='flex-1 mt-5 min-h-0 border'>
         <div className='flex flex-row h-[65vh]'>
-          <ChatSidebar />
-          <ChatSelected />
+          <ChatSidebar setselectedChatId={setselectedChatId} selectedChat={selectedChat} />
+          <ChatSelected selectedChatId={selectedChatId} />
         </div>
       </div>
     </div>
   );
 }
 
-function ChatSidebar() {
-  const [selectedChat, setSelectedChat] = useAtom(selectedChatAtom);
-
+function ChatSidebar({setselectedChatId, selectedChat} : {setselectedChatId: any, selectedChat: any}) {
   return (
     <div className='flex flex-col w-[35%] h-full overflow-y-auto border-r'>
       {chatSidebarJson.map((c) => (
@@ -86,51 +124,85 @@ function ChatSidebar() {
               ? 'bg-[var(--color-link-hover)]'
               : 'hover:bg-[rgba(179,148,214,0.25)]'
           }`}
-          onClick={() => {
-            setSelectedChat(c);
-          }}
+          onClick={() => { setselectedChatId(test_user) }}
         >
           <Avatar src={c.image} size='lg' circle className='shrink-0' />
-
-          <VStack className='flex-1 min-w-0 overflow-hidden'>
-            <p className='text-xl w-full font-bold truncate'>{c.name}</p>
-            <p className='w-full truncate'>{c.messages?.at(-1)?.message}</p>
-          </VStack>
+          <p className='text-xl w-full font-bold truncate'>{c.name}</p>
         </div>
       ))}
     </div>
   );
 }
 
-function ChatSelected() {
-  const [selectedChat, setSelectedChat] = useAtom(selectedChatAtom);
-  const [message, setMessage] = useState<string>('');
+function ChatSelected({selectedChatId} : {selectedChatId: any}) {
+  const [messageToSend, setMessageToSend] = useState<string>('');
+  const [messages, setMessages] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  const handleSendMessage = (e: any) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
+  const toaster = useToaster();
+  const navigate = useNavigate();
 
-      if (!selectedChat || !message || !message.trim()) return;
+  useEffect(() => {
+    const token = getToken();
+    if (!token) {
+      navigate('/');
+      return;
+    }
 
-      setSelectedChat({
-        ...selectedChat,
-        messages: [
-          ...selectedChat.messages,
-          { from: 'user', message: message },
-        ],
+    async function fetchMessages() {
+      try {
+        const res = await GetMessages(token!, test_user);
+        setMessages(res['messages']);
+      } catch (err: any) {
+        toaster.push(
+          <Notification type='error' closable>
+            {err.message}
+          </Notification>,
+        );
+      }
+    }
+
+    fetchMessages();
+
+    const interval = setInterval(fetchMessages, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleSendMessage = async (e: any) => {
+    if (e.key !== 'Enter' || e.shiftKey) return;
+    if (!messageToSend || !messageToSend.trim()) return;
+
+    e.preventDefault();
+
+    const token = getToken();
+    if (!token) {
+      navigate('/');
+      return;
+    }
+
+    try {
+      await SendMessage(token, {
+        targetId: selectedChatId,
+        message: messageToSend,
       });
-
-      setMessage('');
+      const res = await GetMessages(token!, test_user);
+      setMessages(res['messages']);
+      setMessageToSend('')
+    } catch (err: any) {
+      toaster.push(
+        <Notification type='error' closable>
+          {err.message}
+        </Notification>,
+      );
     }
   };
 
   useEffect(
     () => messagesEndRef?.current?.scrollIntoView({ behavior: 'smooth' }),
-    [selectedChat?.messages],
-  );
+    [],
+  );    // TODO: scroll into view on load
 
-  if (!selectedChat)
+  if (!selectedChatId)
     return (
       <div className='flex flex-1 items-center justify-center h-full'>
         <h1>select a chat</h1>
@@ -141,11 +213,11 @@ function ChatSelected() {
     <div className='flex flex-col flex-1 h-full overflow-hidden'>
       {/* Header */}
       <HStack background='var(--color-link-hover)' className='p-2 shrink-0'>
-        <Avatar src={selectedChat.image} size='lg' circle />
+        <Avatar src={chatSidebarJson[0].image} size='lg' circle />
 
         <VStack className='overflow-hidden'>
           <p className='text-xl font-bold w-full truncate'>
-            {selectedChat.name}
+            {chatSidebarJson[0].name}
           </p>
 
           {/* Online Status */}
@@ -158,13 +230,13 @@ function ChatSelected() {
 
       {/* Messages */}
       <div className='flex-1 min-h-0 flex flex-col gap-2 p-2 overflow-y-auto'>
-        {selectedChat.messages.map((item, idx) => (
+        {messages.map((item: any) => (
           <div
-            key={idx}
-            className={`flex ${item.from === 'user' ? 'justify-end pl-20' : 'justify-start pr-20'}`}
+            key={item.id}
+            className={`flex ${item.to_user_id === selectedChatId ? 'justify-end pl-20' : 'justify-start pr-20'}`}
           >
             <Tag
-              color={item.from === 'user' ? 'lightblue' : 'white'}
+              color={item.to_user_id === selectedChatId ? 'lightblue' : 'white'}
               size='lg'
               className='break-all whitespace-pre-wrap'
             >
@@ -179,8 +251,8 @@ function ChatSelected() {
       <Textarea
         placeholder='Message'
         rows={1}
-        value={message}
-        onChange={setMessage}
+        value={messageToSend}
+        onChange={setMessageToSend}
         onKeyDown={handleSendMessage}
         size='lg'
         className='shrink-0'

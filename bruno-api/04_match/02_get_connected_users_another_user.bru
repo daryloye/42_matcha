@@ -1,0 +1,30 @@
+meta {
+  name: 02_get_connected_users_another_user
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/match/status?targetId=db9d9fd2-ce4e-4654-83d7-1a9e087d1982
+  body: json
+  auth: inherit
+}
+
+params:query {
+  targetId: db9d9fd2-ce4e-4654-83d7-1a9e087d1982
+}
+
+headers {
+  Content-Type: application/json
+}
+
+tests {
+  test("status 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}
+
+settings {
+  encodeUrl: false
+  timeout: 10000
+}

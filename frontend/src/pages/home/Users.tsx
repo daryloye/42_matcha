@@ -27,7 +27,7 @@ import profilePic from '../../assets/profilePic2.png';
 import { getToken } from '../../utils/token';
 import { HomePageTemplate } from './HomePageTemplate';
 import { GetMatchStatus, UpdateMatchStatus } from '../../api/match';
-import type { MatchStatus } from '../../utils/types';
+import { MatchStatusEnum, type MatchStatus } from '../../utils/types';
 
 export default function Users() {
   return <HomePageTemplate page={<UsersPage />} />;
@@ -70,7 +70,7 @@ function UsersPage() {
       return;
     }
 
-    if (action === 'report') {
+    if (action === MatchStatusEnum.REPORT) {
       toaster.push(
         <Notification type='info' closable>
           Reported {profile.name}
@@ -232,8 +232,8 @@ function UserProfileMatchButtons({
             disabled={matchStatus.isBlockingTarget}
             onClick={() => {
               matchStatus.hasLikedTarget
-                ? handleUpdateStatus('unlike')
-                : handleUpdateStatus('like');
+                ? handleUpdateStatus(MatchStatusEnum.UNLIKE)
+                : handleUpdateStatus(MatchStatusEnum.LIKE);
             }}
           >
             <HeartIcon />{' '}
@@ -267,9 +267,8 @@ function UserProfileMatchButtons({
             loading={loading}
             onClick={() => {
               matchStatus.isBlockingTarget
-                ? handleUpdateStatus('unblock')
-                : (handleUpdateStatus('block'),
-                  handleUpdateStatus('unlike'));
+                ? handleUpdateStatus(MatchStatusEnum.UNBLOCK)
+                : handleUpdateStatus(MatchStatusEnum.BLOCK)
             }}
           >
             <MdBlock />
@@ -286,7 +285,7 @@ function UserProfileMatchButtons({
             color='red'
             className='w-full rounded-2xl font-semibold transition'
             loading={loading}
-            onClick={() => handleUpdateStatus('report')}
+            onClick={() => handleUpdateStatus(MatchStatusEnum.REPORT)}
           >
             <MdReport />
             <span className='ml-2'>Report</span>

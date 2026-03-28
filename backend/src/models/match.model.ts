@@ -51,5 +51,6 @@ export const getTargetIdsWithStatus = async (
         AND status = $2
     `;
   const result = await query(sql, [userId, status]);
-  return result.rows.length > 0 ? result.rows[0] : null;
+  return result.rows.length > 0 ? result.rows.map(row => row.target_user_id) : null;
 };
+

@@ -1,0 +1,30 @@
+meta {
+  name: 00_get_chat_another_user
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/chat/?targetId=450d84f8-c8ae-4842-a87d-b9a0839ab2a8
+  body: json
+  auth: inherit
+}
+
+params:query {
+  targetId: 450d84f8-c8ae-4842-a87d-b9a0839ab2a8
+}
+
+headers {
+  Content-Type: application/json
+}
+
+tests {
+  test("status 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}
+
+settings {
+  encodeUrl: false
+  timeout: 10000
+}

@@ -1,15 +1,8 @@
 import { AuthRequest } from "../middleware/auth.middleware";
 import { Response } from "express";
-import { createMatchStatus, deleteMatchStatus, getMatchStatus } from "../models/match.model";
+import { createMatchStatus, deleteMatchStatus, getMatchStatus, getTargetIdsWithStatus } from "../models/match.model";
 import { getUsernameFromId } from "../models/user.model";
-import { MatchRequest } from "../types/match.types";
-
-const LIKE = 'like';
-const UNLIKE = 'unlike';
-const BLOCK = 'block';
-const UNBLOCK = 'unblock';
-const VIEW = 'view';
-const REPORT = 'report';
+import { MatchRequest, matchStatus } from "../types/match.types";
 
 export const updateMatchHandler = async (
   req: AuthRequest,
@@ -37,24 +30,54 @@ export const updateMatchHandler = async (
       return; 
     }
 
+    const statusFromTarget = await getMatchStatus(targetId, userId);
+    if (statusFromTarget?.includes(matchStatus.BLOCK)) {
+      res.status(400).json({ error: "invalid targetId" });
+      return;
+    }
+    
+    const statusFromUser = await getMatchStatus(userId, targetId);
+    if (action !== matchStatus.UNBLOCK && statusFromUser?.includes(matchStatus.BLOCK)) {
+      res.status(400).json({ error: "need to unblock user first" });
+      return;
+    }
+
+
     // TODO: handle fame updating
 
     switch (action) {
-      case LIKE:
-      case BLOCK:
-      case VIEW:
-      case REPORT:
+      case matchStatus.LIKE:
+        await createMatchStatus(userId, targetId, matchStatus.LIKE);
+        if (statusFromTarget?.includes(matchStatus.LIKE)) {
+          await createMatchStatus(userId, targetId, matchStatus.CONNECTED);
+          await createMatchStatus(targetId, userId, matchStatus.CONNECTED);
+        }
+        res.status(200).json({ message: `${userId} ${action} ${targetId}`});
+        return;
+
+      case matchStatus.BLOCK:
+        await createMatchStatus(userId, targetId, action);
+        await deleteMatchStatus(userId, targetId, matchStatus.LIKE);
+        await deleteMatchStatus(userId, targetId, matchStatus.CONNECTED);
+        await deleteMatchStatus(targetId, userId, matchStatus.CONNECTED);
+        res.status(200).json({ message: `${userId} ${action} ${targetId}`});
+        return;
+
+      case matchStatus.VIEW:
+      case matchStatus.REPORT:
         await createMatchStatus(userId, targetId, action);
         res.status(200).json({ message: `${userId} ${action} ${targetId}`});
         return;
 
-      case UNLIKE:
-        await deleteMatchStatus(userId, targetId, LIKE);
+      case matchStatus.UNLIKE:
+        await deleteMatchStatus(userId, targetId, matchStatus.LIKE);
+        await deleteMatchStatus(userId, targetId, matchStatus.CONNECTED);
+        await deleteMatchStatus(targetId, userId, matchStatus.CONNECTED);
         res.status(200).json({ message: `${userId} ${action} ${targetId}`});
         return;
 
-      case UNBLOCK:
-        await deleteMatchStatus(userId, targetId, BLOCK);
+      case matchStatus.UNBLOCK:
+        await deleteMatchStatus(userId, targetId, matchStatus.BLOCK);
         res.status(200).json({ message: `${userId} ${action} ${targetId}`});
         return;
 
@@ -91,22 +114,41 @@ export const getMatchStatusHandler = async (
       return; 
     }
 
-    const statusFromUser = await getMatchStatus(userId, targetId);
     const statusFromTarget = await getMatchStatus(targetId, userId);
-
-    if (statusFromTarget?.includes('block')) {
+    if (statusFromTarget?.includes(matchStatus.BLOCK)) {
       res.status(200).json({ isBlockedByTarget: true });
       return;
     }
 
+    const statusFromUser = await getMatchStatus(userId, targetId);
     res.status(200).json({ 
-      isConnected: statusFromUser?.includes('like') && statusFromTarget?.includes('like') || false,
-      hasLikedTarget: statusFromUser?.includes('like') || false,
-      isBlockingTarget: statusFromUser?.includes('block') || false,
+      isConnected: statusFromUser?.includes(matchStatus.CONNECTED) || false,
+      hasLikedTarget: statusFromUser?.includes(matchStatus.LIKE) || false,
+      isBlockingTarget: statusFromUser?.includes(matchStatus.BLOCK) || false,
       isBlockedByTarget: false,
     });
   } catch (error) {
     console.error("error updating match status", error);
+    res.status(500).json({ error: "internal server error" });
+  }
+};
+
+export const getConnectedUsersHandler = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) {
+      res.status(401).json({ error: "user not authenticated" });
+      return;
+    }
+
+    const connectedUsers = await getTargetIdsWithStatus(userId, matchStatus.CONNECTED);
+    res.status(200).json({ connectedUsers });
+
+  } catch (error) {
+    console.error("error getting connected users", error);
     res.status(500).json({ error: "internal server error" });
   }
 };

@@ -1,0 +1,33 @@
+meta {
+  name: 01_send_chat_another_user
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/chat/send
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "targetId": "db9d9fd2-ce4e-4654-83d7-1a9e087d1982",
+    "message": "hello"
+  }
+}
+
+tests {
+  test("status 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}
+
+settings {
+  encodeUrl: false
+  timeout: 10000
+}

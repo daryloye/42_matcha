@@ -20,3 +20,13 @@ export async function GetMatchStatus(token: string, targetId: string) {
     }),
   );
 }
+
+export async function GetConnectedUsers(token: string) {
+  return await GetHTTP(
+    `/api/match/connected`,
+    new Headers({
+      'Content-Type': 'application/json',
+      Authorization: token,
+    }),
+  );
+}

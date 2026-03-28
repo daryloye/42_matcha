@@ -3,13 +3,6 @@ export type PictureItem = {
   url: string;
 };
 
-export type ChatItem = {
-  id: number;
-  name: string;
-  image: string;
-  status: string;
-  messages: { from: string; message: string }[];
-};
 
 export type SearchFilters = {
   name: string;
@@ -51,4 +44,14 @@ export type MatchStatus = {
   hasLikedTarget: boolean;
   isBlockingTarget: boolean;
   isBlockedByTarget: boolean;
+}
+
+export enum MatchStatusEnum {
+  LIKE = 'like',
+  UNLIKE = 'unlike',
+  CONNECTED = 'connected',
+  BLOCK = 'block',
+  UNBLOCK = 'unblock',
+  VIEW = 'view',
+  REPORT = 'report',
 }

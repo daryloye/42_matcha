@@ -1,4 +1,3 @@
-import { Provider } from 'jotai';
 import { createRoot } from 'react-dom/client';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { CustomProvider } from 'rsuite';
@@ -18,28 +17,26 @@ import NotFoundPage from './pages/notFound/NotFoundPage';
 
 createRoot(document.getElementById('root')!).render(
   <CustomProvider>
-    <Provider>
-      <Router>
-        <Routes>
-          {/* Auth */}
-          <Route path='/' element={<LoginPage />} />
-          <Route path='/signup' element={<SignUpPage />} />
-          <Route path='/verify' element={<VerifyPage />} />
-          <Route path='/forgotpassword' element={<ForgotPasswordPage />} />
-          <Route path='/resetpassword' element={<ResetPasswordPage />} />
+    <Router>
+      <Routes>
+        {/* Auth */}
+        <Route path='/' element={<LoginPage />} />
+        <Route path='/signup' element={<SignUpPage />} />
+        <Route path='/verify' element={<VerifyPage />} />
+        <Route path='/forgotpassword' element={<ForgotPasswordPage />} />
+        <Route path='/resetpassword' element={<ResetPasswordPage />} />
 
-          {/* Profile */}
-          <Route path='/search' element={<Search />} />
-          <Route path='/profile' element={<Profile />} />
-          <Route path='/chat' element={<Chat />} />
-          <Route path='/account' element={<Account />} />
+        {/* Profile */}
+        <Route path='/search' element={<Search />} />
+        <Route path='/profile' element={<Profile />} />
+        <Route path='/chat' element={<Chat />} />
+        <Route path='/account' element={<Account />} />
 
-          {/* Users */}
-          <Route path='/users/:id' element={<Users />} />
+        {/* Users */}
+        <Route path='/users/:id' element={<Users />} />
 
-          <Route path='*' element={<NotFoundPage />} />
-        </Routes>
-      </Router>
-    </Provider>
+        <Route path='*' element={<NotFoundPage />} />
+      </Routes>
+    </Router>
   </CustomProvider>,
 );
