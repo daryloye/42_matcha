@@ -3,6 +3,7 @@ import { Response } from "express";
 import { createMatchStatus, deleteMatchStatus, getMatchStatus, getTargetIdsWithStatus } from "../models/match.model";
 import { getUsernameFromId } from "../models/user.model";
 import { MatchRequest, matchStatus } from "../types/match.types";
+import { increaseUserFame } from "../models/profile.model";
 
 export const updateMatchHandler = async (
   req: AuthRequest,
@@ -42,9 +43,6 @@ export const updateMatchHandler = async (
       return;
     }
 
-
-    // TODO: handle fame updating
-
     switch (action) {
       case matchStatus.LIKE:
         await createMatchStatus(userId, targetId, matchStatus.LIKE);
@@ -52,14 +50,18 @@ export const updateMatchHandler = async (
           await createMatchStatus(userId, targetId, matchStatus.CONNECTED);
           await createMatchStatus(targetId, userId, matchStatus.CONNECTED);
         }
+        await increaseUserFame(targetId, 1);
         res.status(200).json({ message: `${userId} ${action} ${targetId}`});
         return;
 
       case matchStatus.BLOCK:
-        await createMatchStatus(userId, targetId, action);
-        await deleteMatchStatus(userId, targetId, matchStatus.LIKE);
+        await createMatchStatus(userId, targetId, matchStatus.BLOCK);
+        if (await deleteMatchStatus(userId, targetId, matchStatus.LIKE)) {
+         await increaseUserFame(targetId, -1); 
+        }
         await deleteMatchStatus(userId, targetId, matchStatus.CONNECTED);
         await deleteMatchStatus(targetId, userId, matchStatus.CONNECTED);
+        await increaseUserFame(targetId, -5);
         res.status(200).json({ message: `${userId} ${action} ${targetId}`});
         return;
 
@@ -73,11 +75,13 @@ export const updateMatchHandler = async (
         await deleteMatchStatus(userId, targetId, matchStatus.LIKE);
         await deleteMatchStatus(userId, targetId, matchStatus.CONNECTED);
         await deleteMatchStatus(targetId, userId, matchStatus.CONNECTED);
+        await increaseUserFame(targetId, -1);
         res.status(200).json({ message: `${userId} ${action} ${targetId}`});
         return;
 
       case matchStatus.UNBLOCK:
         await deleteMatchStatus(userId, targetId, matchStatus.BLOCK);
+        await increaseUserFame(targetId, 5);
         res.status(200).json({ message: `${userId} ${action} ${targetId}`});
         return;
 

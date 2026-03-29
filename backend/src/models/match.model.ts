@@ -25,7 +25,8 @@ export const deleteMatchStatus = async (
         AND target_user_id = $2
         AND status = $3
     `;
-  await query(sql, [userId, targetId, status]);
+  const res = await query(sql, [userId, targetId, status]);
+  return(res.rowCount);
 };
 
 export const getMatchStatus = async (

@@ -39,7 +39,7 @@ const createTables = async () => {
         longitude DECIMAL(9, 6),
         location_city VARCHAR(100),
 
-        fame_rating INTEGER DEFAULT 0,
+        fame_rating INTEGER DEFAULT 10,
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW()
     );

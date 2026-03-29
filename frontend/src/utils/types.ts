@@ -24,6 +24,7 @@ export type BasicProfile = {
   first_name: string;
   last_name: string;
   picture: string;
+  fame_rating: number;
   is_profile_completed: boolean;
 };
 

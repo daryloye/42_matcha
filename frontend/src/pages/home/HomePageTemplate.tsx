@@ -120,7 +120,7 @@ function Sidebar({ profile }: { profile: BasicProfile }) {
         <Avatar src={profile.picture} size='xl' circle />
 
         <Tag color='red' size='lg'>
-          <HeartIcon /> 3
+          <HeartIcon /> {profile.fame_rating}
         </Tag>
 
         <Whisper placement='rightStart' trigger='click' speaker={speaker}>

@@ -223,6 +223,7 @@ export const getProfileMe = async (userId: string): Promise<any | null> => {
             u.first_name,
             u.last_name,
             pp.image_url AS picture,
+            p.fame_rating,
             CASE WHEN
                 p.gender IS NOT NULL AND
                 p.sexual_preference IS NOT NULL AND
@@ -292,3 +293,11 @@ export const updateUserInterests = async (userId: string, interestNames: string[
     }
 }
 
+export const increaseUserFame = async (userId: string, increaseValue: number): Promise<void> => {
+    await query(
+        `UPDATE profiles
+        SET fame_rating = fame_rating + $2
+        WHERE user_id = $1`,
+        [userId, increaseValue]
+    );
+}
