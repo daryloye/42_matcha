@@ -1,3 +1,5 @@
+import { setToken } from "../utils/token";
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 export async function PostHTTP(
@@ -28,6 +30,11 @@ export async function GetHTTP(endpoint: string, headers: HeadersInit) {
   const data = await res.json();
   if (!res.ok) {
     throw new Error(data?.error || 'Unknown error');
+  }
+
+  const newToken = res.headers.get('x-renewed-token');
+  if (newToken) {
+    setToken(newToken);
   }
 
   return data;
