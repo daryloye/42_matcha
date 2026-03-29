@@ -23,27 +23,28 @@ import {
   useToaster,
   VStack,
 } from 'rsuite';
-import profilePic from '../../assets/profilePic2.png';
 import { getToken } from '../../utils/token';
 import { HomePageTemplate } from './HomePageTemplate';
 import { GetMatchStatus, UpdateMatchStatus } from '../../api/match';
-import { MatchStatusEnum, type MatchStatus } from '../../utils/types';
+import { MatchStatusEnum, type MatchStatus, type SearchUserProfile } from '../../utils/types';
+import { GetUserProfile } from '../../api/search';
 
 export default function Users() {
   return <HomePageTemplate page={<UsersPage />} />;
 }
 
 function UsersPage() {
+  const [profile, setProfile] = useState<SearchUserProfile | null>(null);
   const [matchStatus, setMatchStatus] = useState<MatchStatus | null>(null);
   const [loading, setLoading] = useState(false);
 
   const toaster = useToaster();
   const navigate = useNavigate();
   
-  // const { id } = useParams();
-  const targetId = "450d84f8-c8ae-4842-a87d-b9a0839ab2a8";
+  const { id } = useParams();
+  if (!id) return null;
 
-  const fetchMatchStatus = async () => {
+  const fetchProfile = async () => {
     const token = getToken();
     if (!token) {
       navigate('/');
@@ -51,8 +52,8 @@ function UsersPage() {
     }
 
     try {
-      const res = await GetMatchStatus(token, targetId);
-      setMatchStatus(res);
+      const res = await GetUserProfile(token, id);
+      setProfile(res.profile);
     } catch (err: any) {
       toaster.push(
         <Notification type='error' closable>
@@ -62,6 +63,32 @@ function UsersPage() {
     }
   }
 
+  const fetchMatchStatus = async () => {
+    const token = getToken();
+    if (!token) {
+      navigate('/');
+      return;
+    }
+
+    try {
+      const res = await GetMatchStatus(token, id);
+      setMatchStatus(res);
+    } catch (err: any) {
+      toaster.push(
+        <Notification type='error' closable>
+          {err.message}
+        </Notification>,
+      );
+    }
+  }
+  
+  useEffect(() => {
+    fetchProfile();
+    fetchMatchStatus();
+  }, []);
+
+  if (!profile || !matchStatus) return null;
+  
   const handleUpdateStatus = async (action: string) => {
     setLoading(true);
     const token = getToken();
@@ -73,13 +100,13 @@ function UsersPage() {
     if (action === MatchStatusEnum.REPORT) {
       toaster.push(
         <Notification type='info' closable>
-          Reported {profile.name}
+          Reported {profile.first_name} {profile.last_name}
         </Notification>,
       );
     }
 
     try {
-      await UpdateMatchStatus(token, {action: action, targetId: targetId});
+      await UpdateMatchStatus(token, {action: action, targetId: id});
       await fetchMatchStatus();
     } catch (err: any) {
       toaster.push(
@@ -104,7 +131,7 @@ function UsersPage() {
     try {
       toaster.push(
         <Notification type='info' closable>
-          Chat {profile.name}
+          Chat {profile.first_name}
         </Notification>,
       );
     } catch (err: any) {
@@ -117,25 +144,21 @@ function UsersPage() {
       setLoading(false);
     }
   };
-
-  useEffect(() => { fetchMatchStatus() }, []);
   
-  if (!matchStatus) return null;
-
   if (matchStatus.isBlockedByTarget) {
     return (
       <VStack>
-      <h1>{profile.name}</h1>
+      <h1>{profile.first_name} {profile.last_name}</h1>
       <p className='mt-5'>You have been blocked by this user</p>
       </VStack>
     )
   }
   return (
     <div>
-      <UserProfileHeader matchStatus={matchStatus}/>
+      <UserProfileHeader profile={profile} matchStatus={matchStatus}/>
 
       <div className='flex flex-col mt-5 gap-4'>
-        <UserProfileBody />
+        <UserProfileBody profile={profile} />
 
         <UserProfileMatchButtons matchStatus={matchStatus} loading={loading} handleChat={handleChat} handleUpdateStatus={handleUpdateStatus} />
       </div>
@@ -143,13 +166,13 @@ function UsersPage() {
   );
 }
 
-function UserProfileHeader({matchStatus}: {matchStatus: MatchStatus}) {
+function UserProfileHeader({profile, matchStatus}: {profile: SearchUserProfile, matchStatus: MatchStatus}) {
   return (
     <VStack>
-      <h1>{profile.name}</h1>
+      <h1>{profile.first_name} {profile.last_name}</h1>
       <HStack>
         <Badge compact size='lg' color={profile.online ? 'green' : 'red'} />
-        <p>Online {profile.online ? '' : profile.lastSeen}</p>
+        <p>{profile.online ? 'Online' : `Last seen ${profile.last_seen}`}</p>
       </HStack>
       {matchStatus.isConnected ? (
         <HStack>
@@ -176,10 +199,10 @@ function UserProfileHeader({matchStatus}: {matchStatus: MatchStatus}) {
   );
 }
 
-function UserProfileBody() {
+function UserProfileBody({profile}: {profile: SearchUserProfile}) {
   return (
     <>
-      <Image rounded src={profile.image} alt='Shadow' width={300} />
+      <Image rounded src={profile.profile_pic} alt='Shadow' width={300} height={300}/>
       <HStack>
         <Tag color='green' size='lg' className='opacity-70'>
           <MdPersonOutline className='inline' /> {profile.gender}
@@ -191,17 +214,24 @@ function UserProfileBody() {
           <LocationIcon /> {profile.distance} km away
         </Tag>
         <Tag color='red' size='lg'>
-          <HeartIcon /> {profile.fame}
+          <HeartIcon /> {profile.fame_rating}
         </Tag>
       </HStack>
 
       <TagGroup className='flex flex-wrap w-full'>
-        {profile.tags.map((t: string) => (
-          <Tag key={t} color='pink' className='tag-ellipsis'>
-            <TagIcon /> {t}
-          </Tag>
-        ))}
+        {(profile.interests ?? [])
+          .filter((t: any) => t)
+          .map((t: string) => (
+            <Tag key={t} color='pink' className='tag-ellipsis'>
+              <TagIcon /> {t}
+            </Tag>
+          ))}
       </TagGroup>
+
+      <VStack>
+        <p className='text-lg font-bold'>Biography:</p>
+        <p>{profile.biography}</p>
+      </VStack>
     </>
   );
 }
@@ -295,26 +325,3 @@ function UserProfileMatchButtons({
     </>
   );
 }
-
-const profile = {
-  id: 1,
-  name: 'very-very-very-very-long-name',
-  gender: 'Female',
-  image: profilePic,
-  age: 25,
-  fame: 1,
-  distance: 10.1,
-  tags: [
-    'car',
-    'animals',
-    'very-very-long-words',
-    'dogs',
-    'very-very-longer-longer- longer-words',
-  ],
-  like: true,
-  chat: false,
-  report: true,
-  connected: false,
-  online: false,
-  lastSeen: '2 hours ago',
-};

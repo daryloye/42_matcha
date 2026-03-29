@@ -46,6 +46,21 @@ export type MatchStatus = {
   isBlockedByTarget: boolean;
 }
 
+export type SearchUserProfile = {
+  id: string,
+  first_name: string,
+  last_name: string,
+  gender: string,
+  fame_rating: number,
+  profile_pic: string,
+  biography: string,
+  interests: string[],
+  distance: number,
+  age: number
+  online: boolean,
+  last_seen: string,
+}
+
 export enum MatchStatusEnum {
   LIKE = 'like',
   UNLIKE = 'unlike',

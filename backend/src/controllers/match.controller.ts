@@ -26,13 +26,13 @@ export const updateMatchHandler = async (
     }
     const targetUser = await getUsernameFromId(targetId);
     if (!targetUser || targetId === userId) {
-      res.status(400).json({ error: "invalid targetId" });
+      res.status(400).json({ error: "Invalid ID" });
       return; 
     }
 
     const statusFromTarget = await getMatchStatus(targetId, userId);
     if (statusFromTarget?.includes(matchStatus.BLOCK)) {
-      res.status(400).json({ error: "invalid targetId" });
+      res.status(400).json({ error: "Invalid ID" });
       return;
     }
     
@@ -110,7 +110,7 @@ export const getMatchStatusHandler = async (
 
     const targetUser = await getUsernameFromId(targetId);
     if (!targetUser || targetId === userId) {
-      res.status(400).json({ error: "invalid targetId" });
+      res.status(400).json({ error: "Invalid ID" });
       return; 
     }
 

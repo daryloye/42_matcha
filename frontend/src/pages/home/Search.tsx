@@ -16,7 +16,6 @@ import {
   useToaster,
   Notification,
 } from 'rsuite';
-// import { SearchFilterRange } from '../../components/search/SearchFilterRange';
 import type { SearchFilters, SearchSort } from '../../utils/types';
 import { HomePageTemplate } from './HomePageTemplate';
 import {
@@ -96,7 +95,6 @@ function SearchPage() {
 
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4'>
           {/* Sort Options */}
-
           <SelectPicker
             label='Sort by age:'
             data={sortOptions}

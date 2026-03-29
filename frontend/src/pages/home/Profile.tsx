@@ -149,7 +149,7 @@ function ProfilePage() {
             </Form.Group>
 
             <Form.Group>
-              <p className='text-lg font-bold'>Email Name</p>
+              <p className='text-lg font-bold'>Email</p>
               <Form.Control name='email' placeholder='Email' />
             </Form.Group>
 

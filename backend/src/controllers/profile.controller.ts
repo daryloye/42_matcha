@@ -87,35 +87,6 @@ export const getOwnerProfile = async (
   }
 };
 
-export const getOthersProfile = async (
-  req: AuthRequest,
-  res: Response,
-): Promise<void> => {
-  try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: "user not authenticated" });
-      return;
-    }
-    const { id: targetId } = req.params as { id: string };
-    if (!targetId) {
-      res.status(400).json({ error: "invalid id numver" });
-      return;
-    }
-    const targetProfile = await getProfileByUserId(targetId);
-    if (!targetProfile) {
-      res.status(404).json({ error: "user not authenticated" });
-      return;
-    }
-    // TODO: Track profile view (will implement in Step 22)
-    // await trackProfileView(userId, targetId);
-    res.status(200).json({ profile: targetProfile });
-  } catch (error) {
-    console.error("error getting other's profile", error);
-    res.status(500).json({ error: "internal server error" });
-  }
-};
-
 /*Get userId from req.user
 Get update data from req.body
 Call updateProfile(userId, data)

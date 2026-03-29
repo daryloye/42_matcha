@@ -28,7 +28,7 @@ export const createChatHandler = async (
     }
     const targetUser = await getUsernameFromId(targetId);
     if (!targetUser || targetId === userId) {
-      res.status(400).json({ error: "invalid targetId" });
+      res.status(400).json({ error: "Invalid ID" });
       return; 
     }
 
@@ -67,7 +67,7 @@ export const getChatHandler = async (
 
     const targetUser = await getUsernameFromId(targetId);
     if (!targetUser || targetId === userId) {
-      res.status(400).json({ error: "invalid targetId" });
+      res.status(400).json({ error: "Invalid ID" });
       return; 
     }
 
