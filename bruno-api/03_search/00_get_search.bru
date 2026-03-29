@@ -1,24 +1,17 @@
 meta {
-  name: 01_send_chat_another_user
+  name: 00_get_search
   type: http
-  seq: 4
+  seq: 1
 }
 
-post {
-  url: {{baseUrl}}/api/chat/send
+get {
+  url: {{baseUrl}}/api/search
   body: json
   auth: inherit
 }
 
 headers {
   Content-Type: application/json
-}
-
-body:json {
-  {
-    "targetId": "db9d9fd2-ce4e-4654-83d7-1a9e087d1982",
-    "message": "hello"
-  }
 }
 
 tests {

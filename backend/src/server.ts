@@ -13,6 +13,7 @@ import authRouter from "./routes/auth.routes";
 import profileRouter from "./routes/profile.routes";
 import matchRouter from "./routes/match.routes";
 import chatRouter from "./routes/chat.routes";
+import searchRouter from "./routes/search.routes";
 
 dotenv.config(); //this reads my env file and makes variables available via process.env.BACKEND_PORT
 
@@ -45,6 +46,9 @@ app.use("/api/auth", authRouter);
 app.use("/api/profile", profileRouter);
 app.use("/api/match", matchRouter);
 app.use("/api/chat", chatRouter);
+app.use("/api/search", searchRouter);
+
+
 //static files for uploads
 app.use("/uploads", express.static("uploads"));
 

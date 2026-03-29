@@ -2,7 +2,7 @@ import CalendarIcon from '@rsuite/icons/Calendar';
 import HeartIcon from '@rsuite/icons/Heart';
 import LocationIcon from '@rsuite/icons/Location';
 import TagIcon from '@rsuite/icons/Tag';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MdPersonOutline } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -13,18 +13,23 @@ import {
   TagGroup,
   TagInput,
   VStack,
+  useToaster,
+  Notification,
 } from 'rsuite';
-import { SearchFilterRange } from '../../components/search/SearchFilterRange';
+// import { SearchFilterRange } from '../../components/search/SearchFilterRange';
 import type { SearchFilters, SearchSort } from '../../utils/types';
 import { HomePageTemplate } from './HomePageTemplate';
 import {
   baseFilters,
   baseSorts,
+  getRange,
   getFilteredProfiles,
   getSortedProfiles,
-  profilesJson,
   sortOptions,
+  SearchFilterRange
 } from './SearchUtils';
+import { getToken } from '../../utils/token';
+import { GetSearchProfiles } from '../../api/search';
 
 export default function Search() {
   return <HomePageTemplate page={<SearchPage />} />;
@@ -33,11 +38,49 @@ export default function Search() {
 function SearchPage() {
   const [filters, setFilters] = useState<SearchFilters>(baseFilters);
   const [sortBy, setSortBy] = useState<SearchSort>(baseSorts);
-
-  const filtered = getFilteredProfiles(profilesJson, filters);
-  const sorted = getSortedProfiles(filtered, sortBy);
+  const [profiles, setProfiles] = useState<any | null>(null);
 
   const navigate = useNavigate();
+  const toaster = useToaster();
+
+  useEffect(() => {
+    const token = getToken();
+    if (!token) {
+      navigate('/');
+      return;
+    }
+
+    async function fetchProfiles() {
+      try {
+        const res = await GetSearchProfiles(token!);
+        setProfiles(res.profiles);
+
+        setFilters((prev) => ({
+          ...prev,
+          age: getRange(res.profiles, 'age'),
+          distance: getRange(res.profiles, 'distance'),
+          fame: getRange(res.profiles, 'fame_rating'),
+        }));
+      } catch (err: any) {
+        toaster.push(
+          <Notification type='error' closable>
+            {err.message}
+          </Notification>,
+        );
+      }
+    }
+
+    fetchProfiles();
+  }, []);
+
+  if (!profiles) return null;
+
+  const ageRange = getRange(profiles, 'age');
+  const distanceRange = getRange(profiles, 'distance');
+  const fameRange = getRange(profiles, 'fame_rating');
+
+  const filtered = getFilteredProfiles(profiles, filters);
+  const sorted = getSortedProfiles(filtered, sortBy);
 
   return (
     <div>
@@ -48,7 +91,7 @@ function SearchPage() {
         <Input
           placeholder='Search for user'
           value={filters.name}
-          onChange={(value) => setFilters((prev) => ({ ...prev, name: value }))}
+          onChange={(value: string) => setFilters((prev) => ({ ...prev, name: value }))}
         />
 
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4'>
@@ -58,7 +101,7 @@ function SearchPage() {
             label='Sort by age:'
             data={sortOptions}
             value={sortBy.age}
-            onChange={(value) =>
+            onChange={(value: number) =>
               setSortBy((prev) => ({ ...prev, age: value! }))
             }
             cleanable={false}
@@ -69,7 +112,7 @@ function SearchPage() {
             label='Sort by distance:'
             data={sortOptions}
             value={sortBy.distance}
-            onChange={(value) =>
+            onChange={(value: number) =>
               setSortBy((prev) => ({ ...prev, distance: value! }))
             }
             cleanable={false}
@@ -80,7 +123,7 @@ function SearchPage() {
             label='Sort by fame:'
             data={sortOptions}
             value={sortBy.fame}
-            onChange={(value) =>
+            onChange={(value: number) =>
               setSortBy((prev) => ({ ...prev, fame: value! }))
             }
             cleanable={false}
@@ -91,7 +134,7 @@ function SearchPage() {
             label='Sort by tags:'
             data={sortOptions}
             value={sortBy.tags}
-            onChange={(value) =>
+            onChange={(value: number) =>
               setSortBy((prev) => ({ ...prev, tags: value! }))
             }
             cleanable={false}
@@ -101,7 +144,7 @@ function SearchPage() {
           {/* Filter Options */}
           <SearchFilterRange
             label='Age ranges:'
-            range={baseFilters.age}
+            range={ageRange}
             values={filters.age}
             onChange={(value) =>
               setFilters((prev) => ({ ...prev, age: value }))
@@ -110,7 +153,7 @@ function SearchPage() {
 
           <SearchFilterRange
             label='Distance ranges:'
-            range={baseFilters.distance}
+            range={distanceRange}
             values={filters.distance}
             onChange={(value) =>
               setFilters((prev) => ({ ...prev, distance: value }))
@@ -119,7 +162,7 @@ function SearchPage() {
 
           <SearchFilterRange
             label='Fame ranges:'
-            range={baseFilters.fame}
+            range={fameRange}
             values={filters.fame}
             onChange={(value) =>
               setFilters((prev) => ({ ...prev, fame: value }))
@@ -132,7 +175,7 @@ function SearchPage() {
               value={filters.tags}
               trigger={['Space', 'Comma', 'Enter']}
               placeholder='Add a space after each tag'
-              onChange={(value) =>
+              onChange={(value: string[]) =>
                 setFilters((prev) => ({ ...prev, tags: [...value] }))
               }
             />
@@ -149,9 +192,11 @@ function SearchPage() {
               onClick={() => navigate(`/users/${c.id}`)}
               className='text-left transition transform active:scale-95 hover:scale-[1.02]'
             >
-              <img src={c.image} alt='Shadow' />
+              <img src={c.profile_pic} alt='Shadow' className='w-full aspect-square object-cover'/>
               <Card.Header>
-                <p className='text-xl font-bold truncate'>{c.name}</p>
+                <p className='text-xl font-bold truncate'>
+                  {`${c.first_name} ${c.last_name}`}
+                </p>
               </Card.Header>
               <Card.Body>
                 <VStack>
@@ -165,13 +210,13 @@ function SearchPage() {
                     <LocationIcon /> {c.distance} km away
                   </Tag>
                   <Tag color='red' size='lg'>
-                    <HeartIcon /> {c.fame}
+                    <HeartIcon /> {c.fame_rating}
                   </Tag>
                 </VStack>
               </Card.Body>
               <Card.Footer>
                 <TagGroup className='flex flex-wrap w-full'>
-                  {c.tags.map((t: string) => (
+                  {(c.interests ?? []).filter((t: any) => t).map((t: string) => (
                     <Tag key={t} color='pink' className='tag-ellipsis'>
                       <TagIcon /> {t}
                     </Tag>

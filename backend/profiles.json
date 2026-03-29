@@ -30,6 +30,20 @@
             "biography": "Test account",
             "interests": ["coffee", "hiking", "coding"],
             "location_city": "Singapore"
+        },
+        {
+            "username": "1",
+            "firstname": "Dummy User",
+            "lastname": "1",
+            "email": "1@matcha.com",
+            "password": "MatchaAdmin2026!",
+            "profile_pic": "https://media.tenor.com/7t63GFnoIPUAAAAM/huh-cat-huh-m4rtin.gif",
+            "gender": "other",
+            "sexual_preference": "both",
+            "date_of_birth": "1990-08-09",
+            "biography": "Test account",
+            "interests": [],
+            "location_city": "Singapore"
         }
     ]
 }

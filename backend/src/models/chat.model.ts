@@ -1,8 +1,8 @@
 import { query } from "../config/database";
 
 export const createChat = async (
-    fromId: String,
-    toId: String,
+    fromId: string,
+    toId: string,
     message: string
 ): Promise<any | null> => {
   const sql = `
