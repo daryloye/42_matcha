@@ -1,0 +1,35 @@
+{
+    "profiles":
+    [
+        {
+            "id": "db9d9fd2-ce4e-4654-83d7-1a9e087d1982",
+            "username": "admin",
+            "firstname": "Admin",
+            "lastname": "Matcha",
+            "email": "admin@matcha.com",
+            "password": "MatchaAdmin2026!",
+            "profile_pic": "https://media.tenor.com/7t63GFnoIPUAAAAM/huh-cat-huh-m4rtin.gif",
+            "gender": "other",
+            "sexual_preference": "both",
+            "date_of_birth": "2025-08-09",
+            "biography": "System Administrator account",
+            "interests": ["coffee", "hiking", "coding"],
+            "location_city": "Singapore"
+        },
+        {
+            "id": "450d84f8-c8ae-4842-a87d-b9a0839ab2a8",
+            "username": "test",
+            "firstname": "Test",
+            "lastname": "User",
+            "email": "test@matcha.com",
+            "password": "MatchaAdmin2026!",
+            "profile_pic": "https://media.tenor.com/7t63GFnoIPUAAAAM/huh-cat-huh-m4rtin.gif",
+            "gender": "other",
+            "sexual_preference": "both",
+            "date_of_birth": "2025-08-09",
+            "biography": "Test account",
+            "interests": ["coffee", "hiking", "coding"],
+            "location_city": "Singapore"
+        }
+    ]
+}
