@@ -30,3 +30,13 @@ export async function GetConnectedUsers(token: string) {
     }),
   );
 }
+
+export async function GetAccountData(token: string) {
+  return await GetHTTP(
+    `/api/match/account`,
+    new Headers({
+      'Content-Type': 'application/json',
+      Authorization: token,
+    }),
+  );
+}

@@ -55,9 +55,10 @@ export function getSortedProfiles(profiles: any, sortBy: SearchSort) {
     r = doSort(sortBy.distance, a.distance, b.distance);
     if (r !== 0) return r;
 
-    r = doSort(sortBy.fame, Number(a.fame_rating ?? 0), Number(b.fame_rating ?? 0));
+    r = doSort(sortBy.fame, Number(a.fame_rating), Number(b.fame_rating));
     if (r !== 0) return r;
 
+    // TODO: sort by matching tags
     r = doSort(
       sortBy.tags,
       (a.interests ?? []).filter((t: any) => t != null && t !== '').length,

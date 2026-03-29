@@ -1,23 +1,21 @@
 meta {
   name: 00_get_match_status_another_user
   type: http
-  seq: 3
+  seq: 4
 }
 
 get {
-  url: {{baseUrl}}/api/match/status
+  url: {{baseUrl}}/api/match/status?targetId=db9d9fd2-ce4e-4654-83d7-1a9e087d1982
   body: json
   auth: inherit
 }
 
-headers {
-  Content-Type: application/json
+params:query {
+  targetId: db9d9fd2-ce4e-4654-83d7-1a9e087d1982
 }
 
-body:json {
-  {
-    "targetId": "450d84f8-c8ae-4842-a87d-b9a0839ab2a8"
-  }
+headers {
+  Content-Type: application/json
 }
 
 tests {

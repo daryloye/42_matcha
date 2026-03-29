@@ -1,6 +1,6 @@
 import { AuthRequest } from "../middleware/auth.middleware";
 import { Response } from "express";
-import { createMatchStatus, deleteMatchStatus, getMatchStatus, getTargetIdsWithStatus } from "../models/match.model";
+import { createMatchStatus, deleteMatchStatus, getLikeData, getMatchStatus, getTargetIdsWithStatus, getViewData } from "../models/match.model";
 import { getUsernameFromId } from "../models/user.model";
 import { MatchRequest, matchStatus } from "../types/match.types";
 import { increaseUserFame } from "../models/profile.model";
@@ -156,3 +156,23 @@ export const getConnectedUsersHandler = async (
     res.status(500).json({ error: "internal server error" });
   }
 };
+
+export const getAccountDataHandler = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) {
+      res.status(401).json({ error: "user not authenticated" });
+      return;
+    }
+
+    const views = await getViewData(userId);
+    const likes = await getLikeData(userId);
+    res.status(200).json({ views, likes });
+  } catch (error) {
+    console.error("error getting account data", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}

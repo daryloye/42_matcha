@@ -62,6 +62,13 @@ export type SearchUserProfile = {
   last_seen: string,
 }
 
+export type AccountData = {
+  user_id: string,
+  status: string,
+  first_name: string,
+  last_name: string
+}
+
 export enum MatchStatusEnum {
   LIKE = 'like',
   UNLIKE = 'unlike',

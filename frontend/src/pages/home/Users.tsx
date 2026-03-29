@@ -52,6 +52,7 @@ function UsersPage() {
     }
 
     try {
+      await UpdateMatchStatus(token, {action: MatchStatusEnum.VIEW, targetId: id})
       const res = await GetUserProfile(token, id);
       setProfile(res.profile);
     } catch (err: any) {

@@ -55,3 +55,34 @@ export const getTargetIdsWithStatus = async (
   return result.rows.length > 0 ? result.rows.map(row => row.target_user_id) : null;
 };
 
+export const getViewData = async (userId: string): Promise<any | void> => {
+  const sql = `
+    SELECT 
+      r.user_id,
+      r.status,
+      u.first_name,
+      u.last_name
+    FROM relationships r
+    LEFT JOIN users u on u.id = r.user_id
+    WHERE r.target_user_id = $1
+    and r.status = 'view'
+    `;
+    const result = await query(sql, [userId]);
+    return result.rows.length > 0 ? result.rows : null;
+}
+
+export const getLikeData = async (userId: string): Promise<any | void> => {
+  const sql = `
+    SELECT 
+      r.user_id,
+      r.status,
+      u.first_name,
+      u.last_name
+    FROM relationships r
+    LEFT JOIN users u on u.id = r.user_id
+    WHERE r.target_user_id = $1
+    and r.status = 'like'
+    `;
+    const result = await query(sql, [userId]);
+    return result.rows.length > 0 ? result.rows : null;
+}

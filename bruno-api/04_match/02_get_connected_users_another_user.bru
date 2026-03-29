@@ -1,17 +1,13 @@
 meta {
   name: 02_get_connected_users_another_user
   type: http
-  seq: 5
+  seq: 6
 }
 
 get {
-  url: {{baseUrl}}/api/match/status?targetId=db9d9fd2-ce4e-4654-83d7-1a9e087d1982
+  url: {{baseUrl}}/api/match/connected
   body: json
   auth: inherit
-}
-
-params:query {
-  targetId: db9d9fd2-ce4e-4654-83d7-1a9e087d1982
 }
 
 headers {

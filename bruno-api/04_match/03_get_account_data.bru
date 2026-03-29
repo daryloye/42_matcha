@@ -1,24 +1,17 @@
 meta {
-  name: 01_update_match_status
+  name: 03_get_account_data
   type: http
   seq: 2
 }
 
-post {
-  url: {{baseUrl}}/api/match/update
+get {
+  url: {{baseUrl}}/api/match/connected
   body: json
   auth: inherit
 }
 
 headers {
   Content-Type: application/json
-}
-
-body:json {
-  {
-    "action": "like",
-    "targetId": "450d84f8-c8ae-4842-a87d-b9a0839ab2a8"
-  }
 }
 
 tests {
