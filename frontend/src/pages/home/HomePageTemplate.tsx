@@ -16,7 +16,7 @@ import {
   Whisper,
 } from 'rsuite';
 import { GetBasicProfile } from '../../api/profile';
-import { deleteToken, getToken } from '../../utils/token';
+import { deleteToken, getToken, setToken } from '../../utils/token';
 import type { BasicProfile } from '../../utils/types';
 
 export function HomePageTemplate({ page }: { page: ReactNode }) {
@@ -35,8 +35,15 @@ export function HomePageTemplate({ page }: { page: ReactNode }) {
     async function fetchBasicProfile() {
       try {
         const res = await GetBasicProfile(token!);
+        
         setBasicProfile(res.profile);
         console.log('Profile retrieved');
+
+        const newToken = res.headers.get('x-renewed-token');
+        if (newToken) {
+          setToken(newToken);
+        }
+
       } catch (err: any) {
         toaster.push(
           <Notification type='error' closable>

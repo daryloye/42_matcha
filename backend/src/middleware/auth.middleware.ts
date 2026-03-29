@@ -33,6 +33,33 @@ export const requireAuth = async (
       email: decoded.email,
       username: decoded.username,
     };
+
+    if (decoded.exp) {
+      const now = Math.floor(Date.now() / 1000);
+      const remainingSeconds = decoded.exp - now;
+
+      const jwtSecret = process.env.JWT_SECRET;
+      if (!jwtSecret) {
+        throw new Error("JWT_SECRET is not defined");
+      }
+
+      if (remainingSeconds <= 120) {
+        const newToken = jwt.sign(
+          {
+            userId: decoded.userId,
+            email: decoded.email,
+            username: decoded.username,
+          },
+          jwtSecret,
+          {
+            expiresIn: process.env.JWT_EXPIRES_IN || "15m",
+          } as jwt.SignOptions,
+        );
+
+        res.setHeader('x-renewed-token', newToken);
+      }
+    }
+
     next();
   } catch (error) {
     res.status(401).json({ error: "Request is not authorized" });

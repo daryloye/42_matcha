@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Avatar, Badge, HStack, Tag, Textarea, VStack, useToaster, Notification } from 'rsuite';
 import profilePic from '../../assets/profilePic2.png';
 import { HomePageTemplate } from './HomePageTemplate';
-import type { ChatItem } from '../../utils/types';
 import { getToken } from '../../utils/token';
 import { useNavigate } from 'react-router-dom';
 import { GetConnectedUsers } from '../../api/match';
@@ -63,7 +62,7 @@ export default function Chat() {
 }
 
 function ChatPage() {
-  const [selectedChat, setSelectedChat] = useState<ChatItem | null>(null);
+  const [selectedChat, setSelectedChat] = useState<any | null>(null);
   const [selectedChatId, setselectedChatId] = useState<string>('');
   const [connetedUsers, setConnectedUsers] = useState<String[]>([]);  
 

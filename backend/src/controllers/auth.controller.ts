@@ -125,39 +125,39 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     try {
         const { username, password }: LoginRequest = req.body;
 
-        // if(!isValidEmail(email)) {
-        //     res.status(400).json({ error: 'Invalid email or password.'});
-        //     return;
-        // }
-        if(!isValidPassword(password)) {
-            res.status(400).json({ error: 'Invalid email or password.'})
+        if(!username || !password) {
+            res.status(400).json({ error: 'Invalid username or password.'})
             return;
         }
-        const existingUser = await findUserByUsername(username);
 
-        if(existingUser === null){
-            res.status(400).json({ error: 'Invalid email or password.'});
+        const existingUser = await findUserByUsername(username);
+        if (!existingUser) {
+            res.status(400).json({ error: 'Invalid username or password.'});
             return;
         }
+
+        const isMatch = await bcrypt.compare(password, existingUser.password_hash);
+        if(!isMatch){
+            res.status(400).json({ error: 'Invalid username or password.'})
+            return;
+        }
+
         if (!existingUser.is_verified){
-            try{
+            try {
                 await sendVerificationEmail(existingUser.email, existingUser.verification_token!)
                 res.status(400).json({ error: 'Your account is not verified. A new verification email has been sent.'})
-            }catch(emailError){
+            } catch (emailError) {
                 console.error('Failed to resend verification email: ', emailError);
                 res.status(500).json({ error: 'Failed to send verification email. Please try again.' });    
             }
             return;
         }
-        const isMatch = await bcrypt.compare(password, existingUser.password_hash);
 
-        if(!isMatch){
-            res.status(400).json({ error: 'Invalid email or password.'})
-            return;
-        }
         const jwtSecret = process.env.JWT_SECRET;
-        if(!jwtSecret)
+        if (!jwtSecret) {
             throw new Error('JWT_SECRET is not defined');
+        }
+
         const token = jwt.sign(
             {
                 userId: existingUser.id,
@@ -166,25 +166,15 @@ export const login = async (req: Request, res: Response): Promise<void> => {
             },
             jwtSecret,
             {
-                expiresIn: process.env.JWT_EXPIRES_IN || '7d'
+                expiresIn: process.env.JWT_EXPIRES_IN || '15m'
             } as jwt.SignOptions 
-
         );
 
         res.status(200).json({
             message: 'Login successful!',
             token: token,
-/*
-            user: {
-                id: existingUser.id,
-                username: existingUser.username,
-                first_name: existingUser.first_name,
-                last_name: existingUser.last_name,
-                email: existingUser.email
-            }
-*/
         });
-    }catch(error){
+    } catch (error) {
         console.error('login error: ', error);
         res.status(500).json({ error: 'Internal Server Error' })
     }
