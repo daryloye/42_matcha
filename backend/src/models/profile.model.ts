@@ -1,4 +1,5 @@
 import { query } from '../config/database';
+import { AuthRequest } from '../middleware/auth.middleware';
 
 
 interface CreateUserProfile {

@@ -6,6 +6,7 @@ import {
   getProfileDetails,
   getProfileMe,
   updateProfile,
+  addProfilePicture
 } from "../models/profile.model";
 
 // 1. Get userId from authenticated user
@@ -233,4 +234,27 @@ export const getFullProfileDetails = async (
                   latitude: 123
                   longitude: 456
         }*/
+};
+
+export const uploadProfilePicture = async (req: AuthRequest, res: Response): Promise<void> => {
+    try {
+        const userId = req.user?.userId;
+        if (!userId) {
+            res.status(401).json({ error: 'User not authenticated' });
+            return;
+        }
+        if (!req.file) {
+            res.status(400).json({ error: 'No file provided' });
+            return;
+        }
+        const imageUrl = `/uploads/${req.file.filename}`;
+        const newPicture = await addProfilePicture(userId, imageUrl);
+        res.status(200).json({
+            message: 'Picture uploaded successfully',
+            picture: newPicture
+        });
+    } catch (error) {
+        console.error('upload error: ', error);
+        res.status(500).json({ error: 'Internal server error during upload' });
+    }
 };

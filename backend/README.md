@@ -35,12 +35,12 @@
      ✅ 18.4: Build get own profile endpoint
      ✅ 18.5: Build view other's profile endpoint
      ✅ 18.6: Build update profile endpoint
-    ⏳ 18.7: Build upload picture endpoint (multer)
+     ✅ 18.7: Build upload picture endpoint (multer)
     ⏳ 18.8: Build set profile picture endpoint
     ⏳ 18.9: Build delete picture endpoint
     ⏳ 18.10: Build get user pictures endpoint
-    ⏳ 18.11: Create profile.routes.ts
-    ⏳ 18.12: Connect routes to server.ts
+     ✅ 18.11: Create profile.routes.ts
+     ✅ 18.12: Connect routes to server.ts
     ⏳ 18.13: Test all endpoints with Postman
 
   ⏳ Step 19: Interest System

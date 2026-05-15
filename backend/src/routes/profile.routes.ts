@@ -4,10 +4,12 @@ import {
   getOwnerProfile,
   updateOwnProfile,
   getFullProfileDetails,
-  getMe
+  getMe,
+  uploadProfilePicture
 } from "../controllers/profile.controller";
 import { requireAuth } from "../middleware/auth.middleware";
-
+import { upload } from "../middleware/multer";
+ 
 const router = Router();
 
 router.post('/complete-profile', requireAuth, completeProfile);
@@ -18,4 +20,8 @@ router.get('/me', requireAuth, getMe);
 router.get('/details', requireAuth, getFullProfileDetails);
 router.post('/update', requireAuth, updateOwnProfile);
 
+//profilepicture upload
+router.post('/picture', requireAuth, upload.single('picture'), uploadProfilePicture);
+
+router.get('/:id', requireAuth, getOthersProfile);
 export default router;

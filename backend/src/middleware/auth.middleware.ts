@@ -20,11 +20,14 @@ export const requireAuth = async (
   // 4. Call next() if valid
   // 5. Return error if invalid
   try {
-    const token = req.headers.authorization;
-    if (!token) {
+
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       res.status(401).json({ error: "Authorization token required" });
       return;
     }
+
+    const token = authHeader.split(" ")[1];
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
 
