@@ -23,5 +23,4 @@ router.post('/update', requireAuth, updateOwnProfile);
 //profilepicture upload
 router.post('/picture', requireAuth, upload.single('picture'), uploadProfilePicture);
 
-router.get('/:id', requireAuth, getOthersProfile);
 export default router;

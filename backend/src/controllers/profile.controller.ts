@@ -6,7 +6,8 @@ import {
   getProfileDetails,
   getProfileMe,
   updateProfile,
-  addProfilePicture
+  addProfilePicture,
+  setProfilePicture
 } from "../models/profile.model";
 
 // 1. Get userId from authenticated user
@@ -258,3 +259,34 @@ export const uploadProfilePicture = async (req: AuthRequest, res: Response): Pro
         res.status(500).json({ error: 'Internal server error during upload' });
     }
 };
+
+export const setPrimaryPicture = async (req: AuthRequest, res: Response): Promise<void> => {
+  try { 
+    const userId = req.user?.userId;
+  
+    if(!userId){
+      res.status(401).json({ error: 'User not authententicated'  });
+      return;
+    }
+    
+    const pictureId = req.params.pictureId as string;
+    if(!pictureId) {
+      res.status(404).json({ error: 'Picture ID is required' });
+      return;
+    }
+    const picture = await setProfilePicture(userId, pictureId);
+
+    if (!picture) {
+      res.status(404).json({error: 'Picture is not found'})
+      return;
+    }
+    res.status(200).json({
+      message: 'Profile. picture updated successfully',
+      picture
+    })
+  } catch (error){
+      console.error('set profile picture error: ', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+
+}

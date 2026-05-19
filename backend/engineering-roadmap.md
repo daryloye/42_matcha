@@ -2,7 +2,7 @@
 
 > **Project:** `matcha`
 > **Last updated:** 2026-05-15
-> **Active branch:** `feat/profile-update`
+> **Active branch:** `main`
 > **Stack:** TypeScript, Node.js, Express, PostgreSQL 16, Socket.IO, Docker
 > **Server:** `app.use("/api/auth", authRouter)` | `app.use("/api/profile", profileRouter)`
 > **DB container:** `matcha-database-1` | **Backend:** `matcha-backend-1` | **Frontend:** `matcha-frontend-1`
@@ -153,7 +153,7 @@ user_interests: id (UUID PK), user_id (UUID FK), interest_id (UUID FK),
 - [x] `updateOwnProfile` — POST, dynamic update of own profile
 - [x] `getMe` — GET, returns lightweight profile (username, first_name, last_name, picture, is_profile_completed)
 - [x] `getFullProfileDetails` — GET, returns full profile page data including interests[] and pictures[]
-- [ ] `uploadProfilePicture` — POST, multer processes file, saves to uploads/, stores path in DB
+- [x] `uploadProfilePicture` — POST, multer processes file, saves to uploads/, stores path in DB
 - [ ] `setProfilePicture` — POST /:pictureId/primary, marks a picture as profile picture
 - [ ] `deleteProfilePicture` — DELETE /:pictureId, removes picture, auto-promotes next
 - [ ] `getPictures` — GET, returns all pictures for current user
@@ -180,7 +180,7 @@ user_interests: id (UUID PK), user_id (UUID FK), interest_id (UUID FK),
 > 4. At least 1 interest in user_interests
 > 5. At least 1 picture in profile_pictures
 
-### 3.6 — Frontend-requested endpoints (Brad)
+### 3.6 — Frontend-requested endpoints (Daryl)
 - [x] `GET /api/profile/me` → returns `{ first_name, last_name, username, picture, isProfileCompleted }`
 - [x] `GET /api/profile/details` → returns full profile page data
 - [ ] `POST /api/profile/details` → updates full profile
@@ -285,6 +285,52 @@ user_interests: id (UUID PK), user_id (UUID FK), interest_id (UUID FK),
 - [ ] All credentials in `.env`, excluded from Git
 - [ ] No errors, warnings, or notices server-side or client-side
 - [ ] Test on latest Firefox and Chrome
+
+---
+
+backend/
+├── src/
+│   ├── config/
+│   │   ├── database.ts
+│   │   └── initDB.ts
+│   ├── controllers/
+│   │   ├── auth.controller.ts
+│   │   ├── chat.controller.ts        ← Daryl's
+│   │   ├── match.controller.ts       ← Daryl's
+│   │   ├── profile.controller.ts
+│   │   └── search.controller.ts      ← Daryl's
+│   ├── database/
+│   │   ├── migrations/
+│   │   │   └── 001_initial_schema.sql  ← still empty!
+│   │   └── seed.ts
+│   ├── middleware/
+│   │   ├── auth.middleware.ts
+│   │   └── multer.ts
+│   ├── models/
+│   │   ├── chat.model.ts             ← Daryl's
+│   │   ├── match.model.ts            ← Daryl's
+│   │   ├── profile.model.ts
+│   │   ├── search.model.ts           ← Daryl's
+│   │   └── user.model.ts
+│   ├── routes/
+│   │   ├── auth.routes.ts
+│   │   ├── chat.routes.ts            ← Daryl's
+│   │   ├── match.routes.ts           ← Daryl's
+│   │   ├── profile.routes.ts
+│   │   └── search.routes.ts          ← Daryl's
+│   ├── types/
+│   │   ├── chat.types.ts             ← Daryl's
+│   │   ├── match.types.ts            ← Daryl's
+│   │   └── user.types.ts
+│   ├── utils/
+│   │   └── (empty — geo.ts needed here later)
+│   └── server.ts
+├── uploads/                          ← gitignored, persists in container
+├── .env                              ← gitignored
+├── Dockerfile
+├── package.json
+├── tsconfig.json
+└── engineering-roadmap.md
 
 ---
 
