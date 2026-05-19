@@ -7,7 +7,9 @@ import {
   getProfileMe,
   updateProfile,
   addProfilePicture,
-  setProfilePicture
+  setProfilePicture,
+  deleteProfilePicture,
+  getProfilePictures,
 } from "../models/profile.model";
 
 // 1. Get userId from authenticated user
@@ -237,56 +239,115 @@ export const getFullProfileDetails = async (
         }*/
 };
 
-export const uploadProfilePicture = async (req: AuthRequest, res: Response): Promise<void> => {
-    try {
-        const userId = req.user?.userId;
-        if (!userId) {
-            res.status(401).json({ error: 'User not authenticated' });
-            return;
-        }
-        if (!req.file) {
-            res.status(400).json({ error: 'No file provided' });
-            return;
-        }
-        const imageUrl = `/uploads/${req.file.filename}`;
-        const newPicture = await addProfilePicture(userId, imageUrl);
-        res.status(200).json({
-            message: 'Picture uploaded successfully',
-            picture: newPicture
-        });
-    } catch (error) {
-        console.error('upload error: ', error);
-        res.status(500).json({ error: 'Internal server error during upload' });
+export const uploadProfilePicture = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) {
+      res.status(401).json({ error: "User not authenticated" });
+      return;
     }
+    if (!req.file) {
+      res.status(400).json({ error: "No file provided" });
+      return;
+    }
+    const imageUrl = `/uploads/${req.file.filename}`;
+    const newPicture = await addProfilePicture(userId, imageUrl);
+    res.status(200).json({
+      message: "Picture uploaded successfully",
+      picture: newPicture,
+    });
+  } catch (error) {
+    console.error("upload error: ", error);
+    res.status(500).json({ error: "Internal server error during upload" });
+  }
 };
 
-export const setPrimaryPicture = async (req: AuthRequest, res: Response): Promise<void> => {
-  try { 
+export const setPrimaryPicture = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
     const userId = req.user?.userId;
-  
-    if(!userId){
-      res.status(401).json({ error: 'User not authententicated'  });
-      return;
-    }
-    
-    const pictureId = req.params.pictureId as string;
-    if(!pictureId) {
-      res.status(404).json({ error: 'Picture ID is required' });
-      return;
-    }
-    const picture = await setProfilePicture(userId, pictureId);
 
+    if (!userId) {
+      res.status(401).json({ error: "User not authententicated" });
+      return;
+    }
+
+    const pictureId = req.params.pictureId as string;
+    if (!pictureId) {
+      res.status(404).json({ error: "Picture ID is required" });
+      return;
+    }
+
+    const picture = await setProfilePicture(userId, pictureId);
     if (!picture) {
-      res.status(404).json({error: 'Picture is not found'})
+      res.status(404).json({ error: "Picture is not found" });
       return;
     }
     res.status(200).json({
-      message: 'Profile. picture updated successfully',
-      picture
-    })
-  } catch (error){
-      console.error('set profile picture error: ', error);
-      res.status(500).json({ error: 'Internal server error' });
+      message: "Profile. picture updated successfully",
+      picture,
+    });
+  } catch (error) {
+    console.error("set profile picture error: ", error);
+    res.status(500).json({ error: "Internal server error" });
   }
+};
 
-}
+export const removePicture = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) {
+      res.status(401).json({ error: "User not authenticated" });
+      return;
+    }
+
+    const pictureId = req.params.pictureId as string;
+    if (!pictureId) {
+      res.status(400).json({ error: "Picture ID is required" });
+      return;
+    }
+
+    const deleted = await deleteProfilePicture(userId, pictureId);
+
+    if (!deleted) {
+      res.status(404).json({ error: "Picture not found" });
+      return;
+    }
+
+    res.status(200).json({ message: "Picture deleted successfully" });
+  } catch (error) {
+    console.error("delete picture error: ", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const getPictures = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) {
+      res.status(401).json({ error: "User not authenticated" });
+      return;
+    }
+
+    const pictures = await getProfilePictures(userId);
+
+    res.status(200).json({
+      message: "Pictures retrieved successfully",
+      pictures,
+    });
+  } catch (error) {
+    console.error("get pictures error: ", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};

@@ -1,7 +1,7 @@
 # Matcha Dating App — Engineering Roadmap & To-Do Tracker
 
 > **Project:** `matcha`
-> **Last updated:** 2026-05-15
+> **Last updated:** 2026-05-19
 > **Active branch:** `main`
 > **Stack:** TypeScript, Node.js, Express, PostgreSQL 16, Socket.IO, Docker
 > **Server:** `app.use("/api/auth", authRouter)` | `app.use("/api/profile", profileRouter)`
@@ -154,9 +154,9 @@ user_interests: id (UUID PK), user_id (UUID FK), interest_id (UUID FK),
 - [x] `getMe` — GET, returns lightweight profile (username, first_name, last_name, picture, is_profile_completed)
 - [x] `getFullProfileDetails` — GET, returns full profile page data including interests[] and pictures[]
 - [x] `uploadProfilePicture` — POST, multer processes file, saves to uploads/, stores path in DB
-- [ ] `setProfilePicture` — POST /:pictureId/primary, marks a picture as profile picture
-- [ ] `deleteProfilePicture` — DELETE /:pictureId, removes picture, auto-promotes next
-- [ ] `getPictures` — GET, returns all pictures for current user
+- [x] `setPrimaryPicture` — POST /:pictureId/primary, marks a picture as profile picture
+- [x] `removePicture` — DELETE /:pictureId, removes picture, auto-promotes next
+- [x] `getPictures` — GET, returns all pictures for current user
 - [ ] `updateProfileDetails` — POST /details, updates users + profiles + calls updateUserInterests
 
 ### 3.4 — Profile Routes (`profile.routes.ts`) [~]
