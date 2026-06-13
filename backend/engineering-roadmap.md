@@ -1,8 +1,8 @@
 # Matcha Dating App — Engineering Roadmap & To-Do Tracker
 
 > **Project:** `matcha`
-> **Last updated:** 2026-05-29
-> **Active branch:** `feat/update-profile-details`
+> **Last updated:** 2026-06-13
+> **Active branch:** `main`
 > **Stack:** TypeScript, Node.js, Express, PostgreSQL 16, Socket.IO, Docker
 > **Server:** `app.use("/api/auth", authRouter)` | `app.use("/api/profile", profileRouter)`
 > **DB container:** `matcha-database-1` | **Backend:** `matcha-backend-1` | **Frontend:** `matcha-frontend-1`
@@ -64,6 +64,12 @@ interests:      id (UUID PK), name (UNIQUE), created_at
 
 user_interests: id (UUID PK), user_id (UUID FK), interest_id (UUID FK),
                 created_at, UNIQUE(user_id, interest_id)
+
+relationships:  id (SERIAL PK), user_id (UUID FK), target_user_id (UUID FK),
+                status, created_at, UNIQUE(user_id, target_user_id, status)
+
+chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
+                message, created_at
 ```
 
 ---
@@ -190,7 +196,7 @@ user_interests: id (UUID PK), user_id (UUID FK), interest_id (UUID FK),
 - [x] Admin profile seeded (gender, sexual_preference, biography, date_of_birth, location_city)
 - [x] Admin profile picture seeded (is_profile_picture: true)
 - [x] Admin interests seeded (coffee, hiking, coding) via upsert + user_interests link
-- [ ] 500+ fake profiles for evaluation (required by subject)
+- [x] 500+ fake profiles for evaluation (required by subject)
 
 ### 3.8 — User Model additions (`user.model.ts`)
 - [x] `updateUser(userId: string, data)` — dynamic update of first_name, last_name, email via Object.entries loop
@@ -267,11 +273,11 @@ user_interests: id (UUID PK), user_id (UUID FK), interest_id (UUID FK),
 
 ---
 
-## Phase 9 — Seeding & Evaluation Prep [ ]
+## Phase 9 — Seeding & Evaluation Prep [~]
 
-- [ ] Seed 500+ distinct fake profiles (required by subject for evaluation)
-- [ ] Each fake profile needs: gender, sexual_preference, biography, interests, pictures, location
-- [ ] Profiles must cover varied genders, preferences, locations for matching algorithm testing
+- [x] Seed 500+ distinct fake profiles (required by subject for evaluation)
+- [x] Each fake profile needs: gender, sexual_preference, biography, interests, pictures, location
+- [x] Profiles must cover varied genders, preferences, locations for matching algorithm testing
 - [ ] Write full schema into `001_initial_schema.sql` for version control
 
 ---
@@ -292,48 +298,49 @@ user_interests: id (UUID PK), user_id (UUID FK), interest_id (UUID FK),
 ---
 
 backend/
-├── src/
-│   ├── config/
-│   │   ├── database.ts
-│   │   └── initDB.ts
-│   ├── controllers/
-│   │   ├── auth.controller.ts
-│   │   ├── chat.controller.ts        ← Daryl's
-│   │   ├── match.controller.ts       ← Daryl's
-│   │   ├── profile.controller.ts
-│   │   └── search.controller.ts      ← Daryl's
-│   ├── database/
-│   │   ├── migrations/
-│   │   │   └── 001_initial_schema.sql  ← still empty!
-│   │   └── seed.ts
-│   ├── middleware/
-│   │   ├── auth.middleware.ts
-│   │   └── multer.ts
-│   ├── models/
-│   │   ├── chat.model.ts             ← Daryl's
-│   │   ├── match.model.ts            ← Daryl's
-│   │   ├── profile.model.ts
-│   │   ├── search.model.ts           ← Daryl's
-│   │   └── user.model.ts
-│   ├── routes/
-│   │   ├── auth.routes.ts
-│   │   ├── chat.routes.ts            ← Daryl's
-│   │   ├── match.routes.ts           ← Daryl's
-│   │   ├── profile.routes.ts
-│   │   └── search.routes.ts          ← Daryl's
-│   ├── types/
-│   │   ├── chat.types.ts             ← Daryl's
-│   │   ├── match.types.ts            ← Daryl's
-│   │   └── user.types.ts
-│   ├── utils/
-│   │   └── (empty — geo.ts needed here later)
-│   └── server.ts
-├── uploads/                          ← gitignored, persists in container
-├── .env                              ← gitignored
-├── Dockerfile
-├── package.json
-├── tsconfig.json
-└── engineering-roadmap.md
+  src/
+    config/
+      database.ts
+      initDB.ts
+    controllers/
+      auth.controller.ts
+      chat.controller.ts        (Daryl's)
+      match.controller.ts       (Daryl's)
+      profile.controller.ts
+      search.controller.ts      (Daryl's)
+    database/
+      migrations/
+        001_initial_schema.sql  (still empty!)
+      seed.ts
+    middleware/
+      auth.middleware.ts
+      multer.ts
+    models/
+      chat.model.ts             (Daryl's)
+      match.model.ts            (Daryl's)
+      profile.model.ts
+      search.model.ts           (Daryl's)
+      user.model.ts
+    routes/
+      auth.routes.ts
+      chat.routes.ts            (Daryl's)
+      match.routes.ts           (Daryl's)
+      profile.routes.ts
+      search.routes.ts          (Daryl's)
+    types/
+      chat.types.ts             (Daryl's)
+      match.types.ts            (Daryl's)
+      user.types.ts
+    utils/
+      (empty — geo.ts needed here later)
+    server.ts
+  uploads/                      (gitignored, persists in container)
+  .env                          (gitignored)
+  Dockerfile
+  package.json
+  tsconfig.json
+  engineering-roadmap.md
+  profiles.json
 
 ---
 
@@ -349,7 +356,7 @@ backend/
 | 6 | Real-time Chat | ⬜ Not started |
 | 7 | Notifications | ⬜ Not started |
 | 8 | Additional Features | ⬜ Not started |
-| 9 | Seeding & Eval Prep | ⬜ Not started |
+| 9 | Seeding & Eval Prep | 🟡 In Progress |
 | 10 | Security & Final Checks | ⬜ Not started |
 
 ---
