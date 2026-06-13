@@ -17,6 +17,8 @@ type SeedProfileType = {
   biography: string,
   interests: string[],
   location_city: string,
+  latitude: number,
+  longitude: number
 }
 
 export async function seedProfiles() {
@@ -65,10 +67,10 @@ async function insertIntoUsersTable(profile: SeedProfileType) {
 
 async function insertIntoProfilesTable(profile: SeedProfileType, id: string) {
   await query(
-    ` INSERT INTO profiles (user_id, gender, sexual_preference, biography, date_of_birth, location_city) 
-      VALUES ($1, $2, $3, $4, $5, $6) 
+    ` INSERT INTO profiles (user_id, gender, sexual_preference, biography, date_of_birth, location_city, latitude, longitude) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
       ON CONFLICT (user_id) DO NOTHING  `,
-    [id, profile.gender, profile.sexual_preference, profile.biography, profile.date_of_birth, profile.location_city],
+    [id, profile.gender, profile.sexual_preference, profile.biography, profile.date_of_birth, profile.location_city, profile.latitude, profile.longitude],
   );
 }
 
