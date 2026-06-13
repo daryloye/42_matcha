@@ -8,7 +8,8 @@ import {
   uploadProfilePicture,
   setPrimaryPicture,
   removePicture,
-  getPictures
+  getPictures,
+  updateProfileDetails
 } from "../controllers/profile.controller";
 import { requireAuth } from "../middleware/auth.middleware";
 import { upload } from "../middleware/multer";
@@ -22,6 +23,7 @@ router.get('/my-profile', requireAuth, getOwnerProfile);
 router.get('/me', requireAuth, getMe);
 router.get('/details', requireAuth, getFullProfileDetails);
 router.post('/update', requireAuth, updateOwnProfile);
+router.post('/details', requireAuth, updateProfileDetails);
 
 //profilepicture upload
 router.post('/picture', requireAuth, upload.single('picture'), uploadProfilePicture);

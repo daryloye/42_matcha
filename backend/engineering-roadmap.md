@@ -1,8 +1,8 @@
 # Matcha Dating App — Engineering Roadmap & To-Do Tracker
 
 > **Project:** `matcha`
-> **Last updated:** 2026-05-19
-> **Active branch:** `main`
+> **Last updated:** 2026-05-29
+> **Active branch:** `feat/update-profile-details`
 > **Stack:** TypeScript, Node.js, Express, PostgreSQL 16, Socket.IO, Docker
 > **Server:** `app.use("/api/auth", authRouter)` | `app.use("/api/profile", profileRouter)`
 > **DB container:** `matcha-database-1` | **Backend:** `matcha-backend-1` | **Frontend:** `matcha-frontend-1`
@@ -124,7 +124,7 @@ user_interests: id (UUID PK), user_id (UUID FK), interest_id (UUID FK),
 
 ---
 
-## Phase 3 — Profile System [~]
+## Phase 3 — Profile System ✅
 
 ### 3.1 — Profile Model (`profile.model.ts`) ✅
 - [x] `createBlankProfile(userId: string)`
@@ -146,7 +146,7 @@ user_interests: id (UUID PK), user_id (UUID FK), interest_id (UUID FK),
 - [x] limits — 5MB max file size
 - [x] exported as named export `upload`
 
-### 3.3 — Profile Controller (`profile.controller.ts`) [~]
+### 3.3 — Profile Controller (`profile.controller.ts`) ✅
 - [x] `completeProfile` — POST, creates blank profile if none exists, updates with provided data
 - [x] `getOwnerProfile` — GET, returns own profile
 - [x] `getOthersProfile` — GET /:id, returns another user's profile
@@ -157,19 +157,19 @@ user_interests: id (UUID PK), user_id (UUID FK), interest_id (UUID FK),
 - [x] `setPrimaryPicture` — POST /:pictureId/primary, marks a picture as profile picture
 - [x] `removePicture` — DELETE /:pictureId, removes picture, auto-promotes next
 - [x] `getPictures` — GET, returns all pictures for current user
-- [ ] `updateProfileDetails` — POST /details, updates users + profiles + calls updateUserInterests
+- [x] `updateProfileDetails` — POST /details, updates users + profiles + calls updateUserInterests
 
-### 3.4 — Profile Routes (`profile.routes.ts`) [~]
+### 3.4 — Profile Routes (`profile.routes.ts`) ✅
 - [x] `POST /api/profile/complete-profile`
 - [x] `GET /api/profile/my-profile`
 - [x] `POST /api/profile/update`
 - [x] `GET /api/profile/me`
 - [x] `GET /api/profile/details`
 - [x] `POST /api/profile/picture` — requireAuth → upload.single('picture') → uploadProfilePicture
-- [ ] `POST /api/profile/picture/:pictureId/primary`
-- [ ] `DELETE /api/profile/picture/:pictureId`
-- [ ] `GET /api/profile/pictures`
-- [ ] `POST /api/profile/details`
+- [x] `POST /api/profile/picture/:pictureId/primary`
+- [x] `DELETE /api/profile/picture/:pictureId`
+- [x] `GET /api/profile/pictures`
+- [x] `POST /api/profile/details`
 - [x] `GET /api/profile/:id` — must stay last (wildcard route)
 
 ### 3.5 — isProfileCompleted definition (agreed with frontend)
@@ -183,7 +183,7 @@ user_interests: id (UUID PK), user_id (UUID FK), interest_id (UUID FK),
 ### 3.6 — Frontend-requested endpoints (Daryl)
 - [x] `GET /api/profile/me` → returns `{ first_name, last_name, username, picture, isProfileCompleted }`
 - [x] `GET /api/profile/details` → returns full profile page data
-- [ ] `POST /api/profile/details` → updates full profile
+- [x] `POST /api/profile/details` → updates full profile
 
 ### 3.7 — Seed (`database/seed.ts`)
 - [x] Admin user seeded (email: admin@matcha.com, username: admin, is_verified: true)
@@ -191,6 +191,9 @@ user_interests: id (UUID PK), user_id (UUID FK), interest_id (UUID FK),
 - [x] Admin profile picture seeded (is_profile_picture: true)
 - [x] Admin interests seeded (coffee, hiking, coding) via upsert + user_interests link
 - [ ] 500+ fake profiles for evaluation (required by subject)
+
+### 3.8 — User Model additions (`user.model.ts`)
+- [x] `updateUser(userId: string, data)` — dynamic update of first_name, last_name, email via Object.entries loop
 
 ---
 
@@ -340,7 +343,7 @@ backend/
 |:--|:--|:--|
 | 1 | Project Setup | ✅ Complete |
 | 2 | Authentication System | ✅ Complete |
-| 3 | Profile System | 🟡 In Progress |
+| 3 | Profile System | ✅ Complete |
 | 4 | Interest System | ⬜ Not started |
 | 5 | Browsing & Matching | ⬜ Not started |
 | 6 | Real-time Chat | ⬜ Not started |

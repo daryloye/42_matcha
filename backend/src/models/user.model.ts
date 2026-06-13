@@ -10,6 +10,41 @@
     verification_token: string;
  }
 
+ interface UpdateUserData {
+   first_name?: string;
+   last_name?: string;
+   email?: string;
+ }
+
+ export const updateUser = async (userId: string, data: UpdateUserData): Promise<any | null> => {
+   const updates: string[] = [];
+   const values: any[] = [userId];
+   let paramCount = 1;
+
+   for (const [key, value] of Object.entries(data)) {
+      if(value !== undefined){
+         paramCount += 1;
+         updates.push(`${key} = $${paramCount}`);
+         values.push(value);
+      }
+   }
+   if(updates.length === 0){
+      return null;
+   }
+   updates.push(`updated_at = NOW()`);
+
+   const sql = `
+      UPDATE users
+      SET ${updates.join(', ')}
+      WHERE id = $1
+      RETURNING id, email, username, first_name, last_name
+   `;
+
+   const result = await query(sql, values);
+
+   return result.rows.length > 0 ? result.rows[0] : null;
+ };
+
  export const updatePassword = async( userId: number, passwordHash: string ) : Promise <any> => {
    const sql = `
       UPDATE users
