@@ -1,11 +1,10 @@
 import { query } from '../config/database';
-import { AuthRequest } from '../middleware/auth.middleware';
-
 
 interface CreateUserProfile {
     gender?: string;
     sexual_preference?: string;
     biography?: string;
+    date_of_birth?: string;
     latitude?: number;
     longitude?: number;
     location_city?: string;
