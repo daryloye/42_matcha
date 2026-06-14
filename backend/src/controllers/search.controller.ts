@@ -2,6 +2,7 @@ import { AuthRequest } from "../middleware/auth.middleware";
 import { Response } from "express";
 import { getProfileDetails } from "../models/profile.model";
 import { getReommendedProfiles, getUserProfile } from "../models/search.model";
+import { calculateDistance } from "../utils/geo";
 
 export const getRecommendedSearchHandler = async (
   req: AuthRequest,
@@ -15,20 +16,29 @@ export const getRecommendedSearchHandler = async (
     }
 
     const userProfile = await getProfileDetails(userId);
-    const profiles = await getReommendedProfiles(userId);       // TODO: filter sexual preference
+    const profiles = await getReommendedProfiles(userId); // TODO: filter sexual preference
 
+    const userHasLocation = userProfile.latitude !== null && userProfile.longitude !== null;
     for (const profile of profiles) {
-      profile.distance = 10;                          // TODO: calculate distance to user based on latitude and longitude
-      profile.age = getAge(profile.date_of_birth); 
-      
-      delete profile.latitude;
-      delete profile.longitude;
-      delete profile.date_of_birth;
-    }
-    
-    res.status(200).json({ profiles } );
+        const profileHasLocation = profile.latitude !== null && profile.longitude != null;
+        if (userHasLocation && profileHasLocation) {
+          profile.distance = calculateDistance(
+            userProfile.latitude,
+            userProfile.longitude,
+            profile.latitude,
+            profile.longitude,
+          );
+        } else {
+          profile.distance = null;
+        } 
+        profile.age = getAge(profile.date_of_birth);
 
-  } catch (error) {
+        delete profile.latitude;
+        delete profile.longitude;
+        delete profile.date_of_birth;
+      }
+      res.status(200).json({ profiles });
+    } catch (error) {
     console.error("search error: ", error);
     res.status(500).json({ error: "internal server error" });
   }
@@ -57,17 +67,16 @@ export const getUserProfileHandler = async (
       return;
     }
 
-    profile.distance = 10;                          // TODO: calculate distance to user based on latitude and longitude
-    profile.age = getAge(profile.date_of_birth); 
-    profile.online = true;                          // TODO: fetch this from db
-    profile.last_seen = '';
-    
+    profile.distance = 10; // TODO: calculate distance to user based on latitude and longitude
+    profile.age = getAge(profile.date_of_birth);
+    profile.online = true; // TODO: fetch this from db
+    profile.last_seen = "";
+
     delete profile.latitude;
     delete profile.longitude;
     delete profile.date_of_birth;
-    
-    res.status(200).json({ profile } );
 
+    res.status(200).json({ profile });
   } catch (error) {
     console.error("search user error: ", error);
     res.status(500).json({ error: "internal server error" });
@@ -82,8 +91,7 @@ function getAge(dateOfBirth: string): number {
 
   const hasHadBirthdayThisYear =
     today.getMonth() > dob.getMonth() ||
-    (today.getMonth() === dob.getMonth() &&
-     today.getDate() >= dob.getDate());
+    (today.getMonth() === dob.getMonth() && today.getDate() >= dob.getDate());
 
   if (!hasHadBirthdayThisYear) {
     age--;
