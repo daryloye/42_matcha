@@ -2,7 +2,7 @@
 
 > **Project:** `matcha`
 > **Last updated:** 2026-06-13
-> **Active branch:** `main`
+> **Active branch:** `feat/browsing-matching`
 > **Stack:** TypeScript, Node.js, Express, PostgreSQL 16, Socket.IO, Docker
 > **Server:** `app.use("/api/auth", authRouter)` | `app.use("/api/profile", profileRouter)`
 > **DB container:** `matcha-database-1` | **Backend:** `matcha-backend-1` | **Frontend:** `matcha-frontend-1`
@@ -213,17 +213,24 @@ chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
 
 ---
 
-## Phase 5 — Browsing & Matching System [ ]
+## Phase 5 — Browsing & Matching System [~]
 
-- [ ] Step 20: Browse/Search endpoints
-- [ ] Step 21: Like/Unlike system
-- [ ] Step 22: Profile view history tracking
-- [ ] Step 23: Fame rating calculation (define criteria, implement update logic)
-- [ ] Step 24: Matching algorithm
-  - [ ] 24.1: `utils/geo.ts` — Haversine formula for distance calculation
+> Note: Step 20 (Browse/Search), Step 21 (Like/Unlike), Step 22 (View history),
+> and Step 23 (Fame rating) were already implemented by Daryl in
+> `search.controller.ts`, `search.model.ts`, `match.controller.ts`,
+> `match.model.ts`, `match.routes.ts`. This phase now focuses on Step 24
+> (Matching algorithm — distance calculation) which had TODOs in
+> `search.controller.ts`.
+
+- [x] Step 20: Browse/Search endpoints (Daryl — `search.controller.ts`, `search.model.ts`)
+- [x] Step 21: Like/Unlike system (Daryl — `match.controller.ts`, `match.model.ts`)
+- [x] Step 22: Profile view history tracking (Daryl — `getViewData`, matchStatus.VIEW)
+- [x] Step 23: Fame rating calculation (Daryl — `increaseUserFame` calls in match.controller.ts)
+- [~] Step 24: Matching algorithm
+  - [x] 24.1: `utils/geo.ts` — Haversine formula for distance calculation
   - [ ] 24.2: Sort suggestions by proximity
   - [ ] 24.3: Filter by max distance
-  - [ ] 24.4: Combine criteria (tags, fame rating, gender/preference)
+  - [ ] 24.4: Combine criteria (tags, fame rating, gender/preference) — sexual_preference filter still TODO in search.model.ts
   - [ ] 24.5: Browsing list sortable by age, location, fame rating, common tags
   - [ ] 24.6: Browsing list filterable by age, location, fame rating, common tags
 - [ ] Step 25: Advanced search (age range, fame range, location, interest tags)
@@ -332,7 +339,7 @@ backend/
       match.types.ts            (Daryl's)
       user.types.ts
     utils/
-      (empty — geo.ts needed here later)
+      geo.ts                    (calculateDistance — Haversine formula)
     server.ts
   uploads/                      (gitignored, persists in container)
   .env                          (gitignored)
@@ -352,7 +359,7 @@ backend/
 | 2 | Authentication System | ✅ Complete |
 | 3 | Profile System | ✅ Complete |
 | 4 | Interest System | ⬜ Not started |
-| 5 | Browsing & Matching | ⬜ Not started |
+| 5 | Browsing & Matching | 🟡 In Progress |
 | 6 | Real-time Chat | ⬜ Not started |
 | 7 | Notifications | ⬜ Not started |
 | 8 | Additional Features | ⬜ Not started |
