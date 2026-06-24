@@ -3,8 +3,9 @@ import { Response } from "express";
 import { getProfileDetails } from "../models/profile.model";
 import { getReommendedProfiles, getUserProfile } from "../models/search.model";
 import { calculateDistance } from "../utils/geo";
+import { RecommendedProfile } from "../types/search.types";
 
-export const getRecommendedSearchHandler = async (
+export const getRecommendedSearchHandler = async (  
   req: AuthRequest,
   res: Response,
 ): Promise<void> => {
@@ -16,29 +17,48 @@ export const getRecommendedSearchHandler = async (
     }
 
     const userProfile = await getProfileDetails(userId);
-    const profiles = await getReommendedProfiles(userId); // TODO: filter sexual preference
+    const rows = await getReommendedProfiles(userId); // TODO: filter sexual preference
 
-    const userHasLocation = userProfile.latitude !== null && userProfile.longitude !== null;
-    for (const profile of profiles) {
-        const profileHasLocation = profile.latitude !== null && profile.longitude != null;
-        if (userHasLocation && profileHasLocation) {
-          profile.distance = calculateDistance(
+    if(!rows){
+      res.status(200).json({ profiles: [] });
+      return
+    }
+
+    const userHasLocation =
+      userProfile.latitude !== null && userProfile.longitude !== null;
+
+    const profiles: RecommendedProfile[] = rows.map((row) => {
+      const profileHasLocation = row.latitude !== null && row.longitude !== null;
+
+      const distance = userHasLocation && profileHasLocation 
+        ? calculateDistance(
             userProfile.latitude,
             userProfile.longitude,
-            profile.latitude,
-            profile.longitude,
-          );
-        } else {
-          profile.distance = null;
-        } 
-        profile.age = getAge(profile.date_of_birth);
+            row.latitude!,
+            row.longitude!,
+        ) : null;
 
-        delete profile.latitude;
-        delete profile.longitude;
-        delete profile.date_of_birth;
-      }
-      res.status(200).json({ profiles });
-    } catch (error) {
+        return{
+          id: row.id,
+          first_name: row.first_name,
+          last_name: row.last_name,
+          gender: row.gender,
+          fame_rating: row.fame_rating,
+          profile_pic: row.profile_pic,
+          interests: row.interests,
+          distance,
+          age: getAge(row.date_of_birth),
+        };
+    });
+
+    profiles.sort((a, b) => {
+      // profiles with null distance should go last
+      if (a.distance === null) return 1;
+      if (b.distance === null) return -1;
+      return a.distance - b.distance; // closest first
+    });
+    res.status(200).json({ profiles });
+  } catch (error) {
     console.error("search error: ", error);
     res.status(500).json({ error: "internal server error" });
   }

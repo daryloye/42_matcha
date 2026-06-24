@@ -1,7 +1,7 @@
 # Matcha Dating App — Engineering Roadmap & To-Do Tracker
 
 > **Project:** `matcha`
-> **Last updated:** 2026-06-13
+> **Last updated:** 2026-06-24
 > **Active branch:** `feat/browsing-matching`
 > **Stack:** TypeScript, Node.js, Express, PostgreSQL 16, Socket.IO, Docker
 > **Server:** `app.use("/api/auth", authRouter)` | `app.use("/api/profile", profileRouter)`
@@ -228,7 +228,7 @@ chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
 - [x] Step 23: Fame rating calculation (Daryl — `increaseUserFame` calls in match.controller.ts)
 - [~] Step 24: Matching algorithm
   - [x] 24.1: `utils/geo.ts` — Haversine formula for distance calculation
-  - [ ] 24.2: Sort suggestions by proximity
+  - [x] 24.2: Sort suggestions by proximity — `.sort()` comparator in `getRecommendedSearchHandler`; nulls pushed to end. Typed via `RecommendedProfileRow` + `RecommendedProfile` in `search.types.ts`; `search.model.ts` return type updated; controller refactored from mutate+delete to `.map()` transformation.
   - [ ] 24.3: Filter by max distance
   - [ ] 24.4: Combine criteria (tags, fame rating, gender/preference) — sexual_preference filter still TODO in search.model.ts
   - [ ] 24.5: Browsing list sortable by age, location, fame rating, common tags
@@ -337,6 +337,7 @@ backend/
     types/
       chat.types.ts             (Daryl's)
       match.types.ts            (Daryl's)
+      search.types.ts           (RecommendedProfileRow, RecommendedProfile)
       user.types.ts
     utils/
       geo.ts                    (calculateDistance — Haversine formula)

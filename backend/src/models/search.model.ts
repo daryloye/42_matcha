@@ -1,8 +1,9 @@
 import { query } from "../config/database";
+import { RecommendedProfileRow } from "../types/search.types";
 
 export const getReommendedProfiles = async (
     userId: string,
-): Promise<any | null> => {
+): Promise<RecommendedProfileRow[] | null> => {
   const sql = `
     SELECT 
       u.id,
