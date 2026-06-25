@@ -57,7 +57,16 @@ export const getRecommendedSearchHandler = async (
       if (b.distance === null) return -1;
       return a.distance - b.distance; // closest first
     });
-    res.status(200).json({ profiles });
+
+    const maxDistance = req.query.maxDistance ? parseFloat(req.query.maxDistance as string)
+      : null;
+
+     const filteredProfiles = maxDistance
+      ? profiles.filter((profile) => profile.distance !== null && profile.distance <= maxDistance)
+      : profiles;
+
+    res.status(200).json({ profiles: filteredProfiles });
+
   } catch (error) {
     console.error("search error: ", error);
     res.status(500).json({ error: "internal server error" });
