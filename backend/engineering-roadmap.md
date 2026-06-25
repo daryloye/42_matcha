@@ -1,7 +1,7 @@
 # Matcha Dating App — Engineering Roadmap & To-Do Tracker
 
 > **Project:** `matcha`
-> **Last updated:** 2026-06-24
+> **Last updated:** 2026-06-25
 > **Active branch:** `feat/browsing-matching`
 > **Stack:** TypeScript, Node.js, Express, PostgreSQL 16, Socket.IO, Docker
 > **Server:** `app.use("/api/auth", authRouter)` | `app.use("/api/profile", profileRouter)`
@@ -229,8 +229,8 @@ chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
 - [~] Step 24: Matching algorithm
   - [x] 24.1: `utils/geo.ts` — Haversine formula for distance calculation
   - [x] 24.2: Sort suggestions by proximity — `.sort()` comparator in `getRecommendedSearchHandler`; nulls pushed to end. Typed via `RecommendedProfileRow` + `RecommendedProfile` in `search.types.ts`; `search.model.ts` return type updated; controller refactored from mutate+delete to `.map()` transformation.
-  - [ ] 24.3: Filter by max distance
-  - [ ] 24.4: Combine criteria (tags, fame rating, gender/preference) — sexual_preference filter still TODO in search.model.ts
+  - [x] 24.3: Filter by max distance — `?maxDistance=50` query parameter; profiles with null distance excluded when filter active; no filter if param not provided.
+  - [x] 24.4: Combine criteria — sexual_preference filter added to SQL WHERE clause in search.model.ts; mutual compatibility (candidate gender matches user preference AND candidate preference matches user gender)
   - [ ] 24.5: Browsing list sortable by age, location, fame rating, common tags
   - [ ] 24.6: Browsing list filterable by age, location, fame rating, common tags
 - [ ] Step 25: Advanced search (age range, fame range, location, interest tags)

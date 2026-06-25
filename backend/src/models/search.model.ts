@@ -30,6 +30,14 @@ export const getReommendedProfiles = async (
         AND r.target_user_id = $1
         AND r.status = 'block'
     )
+    AND (
+      (SELECT sexual_preference FROM profiles WHERE user_id = $1) = 'both'
+      OR p.gender = (SELECT sexual_preference FROM profiles WHERE user_id = $1)
+    )
+    AND (
+      p.sexual_preference = 'both'
+      OR p.sexual_preference = (SELECT gender FROM profiles WHERE user_id = $1)
+    )
     GROUP BY u.id, p.id, pp.id;
   `;
   const result = await query(sql, [userId]);
