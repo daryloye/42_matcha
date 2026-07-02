@@ -8,6 +8,7 @@ export interface RecommendedProfileRow {
   longitude: number | null;
   fame_rating: number;
   profile_pic: string | null;
+  common_tags_count: number;
   interests: string[];
 }
 
@@ -18,6 +19,7 @@ export interface RecommendedProfile {
   gender: string | null;
   fame_rating: number;
   profile_pic: string | null;
+  common_tags_count: number;
   interests: string[];
   distance: number | null;
   age: number;

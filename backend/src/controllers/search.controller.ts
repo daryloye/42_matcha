@@ -1,4 +1,4 @@
-import { AuthRequest } from "../middleware/auth.middleware";
+ import { AuthRequest } from "../middleware/auth.middleware";
 import { Response } from "express";
 import { getProfileDetails } from "../models/profile.model";
 import { getReommendedProfiles, getUserProfile } from "../models/search.model";
@@ -45,17 +45,23 @@ export const getRecommendedSearchHandler = async (
           gender: row.gender,
           fame_rating: row.fame_rating,
           profile_pic: row.profile_pic,
+          common_tags_count: row.common_tags_count,
           interests: row.interests,
           distance,
           age: getAge(row.date_of_birth),
         };
     });
 
+    const sortBy = req.query.sortBy as string | undefined;
+
     profiles.sort((a, b) => {
       // profiles with null distance should go last
+      if (sortBy === 'age') return a.age - b.age;
+      if (sortBy === 'fame_rating') return b.fame_rating - a.fame_rating;
+      if (sortBy === 'common_tags') return b.common_tags_count - a.common_tags_count;
       if (a.distance === null) return 1;
       if (b.distance === null) return -1;
-      return a.distance - b.distance; // closest first
+      return a.distance - b.distance;// closest first
     });
 
     const maxDistance = req.query.maxDistance ? parseFloat(req.query.maxDistance as string)

@@ -231,7 +231,7 @@ chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
   - [x] 24.2: Sort suggestions by proximity — `.sort()` comparator in `getRecommendedSearchHandler`; nulls pushed to end. Typed via `RecommendedProfileRow` + `RecommendedProfile` in `search.types.ts`; `search.model.ts` return type updated; controller refactored from mutate+delete to `.map()` transformation.
   - [x] 24.3: Filter by max distance — `?maxDistance=50` query parameter; profiles with null distance excluded when filter active; no filter if param not provided.
   - [x] 24.4: Combine criteria — sexual_preference filter added to SQL WHERE clause in search.model.ts; mutual compatibility (candidate gender matches user preference AND candidate preference matches user gender)
-  - [ ] 24.5: Browsing list sortable by age, location, fame rating, common tags
+  - [x] 24.5: Browsing list sortable by age, location, fame rating, common tags — `?sortBy=age|fame_rating|common_tags|distance`; fixed directions (age/distance asc, fame_rating/common_tags desc); default sort is distance. Added `common_tags_count` subquery to SQL, updated both interfaces in search.types.ts, passed through in .map().
   - [ ] 24.6: Browsing list filterable by age, location, fame rating, common tags
 - [ ] Step 25: Advanced search (age range, fame range, location, interest tags)
 

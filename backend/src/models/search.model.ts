@@ -15,6 +15,16 @@ export const getReommendedProfiles = async (
       p.longitude,
       p.fame_rating,
       pp.image_url as profile_pic,
+      (
+        SELECT COUNT(*)
+        FROM user_interests ui2
+        WHERE ui2.user_id = u.id
+        AND ui2.interest_id IN (
+          SELECT interest_id
+          FROM user_interests
+          WHERE user_id = $1
+        )
+      ) AS common_tags_count,
       JSON_AGG(i.name) as interests
     FROM users u
     left JOIN profiles p ON p.user_id = u.id
