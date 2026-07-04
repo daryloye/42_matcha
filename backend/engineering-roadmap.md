@@ -226,13 +226,13 @@ chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
 - [x] Step 21: Like/Unlike system (Daryl — `match.controller.ts`, `match.model.ts`)
 - [x] Step 22: Profile view history tracking (Daryl — `getViewData`, matchStatus.VIEW)
 - [x] Step 23: Fame rating calculation (Daryl — `increaseUserFame` calls in match.controller.ts)
-- [~] Step 24: Matching algorithm
+- [x] Step 24: Matching algorithm
   - [x] 24.1: `utils/geo.ts` — Haversine formula for distance calculation
   - [x] 24.2: Sort suggestions by proximity — `.sort()` comparator in `getRecommendedSearchHandler`; nulls pushed to end. Typed via `RecommendedProfileRow` + `RecommendedProfile` in `search.types.ts`; `search.model.ts` return type updated; controller refactored from mutate+delete to `.map()` transformation.
   - [x] 24.3: Filter by max distance — `?maxDistance=50` query parameter; profiles with null distance excluded when filter active; no filter if param not provided.
   - [x] 24.4: Combine criteria — sexual_preference filter added to SQL WHERE clause in search.model.ts; mutual compatibility (candidate gender matches user preference AND candidate preference matches user gender)
   - [x] 24.5: Browsing list sortable by age, location, fame rating, common tags — `?sortBy=age|fame_rating|common_tags|distance`; fixed directions (age/distance asc, fame_rating/common_tags desc); default sort is distance. Added `common_tags_count` subquery to SQL, updated both interfaces in search.types.ts, passed through in .map().
-  - [ ] 24.6: Browsing list filterable by age, location, fame rating, common tags
+  - [x] 24.6: Browsing list filterable by age, location, fame rating, common tags — `?minAge`, `?maxAge`, `?minFame`, `?maxFame`, `?minCommonTags` query parameters; filters chain progressively on filteredProfiles after sort.
 - [ ] Step 25: Advanced search (age range, fame range, location, interest tags)
 
 ---
