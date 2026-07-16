@@ -3,7 +3,17 @@ import { RecommendedProfileRow } from "../types/search.types";
 
 export const getReommendedProfiles = async (
     userId: string,
+    tags: string[] | null
 ): Promise<RecommendedProfileRow[] | null> => {
+
+  const tagFilter = tags && tags.length > 0 ? `AND EXISTS (
+    SELECT 1 
+    FROM user_interests ui3
+    JOIN interests i2 ON i2.id = ui3.interest_id
+    WHERE ui3.user_id = u.id
+    AND i2.name = ANY ($2)
+  )` : ``;
+
   const sql = `
     SELECT 
       u.id,
@@ -26,8 +36,9 @@ export const getReommendedProfiles = async (
         )
       ) AS common_tags_count,
       JSON_AGG(i.name) as interests
+      
     FROM users u
-    left JOIN profiles p ON p.user_id = u.id
+    LEFT JOIN profiles p ON p.user_id = u.id
     LEFT JOIN profile_pictures pp ON pp.user_id = u.id
     LEFT JOIN user_interests ui ON ui.user_id = u.id
     LEFT JOIN interests i ON i.id = ui.interest_id
@@ -48,9 +59,11 @@ export const getReommendedProfiles = async (
       p.sexual_preference = 'both'
       OR p.sexual_preference = (SELECT gender FROM profiles WHERE user_id = $1)
     )
+    ${tagFilter}
     GROUP BY u.id, p.id, pp.id;
   `;
-  const result = await query(sql, [userId]);
+  const params = tags && tags.length > 0 ? [userId, tags] : [userId];
+  const result = await query(sql, params);
   return result.rows.length > 0 ? result.rows : null;
 };
 

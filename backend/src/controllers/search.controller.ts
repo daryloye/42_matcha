@@ -17,7 +17,10 @@ export const getRecommendedSearchHandler = async (
     }
 
     const userProfile = await getProfileDetails(userId);
-    const rows = await getReommendedProfiles(userId); // TODO: filter sexual preference
+    const tags = req.query.tags ? (req.query.tags as string).split(',').map(tag => tag.trim()) : null;
+
+
+    const rows = await getReommendedProfiles(userId, tags); // TODO: filter sexual preference
 
     if (!rows) {
       res.status(200).json({ profiles: [] });

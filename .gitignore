@@ -50,3 +50,6 @@ coverage/
 
 # TypeScript
 *.tsbuildinfo
+.claude/
+CLAUDE.md
+backend/CLAUDE.md
