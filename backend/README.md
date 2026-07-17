@@ -8,8 +8,8 @@ A dating app backend built with TypeScript, Node.js, Express, and PostgreSQL.
 
 ## Team
 
-- **Jack** — Backend
-- **Daryl** — Frontend
+- **Jack** — Backend (auth, profile, search/matching)
+- **Daryl** — Backend (search, match, chat) & Frontend
 
 ---
 
@@ -62,31 +62,173 @@ MAX_FILE_SIZE, ALLOWED_FILE_TYPES
 
 ---
 
-## API Routes
+## Database Schema
 
-### Auth — `/api/auth`
-| Method | Route | Description |
-|:--|:--|:--|
-| POST | `/register` | Register new account |
-| GET | `/verify` | Verify email token |
-| POST | `/login` | Login (username + password) |
-| POST | `/forgot-password` | Request password reset |
-| POST | `/reset-password` | Reset password with token |
+```mermaid
+erDiagram
+    users {
+        UUID id PK
+        VARCHAR email
+        VARCHAR username
+        VARCHAR first_name
+        VARCHAR last_name
+        VARCHAR password_hash
+        BOOLEAN is_verified
+        VARCHAR verification_token
+        VARCHAR reset_token
+        TIMESTAMP reset_token_expires
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+    profiles {
+        UUID id PK
+        UUID user_id FK
+        VARCHAR gender
+        VARCHAR sexual_preference
+        TEXT biography
+        DATE date_of_birth
+        DECIMAL latitude
+        DECIMAL longitude
+        VARCHAR location_city
+        INTEGER fame_rating
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+    profile_pictures {
+        UUID id PK
+        UUID user_id FK
+        VARCHAR image_url
+        BOOLEAN is_profile_picture
+        TIMESTAMP created_at
+    }
+    interests {
+        UUID id PK
+        VARCHAR name
+        TIMESTAMP created_at
+    }
+    user_interests {
+        UUID id PK
+        UUID user_id FK
+        UUID interest_id FK
+        TIMESTAMP created_at
+    }
+    relationships {
+        SERIAL id PK
+        UUID user_id FK
+        UUID target_user_id FK
+        VARCHAR status
+        TIMESTAMP created_at
+    }
+    chat {
+        SERIAL id PK
+        UUID from_user_id FK
+        UUID to_user_id FK
+        TEXT message
+        TIMESTAMP created_at
+    }
 
-### Profile — `/api/profile`
-| Method | Route | Description |
-|:--|:--|:--|
-| GET | `/me` | Lightweight profile (navbar data) |
-| GET | `/details` | Full profile page data |
-| POST | `/details` | Update full profile |
-| GET | `/my-profile` | Own profile (raw) |
-| POST | `/complete-profile` | Complete profile setup |
-| POST | `/update` | Update profile fields |
-| POST | `/picture` | Upload a picture |
-| POST | `/picture/:pictureId/primary` | Set primary picture |
-| DELETE | `/picture/:pictureId` | Delete a picture |
-| GET | `/pictures` | Get all pictures |
-| GET | `/:id` | View another user's profile |
+    users ||--o| profiles : "has"
+    users ||--o{ profile_pictures : "has"
+    users ||--o{ user_interests : "has"
+    user_interests }o--|| interests : "references"
+    users ||--o{ relationships : "initiates"
+    users ||--o{ chat : "sends"
+```
+
+---
+
+## Architecture
+
+```mermaid
+flowchart TD
+    FE[Frontend] -->|HTTP Request| EX[Express Server :5001]
+    EX --> HM[helmet + cors + json middleware]
+    HM --> RT[Router]
+    RT --> AM[requireAuth middleware\nJWT verification]
+    AM --> CT[Controller]
+    CT --> MD[Model - Raw SQL]
+    MD --> PG[(PostgreSQL\nmatcha_db)]
+    PG --> MD
+    MD --> CT
+    CT -->|JSON Response| FE
+
+    subgraph Routes
+        AR[/api/auth]
+        PR[/api/profile]
+        MR[/api/match]
+        CHR[/api/chat]
+        SR[/api/search]
+    end
+
+    RT --> AR
+    RT --> PR
+    RT --> MR
+    RT --> CHR
+    RT --> SR
+```
+
+---
+
+## API Reference
+
+### Auth Routes — `/api/auth`
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/api/auth/register` | None | Register new account, sends verification email (rolls back user on email failure) |
+| GET | `/api/auth/verify` | None | Verify email via token, sets `is_verified = true` |
+| POST | `/api/auth/login` | None | Login with username + password; blocks unverified users and resends verification email |
+| POST | `/api/auth/forgot-password` | None | Request password reset (unified response to prevent account enumeration) |
+| POST | `/api/auth/reset-password` | None | Reset password using reset token |
+
+### Profile Routes — `/api/profile`
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/api/profile/complete-profile` | ✅ | Create/complete a profile for the current user |
+| GET | `/api/profile/my-profile` | ✅ | Get own raw profile |
+| GET | `/api/profile/me` | ✅ | Lightweight profile (username, name, picture, isProfileCompleted) |
+| GET | `/api/profile/details` | ✅ | Full profile page data (interests, pictures) |
+| POST | `/api/profile/update` | ✅ | Dynamic update of own profile fields |
+| POST | `/api/profile/details` | ✅ | Update full profile (users + profiles + interests) |
+| POST | `/api/profile/picture` | ✅ | Upload a profile picture (multer, max 5MB, jpeg/jpg/png/webp) |
+| POST | `/api/profile/picture/:pictureId/primary` | ✅ | Set a picture as the primary profile picture |
+| DELETE | `/api/profile/picture/:pictureId` | ✅ | Delete a picture (auto-promotes next oldest if primary) |
+| GET | `/api/profile/pictures` | ✅ | Get all pictures for current user |
+
+### Match Routes — `/api/match`
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/api/match/update` | ✅ | Update relationship status (like/unlike/block etc.) between users |
+| GET | `/api/match/status` | ✅ | Get relationship status with a given user |
+| GET | `/api/match/connected` | ✅ | Get all mutually-connected (matched) users |
+| GET | `/api/match/account` | ✅ | Get account-level data for the current user |
+
+### Chat Routes — `/api/chat`
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/api/chat/send` | ✅ | Send a chat message to another user |
+| GET | `/api/chat/` | ✅ | Get chat history |
+
+### Search Routes — `/api/search`
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/api/search/` | ✅ | Get recommended profiles (sortable/filterable, see below) |
+| GET | `/api/search/:id` | ✅ | Get another user's full profile |
+
+**Query parameters for `GET /api/search`:**
+
+| Param | Type | Description |
+|-------|------|-------------|
+| `tags` | string (comma-separated) | Filter by interest tags, e.g. `?tags=vegan,geek` |
+| `sortBy` | string | `age`, `fame_rating`, `common_tags`, or `distance` (default) |
+| `maxDistance` | number | Max distance in km; excludes profiles with unknown distance when set |
+| `minAge` / `maxAge` | number | Filter by age range |
+| `minFame` / `maxFame` | number | Filter by fame rating range |
+| `minCommonTags` | number | Minimum number of shared interest tags |
 
 ---
 
@@ -112,3 +254,6 @@ A default admin account is seeded on startup:
 - **Email:** admin@matcha.com
 - **Username:** admin
 - **Password:** MatchaAdmin2026!
+
+---
+*API reference auto-generated from route files. Run the update-readme skill after adding new endpoints.*
