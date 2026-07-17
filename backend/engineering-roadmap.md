@@ -1,8 +1,8 @@
 # Matcha Dating App — Engineering Roadmap & To-Do Tracker
 
 > **Project:** `matcha`
-> **Last updated:** 2026-07-16
-> **Active branch:** `feat/advanced-search`
+> **Last updated:** 2026-07-17
+> **Active branch:** `main`
 > **Stack:** TypeScript, Node.js, Express, PostgreSQL 16, Socket.IO, Docker
 > **Server:** `app.use("/api/auth", authRouter)` | `app.use("/api/profile", profileRouter)`
 > **DB container:** `matcha-database-1` | **Backend:** `matcha-backend-1` | **Frontend:** `matcha-frontend-1`
@@ -213,7 +213,7 @@ chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
 
 ---
 
-## Phase 5 — Browsing & Matching System [~]
+## Phase 5 — Browsing & Matching System ✅
 
 > Note: Step 20 (Browse/Search), Step 21 (Like/Unlike), Step 22 (View history),
 > and Step 23 (Fame rating) were already implemented by Daryl in
@@ -233,7 +233,7 @@ chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
   - [x] 24.4: Combine criteria — sexual_preference filter added to SQL WHERE clause in search.model.ts; mutual compatibility (candidate gender matches user preference AND candidate preference matches user gender)
   - [x] 24.5: Browsing list sortable by age, location, fame rating, common tags — `?sortBy=age|fame_rating|common_tags|distance`; fixed directions (age/distance asc, fame_rating/common_tags desc); default sort is distance. Added `common_tags_count` subquery to SQL, updated both interfaces in search.types.ts, passed through in .map().
   - [x] 24.6: Browsing list filterable by age, location, fame rating, common tags — `?minAge`, `?maxAge`, `?minFame`, `?maxFame`, `?minCommonTags` query parameters; filters chain progressively on filteredProfiles after sort.
-- [~] Step 25: Advanced search (age range, fame range, location, interest tags) — tag filtering in progress (uncommitted): `?tags=` query param, `EXISTS` subquery on `user_interests`/`interests` in `search.model.ts`; age/fame/location already covered by 24.3/24.6
+- [x] Step 25: Advanced search (age range, fame range, location, interest tags) — `?tags=vegan,geek` query parameter; `EXISTS` subquery on `user_interests`/`interests` in `search.model.ts`, dynamic SQL only applies filter when param provided; age/fame/location covered by 24.3/24.6
 
 ---
 
@@ -360,7 +360,7 @@ backend/
 | 2 | Authentication System | ✅ Complete |
 | 3 | Profile System | ✅ Complete |
 | 4 | Interest System | ⬜ Not started |
-| 5 | Browsing & Matching | 🟡 In Progress |
+| 5 | Browsing & Matching | ✅ Complete |
 | 6 | Real-time Chat | ⬜ Not started |
 | 7 | Notifications | ⬜ Not started |
 | 8 | Additional Features | ⬜ Not started |
