@@ -153,11 +153,11 @@ flowchart TD
     CT -->|JSON Response| FE
 
     subgraph Routes
-        AR[/api/auth]
-        PR[/api/profile]
-        MR[/api/match]
-        CHR[/api/chat]
-        SR[/api/search]
+        AR["/api/auth"]
+        PR["/api/profile"]
+        MR["/api/match"]
+        CHR["/api/chat"]
+        SR["/api/search"]
     end
 
     RT --> AR
