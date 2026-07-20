@@ -62,6 +62,61 @@ MAX_FILE_SIZE, ALLOWED_FILE_TYPES
 
 ---
 
+## Project Structure
+
+```
+backend/
+├── src/
+│   ├── config/
+│   │   ├── database.ts          # PostgreSQL connection pool
+│   │   └── initDB.ts            # Table creation on server start
+│   ├── controllers/
+│   │   ├── auth.controller.ts
+│   │   ├── chat.controller.ts        (Daryl's)
+│   │   ├── match.controller.ts       (Daryl's)
+│   │   ├── profile.controller.ts
+│   │   ├── search.controller.ts      (Daryl's)
+│   │   └── updateProfileDetails.ts
+│   ├── database/
+│   │   ├── migrations/
+│   │   │   └── 001_initial_schema.sql
+│   │   └── seed.ts              # Admin account + 500+ fake profiles
+│   ├── middleware/
+│   │   ├── auth.middleware.ts   # requireAuth — JWT verification
+│   │   └── multer.ts            # Profile picture upload handling
+│   ├── models/
+│   │   ├── chat.model.ts             (Daryl's)
+│   │   ├── match.model.ts            (Daryl's)
+│   │   ├── profile.model.ts
+│   │   ├── search.model.ts           (Daryl's)
+│   │   └── user.model.ts
+│   ├── routes/
+│   │   ├── auth.routes.ts
+│   │   ├── chat.routes.ts            (Daryl's)
+│   │   ├── match.routes.ts           (Daryl's)
+│   │   ├── profile.routes.ts
+│   │   └── search.routes.ts          (Daryl's)
+│   ├── types/
+│   │   ├── chat.types.ts             (Daryl's)
+│   │   ├── match.types.ts            (Daryl's)
+│   │   ├── search.types.ts
+│   │   └── user.types.ts
+│   ├── utils/
+│   │   ├── email.ts              # Mailgun verification/reset emails
+│   │   ├── geo.ts                # Haversine distance calculation
+│   │   └── validation.ts
+│   └── server.ts                 # Express app entrypoint
+├── uploads/                       # Profile pictures (gitignored, persists in container)
+├── .env                           # Gitignored
+├── Dockerfile
+├── package.json
+├── tsconfig.json
+├── engineering-roadmap.md
+└── profiles.json
+```
+
+---
+
 ## Database Schema
 
 ```mermaid
@@ -79,6 +134,7 @@ erDiagram
         TIMESTAMP reset_token_expires
         TIMESTAMP created_at
         TIMESTAMP updated_at
+        TIMESTAMP last_seen
     }
     profiles {
         UUID id PK
@@ -217,7 +273,7 @@ flowchart TD
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | GET | `/api/search/` | ✅ | Get recommended profiles (sortable/filterable, see below) |
-| GET | `/api/search/:id` | ✅ | Get another user's full profile |
+| GET | `/api/search/:id` | ✅ | Get another user's full profile, including computed `online` status (true if `last_seen` within last 5 minutes) |
 
 **Query parameters for `GET /api/search`:**
 
