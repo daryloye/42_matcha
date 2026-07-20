@@ -12,7 +12,8 @@ import {
     setResetToken,
     findUserByResetToken,
     clearResetToken,
-    deleteUserById
+    deleteUserById,
+    updateLastSeen
 } from '../models/user.model';
 import { isValidEmail, isValidUserName, isValidPassword } from '../utils/validation';
 import { sendPasswordResetEmail, sendVerificationEmail } from '../utils/email';
@@ -169,7 +170,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
                 expiresIn: process.env.JWT_EXPIRES_IN || '15m'
             } as jwt.SignOptions 
         );
-
+        await updateLastSeen(existingUser.id);
         res.status(200).json({
             message: 'Login successful!',
             token: token,

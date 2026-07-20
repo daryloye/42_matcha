@@ -25,7 +25,8 @@ const createTables = async () => {
         reset_token VARCHAR(255),
         reset_token_expires TIMESTAMP,
         created_at TIMESTAMP DEFAULT NOW(),
-        updated_at TIMESTAMP DEFAULT NOW()
+        updated_at TIMESTAMP DEFAULT NOW(),
+        last_seen TIMESTAMP
     );
 
     CREATE TABLE profiles (

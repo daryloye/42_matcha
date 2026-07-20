@@ -16,6 +16,15 @@
    email?: string;
  }
 
+ export const updateLastSeen = async (userId: string): Promise<void> => {
+   const sql = `
+      UPDATE users
+      SET last_seen = NOW()
+      WHERE id = $1
+   `;
+   await query(sql, [userId]);
+ };
+
  export const updateUser = async (userId: string, data: UpdateUserData): Promise<any | null> => {
    const updates: string[] = [];
    const values: any[] = [userId];
@@ -48,7 +57,7 @@
  export const updatePassword = async( userId: number, passwordHash: string ) : Promise <any> => {
    const sql = `
       UPDATE users
-      set password_hash = $1, updated_at = NOW()
+      SET password_hash = $1, updated_at = NOW()
       WHERE id = $2
       RETURNING id
    `
@@ -59,7 +68,7 @@
  export const clearResetToken = async( userId: number): Promise <any> => {
    const sql = `
       UPDATE users
-      set reset_token = NULL, reset_token_expires = NULL
+      SET reset_token = NULL, reset_token_expires = NULL
       where id = $1
    `
 

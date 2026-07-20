@@ -76,6 +76,7 @@ export const getUserProfile = async (
       u.id,
       u.first_name,
       u.last_name,
+      u.last_seen,
       p.gender,
       p.date_of_birth,
       p.latitude,

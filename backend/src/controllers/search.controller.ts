@@ -151,10 +151,9 @@ export const getUserProfileHandler = async (
       return;
     }
 
-    profile.distance = 10; // TODO: calculate distance to user based on latitude and longitude
+    // profile.distance = 10; // TODO: calculate distance to user based on latitude and longitude
     profile.age = getAge(profile.date_of_birth);
-    profile.online = true; // TODO: fetch this from db
-    profile.last_seen = "";
+    profile.online = profile.last_seen ? (new Date().getTime() - new Date(profile.last_seen).getTime() < 5 *60 * 1000) : false;
 
     delete profile.latitude;
     delete profile.longitude;
