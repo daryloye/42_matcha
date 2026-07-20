@@ -75,7 +75,7 @@ backend/
 │   │   ├── chat.controller.ts        (Daryl's)
 │   │   ├── match.controller.ts       (Daryl's)
 │   │   ├── profile.controller.ts
-│   │   ├── search.controller.ts      (Daryl's)
+│   │   ├── search.controller.ts      (Jack & Daryl's)
 │   │   └── updateProfileDetails.ts
 │   ├── database/
 │   │   ├── migrations/
