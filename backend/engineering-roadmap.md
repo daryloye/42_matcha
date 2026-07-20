@@ -268,13 +268,13 @@ chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
 
 ---
 
-## Phase 8 — Additional Features [~] Mostly completed by daryl
+## Phase 8 — Additional Features [x] Mostly completed by daryl
 
 - [x] Block user system — `matchStatus.BLOCK` in `updateMatchHandler`; blocked users filtered from search via `NOT EXISTS` SQL clause; `UNBLOCK` also implemented (Daryl)
 - [x] Report fake account system — `matchStatus.REPORT` handled in `updateMatchHandler` switch case (Daryl)
 - [x] Profile view tracking — `getViewData(userId)` in `getAccountDataHandler`, `GET /api/match/account` (Daryl)
 - [x] Like history — `getLikeData(userId)` in `getAccountDataHandler`, `GET /api/match/account` (Daryl)
-- [ ] Online status + last seen timestamp — `profile.online = true` and `profile.last_seen = ""` are hardcoded TODOs in `search.controller.ts`; needs `last_seen` column in `users`, updated on login, returned from `getUserProfileHandler`
+- [x] Online status + last seen timestamp — `last_seen TIMESTAMP` added to `users` table; `updateLastSeen()` added to `user.model.ts`; called on login in `auth.controller.ts`; `u.last_seen` added to `getUserProfile` SQL; `online` computed in `getUserProfileHandler` (true if last seen < 5 mins ago)
 - [x] Unlike / disconnect flow — `matchStatus.UNLIKE` deletes like + connected status, disables chat, decrements fame (Daryl)
 - [x] Fame rating public display on profiles — `fame_rating` returned in all profile responses via `getProfileDetails` and search queries
 
