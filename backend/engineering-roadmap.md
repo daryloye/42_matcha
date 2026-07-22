@@ -285,7 +285,7 @@ chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
 - [x] Seed 500+ distinct fake profiles (required by subject for evaluation)
 - [x] Each fake profile needs: gender, sexual_preference, biography, interests, pictures, location
 - [x] Profiles must cover varied genders, preferences, locations for matching algorithm testing
-- [ ] Write full schema into `001_initial_schema.sql` for version control
+- [x] Write full schema into `001_initial_schema.sql` for version control — pure SQL migration file matching initDB.ts, includes all 7 tables and last_seen column
 
 ---
 
@@ -317,7 +317,7 @@ backend/
       search.controller.ts      (Daryl's)
     database/
       migrations/
-        001_initial_schema.sql  (still empty!)
+        001_initial_schema.sql
       seed.ts
     middleware/
       auth.middleware.ts
