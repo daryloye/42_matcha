@@ -237,18 +237,19 @@ chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
 
 ---
 
-## Phase 6 — Real-time Chat (Socket.IO) [ ]
+## Phase 6 — Real-time Chat (Socket.IO) [~]
 
-- [ ] Step 26: Messages table (schema + migration)
-- [ ] Step 27: Message model (`message.model.ts`)
-- [ ] Step 28: Chat controller (`chat.controller.ts`)
-- [ ] Step 29: Socket.IO chat setup
-  - [ ] Join/leave room on connect/disconnect
-  - [ ] Send message event
-  - [ ] Receive message event
-  - [ ] Max 10 second delay requirement
-- [ ] Step 30: Chat routes
-- [ ] Step 31: Only connected users (mutual likes) can chat
+- [x] Step 26: Messages table — `chat` table in `initDB.ts` (from_user_id, to_user_id, message, created_at)
+- [x] Step 27: Message model — `createChat` and `getChat` in `chat.model.ts` (Daryl)
+- [x] Step 28: Chat controller — `createChatHandler` and `getChatHandler` in `chat.controller.ts` (Daryl + Jack)
+- [x] Step 29: Socket.IO chat setup
+  - [x] JWT authentication middleware on socket connect (`io.use(...)` in `server.ts`)
+  - [x] Join personal room on connect (`socket.join(userId)`)
+  - [x] Send message event — `io.to(targetId).emit("new_message", ...)` in `createChatHandler`
+  - [ ] Receive message event — Brad's frontend responsibility
+  - [x] Max 10 second delay requirement — met via Socket.IO real-time emit
+- [x] Step 30: Chat routes — `POST /api/chat/send`, `GET /api/chat/` (Daryl)
+- [x] Step 31: Only connected users (mutual likes) can chat — enforced via `matchStatus.CONNECTED` check in controller
 
 ---
 

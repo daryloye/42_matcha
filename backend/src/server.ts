@@ -14,6 +14,7 @@ import profileRouter from "./routes/profile.routes";
 import matchRouter from "./routes/match.routes";
 import chatRouter from "./routes/chat.routes";
 import searchRouter from "./routes/search.routes";
+import jwt from "jsonwebtoken";
 
 dotenv.config(); //this reads my env file and makes variables available via process.env.BACKEND_PORT
 
@@ -60,12 +61,42 @@ app.get("/health", (_req: Request, res: Response) => {
   });
 });
 
+io.use((socket, next) => {
+  const token = socket.handshake.auth.token;
+  if(!token){
+    return next(new Error("Authentication Error"));
+  }
+  try{
+    const jwtSecret = process.env.JWT_SECRET;
+    if(!jwtSecret){
+      throw new Error("JWT_SECRET not defined");
+    } 
+      const decoded = jwt.verify(token, jwtSecret!) as unknown as { userId: string};
+      socket.data.userId = decoded.userId;
+      next();
+  }catch{
+    next (new Error("Authentication error"))
+  }
+})
+
 //socket.io connection handling
+// io.on("connection", (socket) => {
+//   console.log("user connected:", socket.id);
+
+//   socket.on("disconnect", () => {
+//     console.log("User disconnected:", socket.id);
+//   });
+// });
+
 io.on("connection", (socket) => {
-  console.log("user connected:", socket.id);
+  const userId = socket.data.userId;
+  console.log(`user connected: ${socket.id}, userId: ${userId} `)
+
+  //JOIN PERSONAL ROOM
+  socket.join(userId);
 
   socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
+    console.log(`User disconnected: ${socket.id}, userId: ${userId}`);
   });
 });
 
