@@ -1,0 +1,49 @@
+backend/src/utils/email.ts
+  s_b5497f7f845b16::t_41d280d09561c6 26,78
+backend/src/server.ts
+  s_b5497f7f845b16::t_41d280d09561c6 20
+  h_5839197889c05f 10,88-89,92-98
+frontend/src/api/profile.tsx
+  h_5839197889c05f 8,18,28
+frontend/src/utils/token.ts
+  h_5839197889c05f 6,10
+frontend/src/api/search.tsx
+  h_5839197889c05f 8,18
+.env.example
+  s_b5497f7f845b16::t_059a5b2a26841f 24-25
+  s_b5497f7f845b16::t_41d280d09561c6 3-5,32
+frontend/src/api/match.tsx
+  h_5839197889c05f 8,19,29,39
+backend/src/config/database.ts
+  h_5839197889c05f 25
+backend/package.json
+  h_5839197889c05f 7
+backend/src/config/initDB.ts
+  h_5839197889c05f 92,95
+Makefile
+  s_b5497f7f845b16::t_9094cd41870f77 25
+  h_5839197889c05f 19
+frontend/src/api/chat.tsx
+  h_5839197889c05f 8,19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "90cb99639cb1d74550dd4cc2c0258d997c85d675",
+  "prompts": {},
+  "humans": {
+    "h_5839197889c05f": {
+      "author": "daryloye <daryloye@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_b5497f7f845b16": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fa381-ab5a-7c91-9c5b-5b2036ed2ce1",
+        "model": "gpt-5.5"
+      },
+      "human_author": "daryloye <daryloye@gmail.com>"
+    }
+  }
+}
