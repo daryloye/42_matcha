@@ -1,0 +1,18 @@
+backend/src/controllers/auth.controller.ts
+  h_5839197889c05f 36,52-53,76,81-82,86,88,133,188,201-203,208-209,224,226,238,245,248,251,253,256,260,262
+backend/src/utils/email.ts
+  h_5839197889c05f 1,8,18-20,23-32,46-47,50-55
+.env.example
+  h_5839197889c05f 18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "3b2f57750a2849fa63168a24a5edc13a7d52183c",
+  "prompts": {},
+  "humans": {
+    "h_5839197889c05f": {
+      "author": "daryloye <daryloye@gmail.com>"
+    }
+  }
+}
