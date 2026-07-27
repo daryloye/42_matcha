@@ -7,7 +7,7 @@ import express, { Application, Request, Response } from "express"; //framework
 import helmet from "helmet";
 import { createServer } from "http";
 import { Server as SocketIOServer } from "socket.io"; //library
-import { testConnection } from "./config/database";
+import { testDatabaseConnection } from "./config/database";
 import createTables from "./config/initDB";
 import authRouter from "./routes/auth.routes";
 import profileRouter from "./routes/profile.routes";
@@ -17,7 +17,7 @@ import searchRouter from "./routes/search.routes";
 
 dotenv.config(); //this reads my env file and makes variables available via process.env.BACKEND_PORT
 
-const allowedOrigins = `${process.env.HOSTNAME}${process.env.FRONTEND_PORT}`;
+const allowedOrigins = `${process.env.APP_HOSTNAME}:${process.env.FRONTEND_PORT}`;
 
 const app: Application = express(); //Express application. Its job is to handle standard requests (HTTP).
 const httpServer = createServer(app); //Node js httpServer
@@ -85,14 +85,17 @@ app.use((err: Error, _req: Request, res: Response) => {
 });
 
 // this will start the server
-const PORT = process.env.BACKEND_PORT || process.env.PORT || 5001;
-
-httpServer.listen(PORT, async () => {
-  console.log(`Server running on port ${PORT}`);
+httpServer.listen(process.env.BACKEND_PORT, async () => {
+  console.log(`Server running on port ${process.env.BACKEND_PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV}`);
 
-  await testConnection(); //wrote this to test database
-  await createTables();
+  if (!await testDatabaseConnection()) {
+    process.exit(1);
+  }
+
+  if (!await createTables()) {
+    process.exit(1);
+  }
 });
 
 export { io };

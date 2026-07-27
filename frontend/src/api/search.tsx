@@ -5,7 +5,7 @@ export async function GetSearchProfiles(token: string) {
     '/api/search',
     new Headers({
       'Content-Type': 'application/json',
-      Authorization: token,
+      'Authorization': `Bearer ${token}`,
     }),
   );
 }
@@ -15,7 +15,7 @@ export async function GetUserProfile(token: string, targetId: string) {
     `/api/search/${targetId}`,
     new Headers({
       'Content-Type': 'application/json',
-      Authorization: token,
+      'Authorization': `Bearer ${token}`,
     }),
   );
 }

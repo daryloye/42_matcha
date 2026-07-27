@@ -5,7 +5,7 @@ export async function GetBasicProfile(token: string) {
     '/api/profile/me',
     new Headers({
       'Content-Type': 'application/json',
-      Authorization: token,
+      'Authorization': `Bearer ${token}`,
     }),
   );
 }
@@ -15,7 +15,7 @@ export async function GetFullProfile(token: string) {
     '/api/profile/details',
     new Headers({
       'Content-Type': 'application/json',
-      Authorization: token,
+      'Authorization': `Bearer ${token}`,
     }),
   );
 }
@@ -25,7 +25,7 @@ export async function UpdateProfile(token: string, params: any) {
     '/api/profile/update',
     new Headers({
       'Content-Type': 'application/json',
-      Authorization: token,
+      'Authorization': `Bearer ${token}`,
     }),
     JSON.stringify(params),
   );

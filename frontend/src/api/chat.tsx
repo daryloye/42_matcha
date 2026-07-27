@@ -5,7 +5,7 @@ export async function SendMessage(token: string, params: any) {
     '/api/chat/send',
     new Headers({
       'Content-Type': 'application/json',
-      Authorization: token,
+      'Authorization': `Bearer ${token}`,
     }),
     JSON.stringify(params),
   );
@@ -16,7 +16,7 @@ export async function GetMessages(token: string, targetId: string) {
     `/api/chat/?targetId=${targetId}`,
     new Headers({
       'Content-Type': 'application/json',
-      Authorization: token,
+      'Authorization': `Bearer ${token}`,
     }),
   );
 }

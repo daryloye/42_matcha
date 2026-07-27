@@ -22,7 +22,7 @@ export const query = async (text: string, params?: any[]) => {
 };
 
 //test connection
-export const testConnection = async () => {
+export const testDatabaseConnection = async () => {
   try {
     const result = await pool.query("SELECT NOW()");
     console.log("✅ Database connected successfully");

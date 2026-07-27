@@ -3,10 +3,9 @@ export function setToken(token: string) {
 }
 
 export function getToken() {
-  const token = localStorage.getItem('token');
-  return token;
+  return localStorage.getItem('token');
 }
 
 export function deleteToken() {
-  localStorage.setItem('token', '');
+  localStorage.removeItem('token');
 }

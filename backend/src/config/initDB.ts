@@ -88,10 +88,11 @@ const createTables = async () => {
   try {
     await query(sql);
     console.log("✅ Tables initialized successfully");
-
     await seedProfiles();    
+    return true;
   } catch (error) {
     console.error("❌ Error initializing tables:", error);
+    return false;
   }
 };
 

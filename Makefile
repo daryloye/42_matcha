@@ -16,13 +16,13 @@ install:
 
 dev:
 	echo "Starting development environment on http://localhost:5173/"
-	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --abort-on-container-exit
 
 test:
 	npm --workspace $(BRUNO) run test
 
 docker-reset:
-	docker-compose down -v --remove-orphans
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml down -v --remove-orphans
 	docker stop $$(docker ps -q) || true
 	docker rm $$(docker ps -aq) || true
 	docker container prune -f
