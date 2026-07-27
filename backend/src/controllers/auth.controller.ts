@@ -31,9 +31,9 @@ import { RegisterRequest, LoginRequest, ForgotPasswordRequest, ResetPasswordRequ
 */
 export const resetPassword = async (req: Request, res: Response) : Promise <void> => {
     try {
-        const { newPassword, resetToken }  :ResetPasswordRequest = req.body;
+        const { newPassword, resetToken } : ResetPasswordRequest = req.body;
         if(!isValidPassword(newPassword) || !newPassword){
-            res.status(400).json({ error: 'invalid password format'});
+            res.status(400).json({ error: 'Password is too weak'});
             return;
         }
         if(!resetToken){
@@ -49,17 +49,8 @@ export const resetPassword = async (req: Request, res: Response) : Promise <void
         const password_hash = await bcrypt.hash(newPassword, saltRounds);
         await updatePassword(existingUser.id, password_hash);
         await clearResetToken(existingUser.id);
-        /*
-        // const currentTime = new Date();
-        // currentTime.setHours(currentTime.getHours());
-        if(existingUser && existingUser.reset_token_expires > currentTime){
-            const saltRounds = 10;
-            const password_hash = await bcrypt.hash(newPassword, saltRounds);
-            await updatePassword(existingUser.id, password_hash);
-            await clearResetToken(existingUser.id);
-        }
-*/
-        res.status(200).json({message:' Password updated.'})
+
+        res.status(200).json({message: 'Password updated.'})
     } catch (error) {
         console.error('Reset password error: ', error);
         res.status(500).json({ error: 'Internal server error' })
@@ -82,29 +73,23 @@ export const forgotPassword = async (req: Request, res: Response) : Promise <voi
     try{
         const { email }: ForgotPasswordRequest = req.body;
 
-        // if(!isValidEmail(email) || !email) {
-        //     res.status(400).json({ error: 'Invalid email format'});
-        //     return;
-        // }
-        
-        if (email && isValidEmail(email)){
-
-            const exisitngUser = await findUserByEmail(email);
-
-            if (exisitngUser && exisitngUser.is_verified){
-                const reset_token = crypto.randomBytes(32).toString('hex');
-                const expires = new Date();
-                expires.setHours(expires.getHours() + 1);
-        
-                await setResetToken(email, reset_token, expires);
-                await sendPasswordResetEmail(email, exisitngUser.username, reset_token);
-            }
+        if(!email || !isValidEmail(email)) {
+            res.status(400).json({ error: 'Invalid email format'});
+            return;
         }
-        res.status(200).json({
-            message: 'A password reset link has been sent'
-        });
 
-    }catch (error){
+        const exisitingUser = await findUserByEmail(email);
+        if (exisitingUser){
+            const reset_token = crypto.randomBytes(32).toString('hex');
+            const expires = new Date();
+            expires.setHours(expires.getHours() + 1);
+    
+            await setResetToken(email, reset_token, expires);
+            await sendPasswordResetEmail(email, exisitingUser.username, reset_token);
+        }
+        res.status(200).json({ message: 'A password reset link has been sent' });
+
+    } catch (error){
         console.error('Forgot password error: ', error);
         res.status(500).json({ error: 'Internal server error. Please try again.' });
     }
@@ -145,7 +130,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
         if (!existingUser.is_verified){
             try {
-                await sendVerificationEmail(existingUser.email, existingUser.verification_token!)
+                await sendVerificationEmail(existingUser.email, existingUser.username, existingUser.verification_token!)
                 res.status(400).json({ error: 'Your account is not verified. A new verification email has been sent.'})
             } catch (emailError) {
                 console.error('Failed to resend verification email: ', emailError);
@@ -192,17 +177,15 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 7. Send verification email
 8. Return success response
 */
-
 export const register = async (req: Request, res: Response): Promise <void> => {
     try{
         const { email, username, first_name, last_name, password }: RegisterRequest = req.body;
 
-        //check required field
         if(!email || !username || !first_name || !last_name || !password){
             res.status(400).json({error: 'All fields are required'});
             return;
         }
-        //validate formats first before touching the DB
+        
         if(!isValidEmail(email)){
             res.status(400).json({error: 'Invalid email format'});
             return;
@@ -212,21 +195,18 @@ export const register = async (req: Request, res: Response): Promise <void> => {
             return;
         }
         if(!isValidPassword(password)){
-            res.status(400).json({error: 'Password is too weak!'}); //fix 1
+            res.status(400).json({error: 'Password is too weak!'});
             return;
         }
-        //check for dulplicates
-        const existingEmail = await findUserByEmail(email);
-        //fix 2 used to verify duplicate email
-        if(existingEmail != null){
+
+        // check for existing email
+        if (await findUserByEmail(email)) {
             res.status(400).json({ error: 'This email is already registered.' });
             return;
         }
 
-        const existingUserName = await findUserByUsername(username);
-        
-        //username exitst
-        if (existingUserName != null){
+        // check for existing username
+        if (await findUserByUsername(username)) {
             res.status(400).json({error: 'Username already exist'});
             return;
         }
@@ -240,118 +220,46 @@ export const register = async (req: Request, res: Response): Promise <void> => {
         const userId = result.rows[0].id;
         console.log(`✅ User created with id: ${userId}`);
         
-        // Fix 3: Roll back user creation if email fails
         try {
-            await sendVerificationEmail(email, verification_token);
-        }catch(emailError){
-            await deleteUserById(userId); //this is the rollback i implemented
-            console.error("Email sending failed. User rolled back: ", emailError);
+            await sendVerificationEmail(email, username, verification_token);
+        } catch (emailError) {
+            // Roll back user creation if email fails
+            await deleteUserById(userId);
             res.status(500).json({ error: 'Failed to send verification email. Please try again.'})
             return;
         }
         res.status(201).json({ message: 'Registration successful! Please check your email to verify your account.'});
-    } catch (error){
+    } catch (error) {
         console.log('Registration error: ', error);
         res.status(500).json({error: 'Registration failed. Please try again.'});
     }
 }
 
-// export const register = async (req: Request, res: Response): Promise<void> => {
-//     try{
-//         const { email, username, first_name, last_name, password }: RegisterRequest = req.body;
-//         // 2. Validate input
-//         // TODO: Check if fields are empty
-//         if (!email || !username || !first_name || !last_name || !password) {
-//             res.status(400).json({error: 'All fields are required'});
-//             return;
-//         }
-//         // TODO: Validate email format
-//         if(!isValidEmail(email)){
-//             res.status(400).json({error: 'Invalid email format'});
-//             return
-//         }
-//         // TODO: Validate username format
-//         if(!isValidUserName(username)){
-//             res.status(400).json({error: 'Invalid username'});
-//             return;
-//         }
-//         // TODO: Validate password strength
-//         if(!isValidPassword(password)){
-//             res.status(400).json({error: 'Password is too weak'});
-//             return;
-//         }
-//         // 3. Check if user already exists
-//         const existingUsername = await findUserByUsername(username);
-//         if(existingUsername != null){
-//             res.status(400).json({error: 'Username already exist'});
-//             return;
-//         }
-//         // TODO: Check email
-//         const existingEmail = await findUserByEmail(email);
-//         if(existingEmail != null) {
-//             res.status(400).json({error: 'email is already registered'});
-//             return;
-//         }
-        
-//         // 4. Hash password
-//         // TODO: Use bcrypt
-//         const saltRounds = 10;
-//         const password_hash = await bcrypt.hash(password, saltRounds);
-        
-//         // 5. Generate verification token
-//         // TODO: Use crypto
-//         const verification_token = crypto.randomBytes(32).toString('hex');
-        
-//         // 6. Save user to database
-//         // TODO: Call createUser
-//         const userData = {
-//             email,
-//             username,
-//             first_name,
-//             last_name,
-//             password_hash,
-//             verification_token
-//         }
-//         const result = await createUser(userData);
-//         const userId = result.rows[0].id;
-//         console.log(`✅ User created with id: ${userId}`);
-        
-//         // 7. Send verification email
-//         // TODO: Call sendVerificationEmail
-//         await sendVerificationEmail(email, username, verification_token);
-//         // 8. Return success response
-//         res.status(201).json({
-//             message: 'Registration successful! Please check your email to verify your account.' 
-//         });
-//     } catch (error){
-//         console.error('Registration error: ', error);
-//         res.status(500).json({error: 'Registration failed. Please try again.'})
-//     }
-// }
-
-
-
-export const verify = async(req: Request, res: Response): Promise<void>=>{
-    try{
+export const verify = async(req: Request, res: Response): Promise<void> => {
+    try {
         const { token } = req.query;
         if(!token || typeof token !== 'string'){
             res.status(400).json({ error: 'Missing or invalid token'})
             return
         }
+
         const user = await findUserByVerificationToken(token);
         if(!user){
-            res.status(400).json({ error: 'User do not exist'});
+            res.status(400).json({ error: 'User does not exist'});
             return;
         }
+
         if(user.is_verified){
-            res.status(400).json({ error: 'User\'s email is already registered'})
+            res.status(400).json({ error: 'Email is already registered'})
             return;
         }
-        const userId =  user.id; 
+
+        const userId = user.id; 
         await verifyUser(userId)
         res.status(200).json({message: 'Email verified successfully! You can now log in.'})
-    }catch(error){
-        console.error("Verification error", error);
+
+    } catch (error) {
+        console.error("Verification error: ", error);
         res.status(500).json({ error: 'Internal server error. Verificatition failed. Please try again.'});
     };
 }
