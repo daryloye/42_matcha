@@ -241,11 +241,8 @@ flowchart TD
 
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| POST | `/api/profile/complete-profile` | ✅ | Create/complete a profile for the current user |
-| GET | `/api/profile/my-profile` | ✅ | Get own raw profile |
 | GET | `/api/profile/me` | ✅ | Lightweight profile (username, name, picture, isProfileCompleted) |
 | GET | `/api/profile/details` | ✅ | Full profile page data (interests, pictures) |
-| POST | `/api/profile/update` | ✅ | Dynamic update of own profile fields |
 | POST | `/api/profile/details` | ✅ | Update full profile (users + profiles + interests) |
 | POST | `/api/profile/picture` | ✅ | Upload a profile picture (multer, max 5MB, jpeg/jpg/png/webp) |
 | POST | `/api/profile/picture/:pictureId/primary` | ✅ | Set a picture as the primary profile picture |

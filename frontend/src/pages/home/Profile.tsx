@@ -95,8 +95,8 @@ function ProfilePage() {
 
     try {
       await UpdateProfile(token, {
-        firstname: formValue?.firstname,
-        lastname: formValue?.lastname,
+        first_name: formValue?.firstname,
+        last_name: formValue?.lastname,
         email: formValue?.email,
         date_of_birth: formValue?.dateOfBirth,
         gender: formValue?.gender,

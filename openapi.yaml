@@ -147,7 +147,7 @@ paths:
                 isProfileCompleted: true
                 notifications: []
 
-  /profile/update:
+  /profile/details:
     get:
       parameters:
         - $ref: "#/components/parameters/BearerAuth"

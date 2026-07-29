@@ -22,7 +22,7 @@ export async function GetFullProfile(token: string) {
 
 export async function UpdateProfile(token: string, params: any) {
   return await PostHTTP(
-    '/api/profile/update',
+    '/api/profile/details',
     new Headers({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,

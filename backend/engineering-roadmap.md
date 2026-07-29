@@ -133,7 +133,6 @@ chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
 ## Phase 3 — Profile System ✅
 
 ### 3.1 — Profile Model (`profile.model.ts`) ✅
-- [x] `createBlankProfile(userId: string)`
 - [x] `getProfileByUserId(userId: string)`
 - [x] `updateProfile(userId: string, data)` — dynamic update, only updates provided fields via Object.entries loop
 - [x] `addProfilePicture(userId: string, imageUrl: string)` — max 5 photos enforced, first photo auto-set as primary
@@ -153,10 +152,6 @@ chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
 - [x] exported as named export `upload`
 
 ### 3.3 — Profile Controller (`profile.controller.ts`) ✅
-- [x] `completeProfile` — POST, creates blank profile if none exists, updates with provided data
-- [x] `getOwnerProfile` — GET, returns own profile
-- [x] `getOthersProfile` — GET /:id, returns another user's profile
-- [x] `updateOwnProfile` — POST, dynamic update of own profile
 - [x] `getMe` — GET, returns lightweight profile (username, first_name, last_name, picture, is_profile_completed)
 - [x] `getFullProfileDetails` — GET, returns full profile page data including interests[] and pictures[]
 - [x] `uploadProfilePicture` — POST, multer processes file, saves to uploads/, stores path in DB
@@ -166,16 +161,13 @@ chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
 - [x] `updateProfileDetails` — POST /details, updates users + profiles + calls updateUserInterests
 
 ### 3.4 — Profile Routes (`profile.routes.ts`) ✅
-- [x] `POST /api/profile/complete-profile`
-- [x] `GET /api/profile/my-profile`
-- [x] `POST /api/profile/update`
 - [x] `GET /api/profile/me`
 - [x] `GET /api/profile/details`
+- [x] `POST /api/profile/details`
 - [x] `POST /api/profile/picture` — requireAuth → upload.single('picture') → uploadProfilePicture
 - [x] `POST /api/profile/picture/:pictureId/primary`
 - [x] `DELETE /api/profile/picture/:pictureId`
 - [x] `GET /api/profile/pictures`
-- [x] `POST /api/profile/details`
 - [x] `GET /api/profile/:id` — must stay last (wildcard route)
 
 ### 3.5 — isProfileCompleted definition (agreed with frontend)

@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/api/profile/update
+  url: {{baseUrl}}/api/profile/details
   body: json
   auth: inherit
 }
@@ -16,8 +16,8 @@ headers {
 
 body:json {
   {
-    "firstname": "firstname",
-    "lastname": "lastname",
+    "first_name": "firstname",
+    "last_name": "lastname",
     "email": "email@test.com",
     "date_of_birth": "2025-01-01T00:00:00.000Z",
     "gender": "male",
@@ -34,8 +34,8 @@ body:json {
 }
 
 tests {
-  test("status 400", function() {
-    expect(res.getStatus()).to.equal(400);
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
   });
 }
 

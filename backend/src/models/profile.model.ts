@@ -10,7 +10,6 @@ interface CreateUserProfile {
     location_city?: string;
 }
 /*
-✅ createBlankProfile() - You started this (fix the SQL)
 ✅ getProfileByUserId() - Get user's profile
 ✅ updateProfile() - Update profile fields
 ✅ addProfilePicture() - Add a photo
@@ -20,16 +19,6 @@ interface CreateUserProfile {
 ✅ deleteProfilePicture() - Remove a photo
 */ 
 
-
-export const createBlankProfile = async (userId: string): Promise<any> => {
-  const sql = `
-        INSERT INTO profiles (user_id)
-        VALUES ($1)
-        returning id
-    `;
-    const result = await query(sql, [userId]);
-    return result.rows.length > 0 ? result.rows[0] : null; 
-};
 
 export const getProfileByUserId = async (
   userId: string,

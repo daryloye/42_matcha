@@ -1,7 +1,6 @@
 import { Response } from "express";
 import { AuthRequest } from "../middleware/auth.middleware";
 import {
-  createBlankProfile,
   getProfileByUserId,
   getProfileDetails,
   getProfileMe,
@@ -13,130 +12,6 @@ import {
   updateUserInterests,
 } from "../models/profile.model";
 import { updateUser } from '../models/user.model';
-
-
-// 1. Get userId from authenticated user
-// 2. Get profile data from request body
-// 3. Check if profile already exists
-// 4. Create blank profile if doesn't exist
-
-// 5. Update profile with provided data
-// 6. Return updated profile
-
-export const completeProfile = async (
-  req: AuthRequest,
-  res: Response,
-): Promise<void> => {
-  try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: "user not authenticated" });
-      return;
-    }
-    const {
-      gender,
-      sexual_preference,
-      biography,
-      latitude,
-      longitude,
-      location_city,
-    } = req.body;
-    let profile = await getProfileByUserId(userId);
-    if (!profile) {
-      await createBlankProfile(userId);
-    }
-    profile = await updateProfile(userId, {
-      gender,
-      sexual_preference,
-      biography,
-      latitude,
-      longitude,
-      location_city,
-    });
-    res
-      .status(200)
-      .json({ message: "Profile completed successfully", profile });
-  } catch (error) {
-    console.error("complete profile error: ", error);
-    res.status(500).json({ error: "failed to complete profile" });
-  }
-};
-
-/*
-1. Get userId from req.user (set by requireAuth middleware)
-2. Check if userId exists
-3. Get profile from database using getProfileByUserId(userId)
-4. Check if profile exists
-5. If no profile → return 404 error
-6. If profile exists → return it
-*/
-export const getOwnerProfile = async (
-  req: AuthRequest,
-  res: Response,
-): Promise<void> => {
-  try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: "user not authenticated" });
-      return;
-    }
-    const userProfile = await getProfileByUserId(userId);
-    if (!userProfile) {
-      res.status(404).json({ error: "user profile does not exist" });
-      return;
-    }
-    res
-      .status(200)
-      .json({ message: "Owner's Profile returnted successfully", userProfile });
-  } catch (error) {
-    console.error("error getting owner", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
-/*Get userId from req.user
-Get update data from req.body
-Call updateProfile(userId, data)
-Return updated profile*/
-
-export const updateOwnProfile = async (
-  req: AuthRequest,
-  res: Response,
-): Promise<void> => {
-  try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: "user not authenticated" });
-      return;
-    }
-
-    const {
-      gender,
-      sexual_preference,
-      biography,
-      latitude,
-      longitude,
-      location_city,
-    } = req.body;
-    const profile = await updateProfile(userId, {
-      gender,
-      sexual_preference,
-      biography,
-      latitude,
-      longitude,
-      location_city,
-    });
-
-    if (!profile) {
-      res.status(404).json({ error: "Profile not found" });
-      return;
-    }
-    res.status(200).json({ message: "Profile updated successfully", profile });
-  } catch (error) {
-    console.error("error getting owner", error);
-    res.status(500).json({ error: "internal server error" });
-  }
-};
 
 /*Get userId from req.user
 Check it exists
@@ -240,6 +115,57 @@ export const getFullProfileDetails = async (
                   latitude: 123
                   longitude: 456
         }*/
+};
+
+export const updateProfileDetails = async (req: AuthRequest, res: Response): Promise<void> => {
+    try {
+        const userId = req.user?.userId;
+        if(!userId){
+            res.status(401).json({ error: 'User not authenticated' });
+            return;
+        }
+
+        const {
+            first_name,
+            last_name,
+            email,
+            gender,
+            sexual_preference,
+            biography,
+            date_of_birth,
+            latitude,
+            longitude,
+            location_city,
+            interests
+        } = req.body
+
+        await updateUser(userId, { first_name, last_name, email });
+
+        await updateProfile(userId, { 
+            gender, 
+            sexual_preference, 
+            biography, 
+            date_of_birth,
+            latitude,
+            longitude,
+            location_city
+        });
+
+        if (interests && Array.isArray(interests)){
+            await updateUserInterests(userId, interests);
+        }
+        
+        const profile = await getProfileDetails(userId);
+
+        res.status(200).json({
+            message: 'Profile updated successfully',
+            profile
+        });
+
+    } catch (error) {
+        console.error('update profile details error: ', error);
+        res.status(500).json({  error: 'Internal server error' });
+    }
 };
 
 export const uploadProfilePicture = async (
@@ -354,54 +280,3 @@ export const getPictures = async (
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
-export const updateProfileDetails = async (req: AuthRequest, res: Response): Promise<void> => {
-    try {
-        const userId = req.user?.userId;
-        if(!userId){
-            res.status(401).json({ error: 'User not authenticated' });
-            return;
-        }
-
-        const {
-            first_name,
-            last_name,
-            email,
-            gender,
-            sexual_preference,
-            biography,
-            date_of_birth,
-            latitude,
-            longitude,
-            location_city,
-            interests
-        } = req.body
-
-        await updateUser(userId, { first_name, last_name, email });
-
-        await updateProfile(userId, { 
-            gender, 
-            sexual_preference, 
-            biography, 
-            date_of_birth,
-            latitude,
-            longitude,
-            location_city
-        });
-
-        if (interests && Array.isArray(interests)){
-            await updateUserInterests(userId, interests);
-        }
-        
-        const profile = await getProfileDetails(userId);
-
-        res.status(200).json({
-            message: 'Profile updated successfully',
-            profile
-        });
-
-    } catch (error) {
-        console.error('update profile details error: ', error);
-        res.status(500).json({  error: 'Internal server error' });
-    }
-}
