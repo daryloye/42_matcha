@@ -1,0 +1,16 @@
+backend/src/models/profile.model.ts
+  h_5839197889c05f 33-35,37-48,51
+backend/src/controllers/auth.controller.ts
+  h_5839197889c05f 21,222-224,232
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "6d13f22ef681fdfc34d13f268dd4cfe517ff6f87",
+  "prompts": {},
+  "humans": {
+    "h_5839197889c05f": {
+      "author": "daryloye <daryloye@gmail.com>"
+    }
+  }
+}
