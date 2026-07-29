@@ -1,0 +1,68 @@
+bruno-api/01_auth/00_register/01_same_username.bru
+  h_5839197889c05f 2,4
+bruno-api/01_auth/03_forget_password/00_invalid_email.bru
+  h_5839197889c05f 1-32
+bruno-api/01_auth/00_register/02_weak_password.bru
+  h_5839197889c05f 2,4
+bruno-api/04_match/folder.bru
+  h_5839197889c05f 3
+bruno-api/04_match/get_match_status.bru
+  h_5839197889c05f 1-20
+bruno-api/01_auth/02_login/00_login_ok.bru
+  h_5839197889c05f 4
+bruno-api/05_chat/get_chat_another_user.bru
+  h_5839197889c05f 1-24
+bruno-api/03_search/folder.bru
+  h_5839197889c05f 3
+frontend/package.json
+  h_5839197889c05f 33
+bruno-api/01_auth/folder.bru
+  h_5839197889c05f 3
+bruno-api/02_profile/02_update_full_profile.bru
+  h_5839197889c05f 21
+bruno-api/05_chat/get_chat.bru
+  h_5839197889c05f 1-20
+bruno-api/01_auth/00_register/00_same_email.bru
+  h_5839197889c05f 2
+bruno-api/01_auth/02_login/login.bru
+  h_5839197889c05f 1-32
+bruno-api/05_chat/send_chat.bru
+  h_5839197889c05f 1-27
+bruno-api/05_chat/folder.bru
+  h_5839197889c05f 3
+bruno-api/04_match/01_get_account.bru
+  h_5839197889c05f 1-26
+bruno-api/04_match/update_match_status_another_user.bru
+  h_5839197889c05f 1-27
+bruno-api/03_search/search.bru
+  h_5839197889c05f 1-20
+bruno-api/04_match/get_connected_users_another_user.bru
+  h_5839197889c05f 1-20
+bruno-api/02_profile/folder.bru
+  h_5839197889c05f 3
+bruno-api/04_match/00_get_connected.bru
+  h_5839197889c05f 2,4
+bruno-api/04_match/get_match_status_another_user.bru
+  h_5839197889c05f 1-24
+bruno-api/03_search/00_get_user_profile.bru
+  h_5839197889c05f 4
+bruno-api/01_auth/01_verify/verify.bru
+  h_5839197889c05f 1-20
+bruno-api/04_match/update_match_status.bru
+  h_5839197889c05f 1-27
+bruno-api/01_auth/01_verify/00_verify_invalid_token.bru
+  h_5839197889c05f 1-22
+bruno-api/05_chat/send_chat_another_user.bru
+  h_5839197889c05f 1-27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "185b998ed2727740084e55d77b21a5bc79678b0d",
+  "prompts": {},
+  "humans": {
+    "h_5839197889c05f": {
+      "author": "daryloye <daryloye@gmail.com>"
+    }
+  }
+}
