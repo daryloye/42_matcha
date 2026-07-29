@@ -1,0 +1,24 @@
+docker-compose.dev.yml
+  h_5839197889c05f 6,13,28
+.env.example
+  h_5839197889c05f 3
+backend/src/server.ts
+  h_5839197889c05f 17-18,89-96,101,105
+frontend/vite.config.ts
+  h_5839197889c05f 4,17-20,24,28
+bruno-api/package.json
+  h_5839197889c05f 8
+bruno-api/environments/matcha.bru
+  h_5839197889c05f 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "20bb15b84931b0c165c5fa58f4059a2294a68909",
+  "prompts": {},
+  "humans": {
+    "h_5839197889c05f": {
+      "author": "daryloye <daryloye@gmail.com>"
+    }
+  }
+}
