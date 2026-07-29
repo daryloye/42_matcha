@@ -1,23 +1,17 @@
 meta {
-  name: 00_get_search
+  name: get_chat
   type: http
   seq: 1
 }
 
 get {
-  url: {{baseUrl}}/api/search
+  url: {{baseUrl}}/api/match/status
   body: json
   auth: inherit
 }
 
 headers {
   Content-Type: application/json
-}
-
-tests {
-  test("status 200", function() {
-    expect(res.getStatus()).to.equal(200);
-  });
 }
 
 settings {

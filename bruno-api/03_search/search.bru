@@ -1,23 +1,17 @@
 meta {
-  name: 00_get_match_status
+  name: search
   type: http
   seq: 1
 }
 
 get {
-  url: {{baseUrl}}/api/match/status
+  url: {{baseUrl}}/api/search/1234
   body: json
   auth: inherit
 }
 
 headers {
   Content-Type: application/json
-}
-
-tests {
-  test("status 400", function() {
-    expect(res.getStatus()).to.equal(400);
-  });
 }
 
 settings {

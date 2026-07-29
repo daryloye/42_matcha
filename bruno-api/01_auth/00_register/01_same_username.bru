@@ -1,21 +1,27 @@
 meta {
-  name: 00_get_chat_another_user
+  name: 01_same_username
   type: http
   seq: 2
 }
 
-get {
-  url: {{baseUrl}}/api/chat/?targetId=450d84f8-c8ae-4842-a87d-b9a0839ab2a8
+post {
+  url: {{baseUrl}}/api/auth/register
   body: json
   auth: inherit
 }
 
-params:query {
-  targetId: 450d84f8-c8ae-4842-a87d-b9a0839ab2a8
-}
-
 headers {
   Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "admin1@matcha.com",
+    "username": "admin",
+    "first_name": "Admin1",
+    "last_name": "Matcha1",
+    "password": "Password@123"
+  }
 }
 
 tests {

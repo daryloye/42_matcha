@@ -1,5 +1,5 @@
 meta {
-  name: 00_login_another_user
+  name: login
   type: http
   seq: 4
 }
@@ -24,12 +24,6 @@ body:json {
 script:post-response {
   const body = res.getBody();
   bru.setVar("token", body.token);
-}
-
-tests {
-  test("status 200", function() {
-    expect(res.getStatus()).to.equal(200);
-  });
 }
 
 settings {

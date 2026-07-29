@@ -1,11 +1,11 @@
 meta {
-  name: 02_get_connected_users_another_user
+  name: 01_get_account
   type: http
-  seq: 6
+  seq: 2
 }
 
 get {
-  url: {{baseUrl}}/api/match/connected
+  url: {{baseUrl}}/api/match/account
   body: json
   auth: inherit
 }

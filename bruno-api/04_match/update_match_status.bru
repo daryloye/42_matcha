@@ -1,0 +1,27 @@
+meta {
+  name: update_match_status
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/match/update
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "action": "like",
+    "targetId": "450d84f8-c8ae-4842-a87d-b9a0839ab2a8"
+  }
+}
+
+settings {
+  encodeUrl: false
+  timeout: 10000
+}

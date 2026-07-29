@@ -1,0 +1,20 @@
+meta {
+  name: get_connected_users_another_user
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/api/match/connected
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+settings {
+  encodeUrl: false
+  timeout: 10000
+}
