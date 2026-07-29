@@ -1,0 +1,50 @@
+backend/engineering-roadmap.md
+  h_5839197889c05f 166
+bruno-api/02_profile/02_update_full_profile.bru
+  h_5839197889c05f 8,19-20,37-38
+backend/src/controllers/profile.controller.ts
+  h_5839197889c05f 120-170
+bruno-api/03_search/00_get_user_profile.bru
+  h_5839197889c05f 18-19
+frontend/src/api/profile.tsx
+  h_5839197889c05f 25
+bruno-api/02_profile/01_get_full_profile.bru
+  h_5839197889c05f 18-19
+bruno-api/02_profile/00_get_basic_profile.bru
+  h_5839197889c05f 18-19
+bruno-api/04_match/folder.bru
+  h_5839197889c05f 7
+bruno-api/05_chat/folder.bru
+  h_5839197889c05f 7
+bruno-api/02_profile/folder.bru
+  h_5839197889c05f 7
+bruno-api/04_match/03_get_account_data.bru
+  h_5839197889c05f 18-19
+frontend/src/pages/home/Profile.tsx
+  h_5839197889c05f 98-99
+bruno-api/03_search/folder.bru
+  h_5839197889c05f 7
+bruno-api/package.json
+  h_5839197889c05f 5
+bruno-api/01_auth/02_login/00_login_another_user.bru
+  h_5839197889c05f 26
+bruno-api/04_match/02_get_connected_users_another_user.bru
+  h_5839197889c05f 18-19
+bruno-api/01_auth/02_login/00_login_ok.bru
+  h_5839197889c05f 26
+openapi.yaml
+  h_5839197889c05f 150
+bruno-api/03_search/00_get_search.bru
+  h_5839197889c05f 18-19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "a8d4e9c9da3df38b659f512cdbd6beb0bc93de5b",
+  "prompts": {},
+  "humans": {
+    "h_5839197889c05f": {
+      "author": "daryloye <daryloye@gmail.com>"
+    }
+  }
+}
