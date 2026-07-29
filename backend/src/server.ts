@@ -14,6 +14,8 @@ import profileRouter from "./routes/profile.routes";
 import matchRouter from "./routes/match.routes";
 import chatRouter from "./routes/chat.routes";
 import searchRouter from "./routes/search.routes";
+import fs from "fs";
+import https from "https";
 
 dotenv.config(); //this reads my env file and makes variables available via process.env.BACKEND_PORT
 
@@ -84,18 +86,22 @@ app.use((err: Error, _req: Request, res: Response) => {
   });
 });
 
-// this will start the server
-httpServer.listen(process.env.BACKEND_PORT, async () => {
-  console.log(`Server running on port ${process.env.BACKEND_PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV}`);
+https.createServer(
+  {
+    key: fs.readFileSync("/certs/localhost-key.pem"),
+    cert: fs.readFileSync("/certs/localhost.pem"),
+  },
+  app,
+).listen(process.env.BACKEND_PORT, async () => {
+  console.log(`HTTPS server running on https://localhost:${process.env.BACKEND_PORT}`);
 
   if (!await testDatabaseConnection()) {
     process.exit(1);
   }
-
+  
   if (!await createTables()) {
     process.exit(1);
   }
-});
+})
 
 export { io };
