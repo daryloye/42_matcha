@@ -104,7 +104,7 @@ chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
 ### 2.2 — Auth Controller (`auth.controller.ts`)
 - [x] `register` — validate formats → check duplicates → hash password → createUser → sendVerificationEmail (rollback via deleteUserById if email fails)
 - [x] `verify` — verify email token, set is_verified = true
-- [x] `login` — username + password, blocks unverified users, resends verification email on unverified login, returns message + token only
+- [x] `login` — username + password, blocks unverified users, resends verification email on unverified login, returns message
 - [x] `forgotPassword` — unified response regardless of email existence (prevents account enumeration)
 - [x] `resetPassword` — verify reset token, update password, clear token
 
@@ -116,7 +116,7 @@ chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
 - [x] `POST /api/auth/reset-password`
 
 ### 2.4 — Auth Middleware (`auth.middleware.ts`)
-- [x] `requireAuth` — extracts Bearer token from Authorization header, verifies JWT, attaches `req.user = { userId: string, email, username }`
+- [x] `requireAuth` — extracts Bearer token from cookie, verifies JWT, attaches `req.user = { userId: string, email, username }`
 
 ### 2.5 — Types (`user.types.ts`)
 - [x] `User` interface — id: string (UUID)

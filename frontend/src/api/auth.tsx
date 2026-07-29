@@ -48,3 +48,13 @@ export async function ResetPassword(params: any) {
     JSON.stringify(params),
   );
 }
+
+export async function Logout() {
+  return await PostHTTP(
+    `/api/auth/logout`,
+    new Headers({
+      'Content-Type': 'application/json',
+    }),
+    JSON.stringify({}),
+  );
+}

@@ -11,7 +11,7 @@ import {
   MdPersonOutline,
   MdReport,
 } from 'react-icons/md';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   Badge,
   Button,
@@ -23,7 +23,6 @@ import {
   useToaster,
   VStack,
 } from 'rsuite';
-import { getToken } from '../../utils/token';
 import { HomePageTemplate } from './HomePageTemplate';
 import { GetMatchStatus, UpdateMatchStatus } from '../../api/match';
 import { MatchStatusEnum, type MatchStatus, type SearchUserProfile } from '../../utils/types';
@@ -39,21 +38,14 @@ function UsersPage() {
   const [loading, setLoading] = useState(false);
 
   const toaster = useToaster();
-  const navigate = useNavigate();
   
   const { id } = useParams();
   if (!id) return null;
 
   const fetchProfile = async () => {
-    const token = getToken();
-    if (!token) {
-      navigate('/');
-      return;
-    }
-
     try {
-      await UpdateMatchStatus(token, {action: MatchStatusEnum.VIEW, targetId: id})
-      const res = await GetUserProfile(token, id);
+      await UpdateMatchStatus({action: MatchStatusEnum.VIEW, targetId: id})
+      const res = await GetUserProfile(id);
       setProfile(res.profile);
     } catch (err: any) {
       toaster.push(
@@ -65,14 +57,8 @@ function UsersPage() {
   }
 
   const fetchMatchStatus = async () => {
-    const token = getToken();
-    if (!token) {
-      navigate('/');
-      return;
-    }
-
     try {
-      const res = await GetMatchStatus(token, id);
+      const res = await GetMatchStatus(id);
       setMatchStatus(res);
     } catch (err: any) {
       toaster.push(
@@ -92,11 +78,6 @@ function UsersPage() {
   
   const handleUpdateStatus = async (action: string) => {
     setLoading(true);
-    const token = getToken();
-    if (!token) {
-      navigate('/');
-      return;
-    }
 
     if (action === MatchStatusEnum.REPORT) {
       toaster.push(
@@ -107,7 +88,7 @@ function UsersPage() {
     }
 
     try {
-      await UpdateMatchStatus(token, {action: action, targetId: id});
+      await UpdateMatchStatus({action: action, targetId: id});
       await fetchMatchStatus();
     } catch (err: any) {
       toaster.push(
@@ -122,12 +103,6 @@ function UsersPage() {
 
   const handleChat = async () => {
     setLoading(true);
-
-    const token = getToken();
-    if (!token) {
-      navigate('/');
-      return;
-    }
 
     try {
       toaster.push(

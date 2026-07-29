@@ -1,7 +1,7 @@
 import HeartIcon from '@rsuite/icons/Heart';
 import NoticeIcon from '@rsuite/icons/Notice';
 import { useEffect, useState, type ReactNode } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   Avatar,
   Badge,
@@ -16,25 +16,18 @@ import {
   Whisper,
 } from 'rsuite';
 import { GetBasicProfile } from '../../api/profile';
-import { deleteToken, getToken } from '../../utils/token';
 import type { BasicProfile } from '../../utils/types';
+import { Logout } from '../../api/auth';
 
 export function HomePageTemplate({ page }: { page: ReactNode }) {
   const [basicProfile, setBasicProfile] = useState<BasicProfile | null>(null);
   const toaster = useToaster();
-  const navigate = useNavigate();
 
   // Get user profile
   useEffect(() => {
-    const token = getToken();
-    if (!token) {
-      navigate('/');
-      return;
-    }
-
     async function fetchBasicProfile() {
       try {
-        const res = await GetBasicProfile(token!);
+        const res = await GetBasicProfile();
         setBasicProfile(res.profile);
         console.log('Profile retrieved');
 
@@ -44,7 +37,6 @@ export function HomePageTemplate({ page }: { page: ReactNode }) {
             {err.message}
           </Notification>,
         );
-        navigate('/');
       }
     }
 
@@ -167,7 +159,7 @@ function NavigationLinks() {
         <h1>Account</h1>
       </Link>
 
-      <Link to='/' onClick={() => deleteToken()}>
+      <Link to='/' onClick={async () => { await Logout() }}>
         <h1>Logout</h1>
       </Link>
     </VStack>

@@ -1,31 +1,28 @@
 import { GetHTTP, PostHTTP } from './httpClient';
 
-export async function GetBasicProfile(token: string) {
+export async function GetBasicProfile() {
   return await GetHTTP(
     '/api/profile/me',
     new Headers({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
     }),
   );
 }
 
-export async function GetFullProfile(token: string) {
+export async function GetFullProfile() {
   return await GetHTTP(
     '/api/profile/details',
     new Headers({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
     }),
   );
 }
 
-export async function UpdateProfile(token: string, params: any) {
+export async function UpdateProfile(params: any) {
   return await PostHTTP(
     '/api/profile/details',
     new Headers({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
     }),
     JSON.stringify(params),
   );

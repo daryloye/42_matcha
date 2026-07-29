@@ -27,7 +27,6 @@ import {
   sortOptions,
   SearchFilterRange
 } from './SearchUtils';
-import { getToken } from '../../utils/token';
 import { GetSearchProfiles } from '../../api/search';
 
 export default function Search() {
@@ -43,15 +42,9 @@ function SearchPage() {
   const toaster = useToaster();
 
   useEffect(() => {
-    const token = getToken();
-    if (!token) {
-      navigate('/');
-      return;
-    }
-
     async function fetchProfiles() {
       try {
-        const res = await GetSearchProfiles(token!);
+        const res = await GetSearchProfiles();
         setProfiles(res.profiles);
 
         setFilters((prev) => ({
@@ -99,7 +92,7 @@ function SearchPage() {
             label='Sort by age:'
             data={sortOptions}
             value={sortBy.age}
-            onChange={(value: number) =>
+            onChange={(value: number | null) =>
               setSortBy((prev) => ({ ...prev, age: value! }))
             }
             cleanable={false}
@@ -110,7 +103,7 @@ function SearchPage() {
             label='Sort by distance:'
             data={sortOptions}
             value={sortBy.distance}
-            onChange={(value: number) =>
+            onChange={(value: number | null) =>
               setSortBy((prev) => ({ ...prev, distance: value! }))
             }
             cleanable={false}
@@ -121,7 +114,7 @@ function SearchPage() {
             label='Sort by fame:'
             data={sortOptions}
             value={sortBy.fame}
-            onChange={(value: number) =>
+            onChange={(value: number | null) =>
               setSortBy((prev) => ({ ...prev, fame: value! }))
             }
             cleanable={false}
@@ -132,7 +125,7 @@ function SearchPage() {
             label='Sort by tags:'
             data={sortOptions}
             value={sortBy.tags}
-            onChange={(value: number) =>
+            onChange={(value: number | null) =>
               setSortBy((prev) => ({ ...prev, tags: value! }))
             }
             cleanable={false}
@@ -173,7 +166,7 @@ function SearchPage() {
               value={filters.tags}
               trigger={['Space', 'Comma', 'Enter']}
               placeholder='Add a space after each tag'
-              onChange={(value: string[]) =>
+              onChange={(value: readonly string[]) =>
                 setFilters((prev) => ({ ...prev, tags: [...value] }))
               }
             />

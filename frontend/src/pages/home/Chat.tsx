@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Avatar, Badge, HStack, Tag, Textarea, VStack, useToaster, Notification } from 'rsuite';
 import profilePic from '../../assets/profilePic2.png';
 import { HomePageTemplate } from './HomePageTemplate';
-import { getToken } from '../../utils/token';
-import { useNavigate } from 'react-router-dom';
 import { GetConnectedUsers } from '../../api/match';
 import { GetMessages, SendMessage } from '../../api/chat';
 
@@ -67,18 +65,11 @@ function ChatPage() {
   const [connetedUsers, setConnectedUsers] = useState<String[]>([]);  
 
   const toaster = useToaster();
-  const navigate = useNavigate();
   
   useEffect(() => {
-    const token = getToken();
-    if (!token) {
-      navigate('/');
-      return;
-    }
-
     async function fetchConnectedUsers() {
       try {
-        const res = await GetConnectedUsers(token!);
+        const res = await GetConnectedUsers();
         console.log(res['connectedUsers']);
 
         setConnectedUsers(res['connectedUsers']);
@@ -139,18 +130,11 @@ function ChatSelected({selectedChatId} : {selectedChatId: any}) {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const toaster = useToaster();
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const token = getToken();
-    if (!token) {
-      navigate('/');
-      return;
-    }
-
     async function fetchMessages() {
       try {
-        const res = await GetMessages(token!, test_user);
+        const res = await GetMessages(test_user);
         setMessages(res['messages']);
       } catch (err: any) {
         toaster.push(
@@ -173,18 +157,12 @@ function ChatSelected({selectedChatId} : {selectedChatId: any}) {
 
     e.preventDefault();
 
-    const token = getToken();
-    if (!token) {
-      navigate('/');
-      return;
-    }
-
     try {
-      await SendMessage(token, {
+      await SendMessage({
         targetId: selectedChatId,
         message: messageToSend,
       });
-      const res = await GetMessages(token!, test_user);
+      const res = await GetMessages(test_user);
       setMessages(res['messages']);
       setMessageToSend('')
     } catch (err: any) {

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { RxAvatar, RxCamera } from 'react-icons/rx';
-import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -16,7 +15,6 @@ import {
 } from 'rsuite';
 import { GetFullProfile, UpdateProfile } from '../../api/profile';
 import { ProfileLocation } from '../../components/profile/ProfileLocation';
-import { getToken } from '../../utils/token';
 import type { ProfileForm } from '../../utils/types';
 import { HomePageTemplate } from './HomePageTemplate';
 import { genderData, model, preferenceData } from './ProfileUtils';
@@ -34,18 +32,11 @@ function ProfilePage() {
   const [position, setPosition] = useState(null);
 
   const toaster = useToaster();
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const token = getToken();
-    if (!token) {
-      navigate('/');
-      return;
-    }
-
     async function fetchProfile() {
       try {
-        const res = await GetFullProfile(token!);
+        const res = await GetFullProfile();
         setFormValue({
           firstname: res.profile.first_name,
           lastname: res.profile.last_name,
@@ -63,7 +54,6 @@ function ProfilePage() {
             {err.message}
           </Notification>,
         );
-        navigate('/');
       }
     }
 
@@ -87,14 +77,8 @@ function ProfilePage() {
   const handleSubmit = async () => {
     setLoading(true);
 
-    const token = getToken();
-    if (!token) {
-      navigate('/');
-      return;
-    }
-
     try {
-      await UpdateProfile(token, {
+      await UpdateProfile({
         first_name: formValue?.firstname,
         last_name: formValue?.lastname,
         email: formValue?.email,

@@ -16,6 +16,7 @@ import chatRouter from "./routes/chat.routes";
 import searchRouter from "./routes/search.routes";
 import fs from "fs";
 import https from "https";
+import cookieParser from 'cookie-parser';
 
 dotenv.config(); //this reads my env file and makes variables available via process.env.BACKEND_PORT
 
@@ -43,6 +44,7 @@ app.use(
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 app.use("/api/auth", authRouter);
 app.use("/api/profile", profileRouter);

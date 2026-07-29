@@ -14,21 +14,18 @@ export const requireAuth = async (
   res: Response,
   next: NextFunction,
 ) => {
-  // 1. Get token from Authorization header
+  // 1. Get token from cookie
   // 2. Verify token with JWT_SECRET
   // 3. Attach user info to req.user
   // 4. Call next() if valid
   // 5. Return error if invalid
   try {
-
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    const token = req.cookies?.access_token;
+    if (!token) {
       res.status(401).json({ error: "Authorization token required" });
       return;
     }
-
-    const token = authHeader.split(" ")[1];
-
+    
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
 
     req.user = {
@@ -59,7 +56,12 @@ export const requireAuth = async (
           } as jwt.SignOptions,
         );
 
-        res.setHeader('x-renewed-token', newToken);
+        res.cookie('access_token', newToken, {
+            maxAge: 900000,     // Expires in 15 minutes (in milliseconds)
+            httpOnly: true,     // Protects against XSS attacks
+            secure: true,       // Requires HTTPS connections
+            sameSite: 'lax'     // Protects against CSRF attacks
+        });
       }
     }
 

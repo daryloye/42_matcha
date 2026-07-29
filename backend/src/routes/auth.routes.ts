@@ -1,5 +1,5 @@
 import { Router } from 'express'; 
-import { register, verify, login, forgotPassword, resetPassword } from '../controllers/auth.controller'
+import { register, verify, login, forgotPassword, resetPassword, logout } from '../controllers/auth.controller'
 
 // import { verify } from 'node:crypto';
 
@@ -11,6 +11,7 @@ router.get('/verify', verify);
 router.post('/login', login);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
+router.post('/logout', logout);
 
 export default router;
 

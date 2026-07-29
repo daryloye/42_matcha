@@ -157,9 +157,15 @@ export const login = async (req: Request, res: Response): Promise<void> => {
             } as jwt.SignOptions 
         );
         await updateLastSeen(existingUser.id);
+
+        res.cookie('access_token', token, {
+            maxAge: 900000,     // Expires in 15 minutes (in milliseconds)
+            httpOnly: true,     // Protects against XSS attacks
+            secure: true,       // Requires HTTPS connections
+            sameSite: 'lax'  // Protects against CSRF attacks
+        });
         res.status(200).json({
-            message: 'Login successful!',
-            token: token,
+            message: 'Login successful!'
         });
     } catch (error) {
         console.error('login error: ', error);
@@ -267,4 +273,13 @@ export const verify = async(req: Request, res: Response): Promise<void> => {
         console.error("Verification error: ", error);
         res.status(500).json({ error: 'Internal server error. Verificatition failed. Please try again.'});
     };
+}
+
+export const logout = async(req: Request, res: Response): Promise<void>  => {
+    res.clearCookie("access_token", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "lax",
+    });
+    res.status(200).json({ message: "Logged out" });
 }

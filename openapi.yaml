@@ -5,16 +5,6 @@ info:
 servers:
   - url: https://api.server.test/v1
 
-components:
-  parameters:
-    BearerAuth:
-      in: header
-      name: Authorization
-      required: true
-      schema:
-        type: string
-        example: "Bearer <token>"
-
 paths:
   /auth/login:
     post:
@@ -28,10 +18,6 @@ paths:
       responses:
         "200":
           description: Login successful
-          content:
-            application/json:
-              example:
-                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
         "400":
           description: Missing required fields
         "401":
@@ -131,8 +117,6 @@ paths:
 
   /profile/me:
     get:
-      parameters:
-        - $ref: "#/components/parameters/BearerAuth"
       responses:
         "200":
           description: OK
@@ -149,8 +133,6 @@ paths:
 
   /profile/details:
     get:
-      parameters:
-        - $ref: "#/components/parameters/BearerAuth"
       responses:
         "200":
           description: OK
@@ -182,8 +164,6 @@ paths:
                   longitude: 456
 
     post:
-      parameters:
-        - $ref: "#/components/parameters/BearerAuth"
       requestBody:
         required: true
         content:

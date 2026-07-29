@@ -1,8 +1,6 @@
 import { List, VStack, useToaster, Notification } from 'rsuite';
 import { HomePageTemplate } from './HomePageTemplate';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getToken } from '../../utils/token';
 import { GetAccountData } from '../../api/match';
 import type { AccountData } from '../../utils/types';
 
@@ -14,18 +12,11 @@ function AccountPage() {
   const [views, setViews] = useState<AccountData[] | null>(null);
   const [likes, setLikes] = useState<AccountData[] | null>(null);
   const toaster = useToaster();
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const token = getToken();
-    if (!token) {
-      navigate('/');
-      return;
-    }
-
     async function fetchAccountData() {
       try {
-        const res = await GetAccountData(token!);
+        const res = await GetAccountData();
         setViews(res.views || []);
         setLikes(res.likes || []);
 

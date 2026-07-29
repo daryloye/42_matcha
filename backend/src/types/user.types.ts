@@ -33,7 +33,6 @@ export interface LoginResponse {
     last_name: string;    
     is_verified: boolean;
     };
-    token: string;
 };
 
 export interface LoginRequest {
