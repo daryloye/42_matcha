@@ -118,9 +118,9 @@
 
  export const createUser = async (data: CreateUserData) => {
     const sql = `
-                INSERT INTO users (email, username, first_name, last_name, password_hash, verification_token) 
-                VALUES ($1, $2, $3, $4, $5, $6) 
-                RETURNING id;
+      INSERT INTO users (email, username, first_name, last_name, password_hash, verification_token) 
+      VALUES ($1, $2, $3, $4, $5, $6) 
+      RETURNING id;
     `;
     
     const values = [

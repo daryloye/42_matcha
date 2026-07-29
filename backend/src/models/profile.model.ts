@@ -30,34 +30,26 @@ export const getProfileByUserId = async (
   return result.rows.length > 0 ? result.rows[0] : null;
 };
 
-/*
-export const updateProfile = async (userId: number, data: CreateUserProfile): Promise<any | null> => {
+export const createProfile = async (
+    userId: string,
+): Promise<any | null> => {
     const sql = `
-        UPDATE profiles
-        SET gender = $2,
-            sexual_preference= $3,
-            biography = $4,
-            latitude = $5,
-            longitude = $6, 
-            location_city = $7, 
-            updated_at = NOW()
-        WHERE user_id = $1
-        RETURNING *
-    `
-    const values = [
-        userId,
-        data.gender,
-        data.sexual_preference,
-        data.biography,
-        data.latitude, 
-        data.longitude, 
-        data.location_city, 
-    ];
-    const result = await query(sql, values);
-
-    return result.rows.length > 0 ? result.rows[0] : null;
+        INSERT INTO profiles (user_id, gender, sexual_preference)
+        VALUES ($1, $2, $3)
+        ON CONFLICT (user_id) DO NOTHING
+    `;
+    await query(sql, [userId, "other", "both"]);
 }
-*/
+
+export const deleteProfile = async (
+    userId: string,
+): Promise<any | null> => {
+    const sql = `
+        DELETE FROM profiles
+        WHERE user_id = $1
+    `
+    await query(sql, [userId]);
+}
 
 export const updateProfile = async (
   userId: string,
@@ -106,33 +98,6 @@ export const addProfilePicture = async (userId: string, imageUrl: string): Promi
     return result.rows.length > 0 ? result.rows[0] : null;
 }
 
-/*
-export const addProfilePicture = async (userId: number, imageUrl: string, isPrimary: boolean = false): Promise<any | null> => {
-    const sql = `
-        INSERT INTO profile_pictures (user_id, image_url, is_profile_picture)
-        VALUES ($1, $2, $3)
-        RETURNING *   
-    `;
-  const params = [userId, imageUrl, isPrimary];
-  const result = await query(sql, params);
-
-
-    return result.rows.length > 0 ? result.rows[0] : null;
-}
-
-setProfilePicture:
-
-Set all user's photos to is_profile_picture = false
-Then set the specific photo to is_profile_picture = true
-Use two UPDATE queries or one smart query
-
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-        image_url VARCHAR(255),
-        is_profile_picture BOOLEAN DEFAULT FALSE,
-        created_at TIMESTAMP DEFAULT NOW()
-
-*/ 
 export const setProfilePicture = async (userId: string, pictureId: string): Promise<any | null> => {
     const sql = `
         UPDATE profile_pictures
@@ -143,14 +108,7 @@ export const setProfilePicture = async (userId: string, pictureId: string): Prom
     const result = await query(sql, [userId, pictureId]);
     return result.rows.find(row => row.id === pictureId) || null;
 }
-/*
-getProfilePictures:
 
-SELECT all photos for a user
-Order by is_profile_picture DESC (profile pic first)
-
-
-*/
 export const getProfilePictures = async (userId: string): Promise <any | null> => {
     const sql = `
         SELECT * FROM profile_pictures
@@ -172,13 +130,6 @@ export const getPrimaryProfilePicture = async (userId: string): Promise <any | n
     const result = await query(sql, [userId]);
     return result.rows.length > 0 ? result.rows[0] : null;
 }
-
-/*
-deleteProfilePicture:
-
-DELETE photo by id
-Make sure it belongs to the user (security!)
-*/
 
 export const deleteProfilePicture = async(userId: string, pictureId: string): Promise <any | null> => {
     const sql = `

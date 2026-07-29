@@ -18,6 +18,7 @@ import {
 import { isValidEmail, isValidUserName, isValidPassword } from '../utils/validation';
 import { sendPasswordResetEmail, sendVerificationEmail } from '../utils/email';
 import { RegisterRequest, LoginRequest, ForgotPasswordRequest, ResetPasswordRequest } from '../types/user.types';
+import { createProfile, deleteProfile } from '../models/profile.model';
 
 /*
     // 1. Get token and new password from request
@@ -218,6 +219,9 @@ export const register = async (req: Request, res: Response): Promise <void> => {
         const userData = { email, username, first_name, last_name, password_hash, verification_token };
         const result = await createUser(userData);
         const userId = result.rows[0].id;
+
+        await createProfile(userId);
+        
         console.log(`✅ User created with id: ${userId}`);
         
         try {
@@ -225,6 +229,7 @@ export const register = async (req: Request, res: Response): Promise <void> => {
         } catch (emailError) {
             // Roll back user creation if email fails
             await deleteUserById(userId);
+            await deleteProfile(userId);
             res.status(500).json({ error: 'Failed to send verification email. Please try again.'})
             return;
         }
