@@ -5,12 +5,7 @@ import { updateProfile, updateUserInterests, getProfileDetails } from '../models
 
 export const updateProfileDetails = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
-        const userId = req.user?.userId;
-        if(!userId){
-            res.status(401).json({ error: 'User not authenticated' });
-            return;
-        }
-
+        const userId = req.user!.userId;
         const {
             first_name,
             last_name,

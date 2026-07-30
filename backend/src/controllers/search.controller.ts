@@ -10,12 +10,7 @@ export const getRecommendedSearchHandler = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: "user not authenticated" });
-      return;
-    }
-
+    const userId = req.user!.userId;
     const userProfile = await getProfileDetails(userId);
     const tags = req.query.tags ? (req.query.tags as string).split(',').map(tag => tag.trim()) : null;
 
@@ -133,11 +128,7 @@ export const getUserProfileHandler = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: "user not authenticated" });
-      return;
-    }
+    const userId = req.user!.userId;
 
     const { id: targetId } = req.params as { id: string };
     if (!targetId) {
@@ -153,7 +144,9 @@ export const getUserProfileHandler = async (
 
     // profile.distance = 10; // TODO: calculate distance to user based on latitude and longitude
     profile.age = getAge(profile.date_of_birth);
-    profile.online = profile.last_seen ? (new Date().getTime() - new Date(profile.last_seen).getTime() < 5 *60 * 1000) : false;
+    profile.online = profile.last_seen
+      ? (new Date().getTime() - new Date(profile.last_seen).getTime() < 15000) 
+      : false;    // offline if last seen more than 15 seconds ago
 
     delete profile.latitude;
     delete profile.longitude;

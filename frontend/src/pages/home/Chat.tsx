@@ -200,7 +200,7 @@ function ChatSelected({selectedChatId} : {selectedChatId: any}) {
           {/* Online Status */}
           <HStack>
             <Badge compact size='lg' color={1 ? 'green' : 'red'} />
-            <p>Online {1 ? '' : 'last seen'}</p>
+            <p>Online {1 ? '' : 'last seen'}</p>  // TODO: check last seen status
           </HStack>
         </VStack>
       </HStack>

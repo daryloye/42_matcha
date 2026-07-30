@@ -148,7 +148,7 @@ function UserProfileHeader({profile, matchStatus}: {profile: SearchUserProfile, 
       <h1>{profile.first_name} {profile.last_name}</h1>
       <HStack>
         <Badge compact size='lg' color={profile.online ? 'green' : 'red'} />
-        <p>{profile.online ? 'Online' : `Last seen ${profile.last_seen}`}</p>
+        <p>{profile.online ? 'Online' : `Last seen ${new Date(profile.last_seen).toLocaleString("en-GB")}`}</p>
       </HStack>
       {matchStatus.isConnected ? (
         <HStack>

@@ -11,11 +11,7 @@ export const createChatHandler = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: "user not authenticated" });
-      return;
-    }
+    const userId = req.user!.userId;
 
     const {message, targetId}: ChatRequest = req.body;
     if (!message) {
@@ -53,11 +49,7 @@ export const getChatHandler = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: "user not authenticated" });
-      return;
-    }
+    const userId = req.user!.userId;
 
     const {targetId} = req.query;
     if (!targetId || typeof targetId !== 'string') {

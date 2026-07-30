@@ -13,7 +13,6 @@ import {
     findUserByResetToken,
     clearResetToken,
     deleteUserById,
-    updateLastSeen
 } from '../models/user.model';
 import { isValidEmail, isValidUserName, isValidPassword } from '../utils/validation';
 import { sendPasswordResetEmail, sendVerificationEmail } from '../utils/email';
@@ -156,7 +155,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
                 expiresIn: process.env.JWT_EXPIRES_IN || '15m'
             } as jwt.SignOptions 
         );
-        await updateLastSeen(existingUser.id);
 
         res.cookie('access_token', token, {
             maxAge: 900000,     // Expires in 15 minutes (in milliseconds)

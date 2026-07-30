@@ -10,11 +10,7 @@ export const updateMatchHandler = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: "user not authenticated" });
-      return;
-    }
+    const userId = req.user!.userId;
 
     const {action, targetId}: MatchRequest = req.body;
     if (!action) {
@@ -31,15 +27,22 @@ export const updateMatchHandler = async (
       return; 
     }
 
+    // error if target has blocked user
     const statusFromTarget = await getMatchStatus(targetId, userId);
     if (statusFromTarget?.includes(matchStatus.BLOCK)) {
       res.status(400).json({ error: "Invalid ID" });
       return;
     }
     
+    // if blocking target, then allow to view, unblock and report
     const statusFromUser = await getMatchStatus(userId, targetId);
-    if (action !== matchStatus.UNBLOCK && statusFromUser?.includes(matchStatus.BLOCK)) {
-      res.status(400).json({ error: "need to unblock user first" });
+    if (
+      action !== matchStatus.VIEW 
+      && action !== matchStatus.UNBLOCK 
+      && action !== matchStatus.REPORT
+      && statusFromUser?.includes(matchStatus.BLOCK)
+    ) {
+      res.status(400).json({ error: "Need to unblock user first" });
       return;
     }
 
@@ -66,8 +69,13 @@ export const updateMatchHandler = async (
         return;
 
       case matchStatus.VIEW:
+        await createMatchStatus(userId, targetId, action);
+        res.status(200).json({ message: `${userId} ${action} ${targetId}`});
+        return;
+
       case matchStatus.REPORT:
         await createMatchStatus(userId, targetId, action);
+        await increaseUserFame(targetId, -3);
         res.status(200).json({ message: `${userId} ${action} ${targetId}`});
         return;
 
@@ -100,11 +108,7 @@ export const getMatchStatusHandler = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: "user not authenticated" });
-      return;
-    }
+    const userId = req.user!.userId;
 
     const {targetId} = req.query;
     if (!targetId || typeof targetId !== 'string') {
@@ -142,11 +146,7 @@ export const getConnectedUsersHandler = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: "user not authenticated" });
-      return;
-    }
+    const userId = req.user!.userId;
 
     const connectedUsers = await getTargetIdsWithStatus(userId, matchStatus.CONNECTED);
     res.status(200).json({ connectedUsers });
@@ -162,11 +162,7 @@ export const getAccountDataHandler = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: "user not authenticated" });
-      return;
-    }
+    const userId = req.user!.userId;
 
     const views = await getViewData(userId);
     const likes = await getLikeData(userId);

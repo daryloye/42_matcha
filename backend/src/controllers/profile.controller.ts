@@ -1,7 +1,6 @@
 import { Response } from "express";
 import { AuthRequest } from "../middleware/auth.middleware";
 import {
-  getProfileByUserId,
   getProfileDetails,
   getProfileMe,
   updateProfile,
@@ -11,7 +10,7 @@ import {
   getProfilePictures,
   updateUserInterests,
 } from "../models/profile.model";
-import { updateUser } from '../models/user.model';
+import { updateLastSeen, updateUser } from '../models/user.model';
 
 /*Get userId from req.user
 Check it exists
@@ -31,20 +30,15 @@ Return result
 
 export const getMe = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: "user not authenticated" });
-      return;
-    }
+    const userId = req.user!.userId;
     const profile = await getProfileMe(userId);
 
     if (!profile) {
       res.status(404).json({ error: "user profile does not exist" });
       return;
     }
-    res
-      .status(200)
-      .json({ message: "Owner's Profile returnted successfully", profile });
+    await updateLastSeen(userId);
+    res.status(200).json({ message: "Owner's Profile returnted successfully", profile });
   } catch (error) {
     console.error("error getting owner", error);
     res.status(500).json({ error: "Internal server error" });
@@ -69,12 +63,7 @@ export const getFullProfileDetails = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: "user not authenticated" });
-      return;
-    }
-
+    const userId = req.user!.userId;
     const profile = await getProfileDetails(userId);
 
     if (!profile) {
@@ -119,12 +108,7 @@ export const getFullProfileDetails = async (
 
 export const updateProfileDetails = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
-        const userId = req.user?.userId;
-        if(!userId){
-            res.status(401).json({ error: 'User not authenticated' });
-            return;
-        }
-
+        const userId = req.user!.userId;
         const {
             first_name,
             last_name,
@@ -173,11 +157,7 @@ export const uploadProfilePicture = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: "User not authenticated" });
-      return;
-    }
+    const userId = req.user!.userId;
     if (!req.file) {
       res.status(400).json({ error: "No file provided" });
       return;
@@ -199,12 +179,7 @@ export const setPrimaryPicture = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const userId = req.user?.userId;
-
-    if (!userId) {
-      res.status(401).json({ error: "User not authententicated" });
-      return;
-    }
+    const userId = req.user!.userId;
 
     const pictureId = req.params.pictureId as string;
     if (!pictureId) {
@@ -232,11 +207,7 @@ export const removePicture = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: "User not authenticated" });
-      return;
-    }
+    const userId = req.user!.userId;
 
     const pictureId = req.params.pictureId as string;
     if (!pictureId) {
@@ -263,12 +234,7 @@ export const getPictures = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: "User not authenticated" });
-      return;
-    }
-
+    const userId = req.user!.userId;
     const pictures = await getProfilePictures(userId);
 
     res.status(200).json({
