@@ -1,0 +1,26 @@
+backend/src/controllers/search.controller.ts
+  h_5839197889c05f 13,131,148-149
+backend/src/controllers/updateProfileDetails.ts
+  h_5839197889c05f 8
+backend/src/controllers/profile.controller.ts
+  h_5839197889c05f 13,33,40,66,111,160,182,210,237
+frontend/src/pages/home/Users.tsx
+  h_5839197889c05f 151
+backend/src/controllers/chat.controller.ts
+  h_5839197889c05f 14,52
+frontend/src/pages/home/Chat.tsx
+  h_5839197889c05f 203
+backend/src/controllers/match.controller.ts
+  h_5839197889c05f 13,30,37,40-45,72-75,78,111,149,165
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "e760ea102702a06118c849424de50dd8509b018c",
+  "prompts": {},
+  "humans": {
+    "h_5839197889c05f": {
+      "author": "daryloye <daryloye@gmail.com>"
+    }
+  }
+}
