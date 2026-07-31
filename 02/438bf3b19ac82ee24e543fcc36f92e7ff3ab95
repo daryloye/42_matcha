@@ -1,0 +1,41 @@
+bruno-api/02_profile/06_delete_picture.bru
+  h_5839197889c05f 1-21
+bruno-api/02_profile/05_set_primary_picture.bru
+  h_5839197889c05f 1-21
+backend/src/database/seed.ts
+  h_5839197889c05f 78-81
+bruno-api/02_profile/04_get_pictures.bru
+  h_5839197889c05f 1-33
+backend/src/models/profile.model.ts
+  h_5839197889c05f 83-88,90,96,108,139
+backend/src/middleware/multer.ts
+  h_5839197889c05f 12-18,22,48-50
+backend/src/controllers/profile.controller.ts
+  h_5839197889c05f 12,15,25,27,29,151-159,161,187,191,218-220
+bruno-api/02_profile/03_upload_profile_picture.bru
+  s_f7d186da89456e::t_c253df34274e19 9
+  h_5839197889c05f 1-8,10-26
+.gitignore
+  h_5839197889c05f 56-57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "02438bf3b19ac82ee24e543fcc36f92e7ff3ab95",
+  "prompts": {},
+  "humans": {
+    "h_5839197889c05f": {
+      "author": "daryloye <daryloye@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_f7d186da89456e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fb0d2-22c8-7922-a7e8-df3a18bd0243",
+        "model": "gpt-5.5"
+      },
+      "human_author": "daryloye <daryloye@gmail.com>"
+    }
+  }
+}
