@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { getProfileMe } from "../models/profile.model";
 
 export interface AuthRequest extends Request {
   user?: {
@@ -22,7 +23,7 @@ export const requireAuth = async (
   try {
     const token = req.cookies?.access_token;
     if (!token) {
-      res.status(401).json({ error: "Authorization token required" });
+      res.status(401).json({ error: "Unauthorized" });
       return;
     }
     
@@ -67,7 +68,39 @@ export const requireAuth = async (
 
     next();
   } catch (error) {
-    res.status(401).json({ error: "Request is not authorized" });
+    res.status(401).json({ error: "Unauthorized" });
     return;
   }
 };
+
+export const requireProfileCompleted = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const profile = await getProfileMe(req.user.userId);
+    if (!profile) {
+      res.status(404).json({ error: "user profile does not exist" });
+      return;
+    }
+
+    if (!profile.is_profile_completed) {
+      res.status(403).json({ 
+        code: 'PROFILE_INCOMPLETE',
+        error: "Profile not completed yet" 
+      });
+      return;
+    }
+
+    next();
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+    return;
+  }
+}

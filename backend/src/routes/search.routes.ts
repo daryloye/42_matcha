@@ -1,10 +1,10 @@
 import { Router } from 'express'; 
-import { requireAuth } from '../middleware/auth.middleware';
+import { requireAuth, requireProfileCompleted } from '../middleware/auth.middleware';
 import { getRecommendedSearchHandler, getUserProfileHandler } from '../controllers/search.controller';
 
 const router = Router();
 
-router.get('/', requireAuth, getRecommendedSearchHandler);
-router.get('/:id', requireAuth, getUserProfileHandler);
+router.get('/', requireAuth, requireProfileCompleted, getRecommendedSearchHandler);
+router.get('/:id', requireAuth, requireProfileCompleted, getUserProfileHandler);
 
 export default router;

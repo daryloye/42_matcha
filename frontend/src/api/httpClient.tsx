@@ -16,7 +16,10 @@ export async function PostHTTP(
   
   if (res.status === 401) {
     window.location.href = '/';
-    throw new Error('Session expired');
+  }
+
+  if (res.status === 403 && data?.code === 'PROFILE_INCOMPLETE') {
+    window.location.href = '/profile?reason=profile_incomplete';
   }
   
   if (!res.ok) {
@@ -37,7 +40,10 @@ export async function GetHTTP(endpoint: string, headers: HeadersInit) {
 
   if (res.status === 401) {
     window.location.href = '/';
-    throw new Error('Session expired');
+  }
+
+  if (res.status === 403 && data?.code === 'PROFILE_INCOMPLETE') {
+    window.location.href = '/profile?reason=profile_incomplete';
   }
 
   if (!res.ok) {

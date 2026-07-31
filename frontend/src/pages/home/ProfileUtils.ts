@@ -22,6 +22,8 @@ export const model = Schema.Model({
   gender: StringType().isRequired('Gender is required'),
   preference: StringType().isRequired('Preference is required'),
   interests: ArrayType()
+    .minLength(1, 'Minimum 1 tag required')
     .maxLength(5, 'Maximum 5 tags allowed')
     .of(StringType().maxLength(20, 'Max 20 characters for each tag')),
+  biography: StringType().isRequired('Biography is required'),
 });
