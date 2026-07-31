@@ -1,0 +1,26 @@
+meta {
+  name: 03_upload_profile_picture
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/profile/picture
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  picture: @file(test_image.png)
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}
+
+settings {
+  encodeUrl: false
+  timeout: 10000
+}

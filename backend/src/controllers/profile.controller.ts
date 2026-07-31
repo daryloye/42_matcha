@@ -9,38 +9,24 @@ import {
   deleteProfilePicture,
   getProfilePictures,
   updateUserInterests,
+  getPictureCount,
 } from "../models/profile.model";
 import { updateLastSeen, updateUser } from '../models/user.model';
-
-/*Get userId from req.user
-Check it exists
-Call the model function
-Handle null case
-Return result
-
-{
-  firstname,
-  lastname,
-  username,
-  picture,
-  isProfileCompleted
-}
-
-*/
+import fs from 'fs'
 
 export const getMe = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userId = req.user!.userId;
     const profile = await getProfileMe(userId);
-
     if (!profile) {
       res.status(404).json({ error: "user profile does not exist" });
       return;
     }
+
     await updateLastSeen(userId);
-    res.status(200).json({ message: "Owner's Profile returnted successfully", profile });
+    res.status(200).json({ message: "Owner's Profile returned successfully", profile });
   } catch (error) {
-    console.error("error getting owner", error);
+    console.error("error getting profile", error);
     res.status(500).json({ error: "Internal server error" });
   }
 
@@ -162,8 +148,17 @@ export const uploadProfilePicture = async (
       res.status(400).json({ error: "No file provided" });
       return;
     }
+    
+    const currentImageCount = await getPictureCount(userId);
+    if (currentImageCount >= 5){
+      res.status(400).json({
+        message: "Image limit reached (maximum 5 images)",
+      });
+    }
+    const isFirstPicture = (currentImageCount === 0);
+    
     const imageUrl = `/uploads/${req.file.filename}`;
-    const newPicture = await addProfilePicture(userId, imageUrl);
+    const newPicture = await addProfilePicture(userId, imageUrl, isFirstPicture);
     res.status(200).json({
       message: "Picture uploaded successfully",
       picture: newPicture,
@@ -189,11 +184,11 @@ export const setPrimaryPicture = async (
 
     const picture = await setProfilePicture(userId, pictureId);
     if (!picture) {
-      res.status(404).json({ error: "Picture is not found" });
+      res.status(404).json({ error: "Picture not found" });
       return;
     }
     res.status(200).json({
-      message: "Profile. picture updated successfully",
+      message: "Profile picture updated successfully",
       picture,
     });
   } catch (error) {
@@ -216,10 +211,12 @@ export const removePicture = async (
     }
 
     const deleted = await deleteProfilePicture(userId, pictureId);
-
     if (!deleted) {
       res.status(404).json({ error: "Picture not found" });
       return;
+    }
+    if (!deleted.image_url.startsWith('http://') && !deleted.image_url.startsWith('https://')) {
+      fs.rmSync(process.cwd() + deleted.image_url);
     }
 
     res.status(200).json({ message: "Picture deleted successfully" });

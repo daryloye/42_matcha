@@ -80,20 +80,20 @@ export const updateProfile = async (
     return result.rows.length > 0 ? result.rows[0] : null;
 }
 
-export const addProfilePicture = async (userId: string, imageUrl: string): Promise<any | null> => {
-    const countSql = `SELECT COUNT (*) FROM profile_pictures WHERE user_id = $1`;
-    const countResult = await query(countSql, [userId]);
-    const currentCount = parseInt(countResult.rows[0].count, 10);
+export const getPictureCount = async (userId: string): Promise<number> => {
+    const sql = `SELECT COUNT (*) FROM profile_pictures WHERE user_id = $1`;
+    const result = await query(sql, [userId]);
+    const count = parseInt(result.rows[0].count, 10);
+    return count;
+}
 
-    if (currentCount >= 5){
-        throw new Error("Max 5 photos reached");
-    }
-    const isFirstPhoto = currentCount === 0;
+export const addProfilePicture = async (userId: string, imageUrl: string, isFirstPhoto: boolean): Promise<any | null> => {
     const sql = `
-        INSERT INTO profile_pictures (user_id, image_url,is_profile_picture)
+        INSERT INTO profile_pictures (user_id, image_url, is_profile_picture)
         VALUES ($1, $2, $3)
         RETURNING *
     `;
+    
     const result = await query(sql, [userId, imageUrl, isFirstPhoto]);
     return result.rows.length > 0 ? result.rows[0] : null;
 }
@@ -105,6 +105,7 @@ export const setProfilePicture = async (userId: string, pictureId: string): Prom
         WHERE user_id = $1
         RETURNING *
     `;
+
     const result = await query(sql, [userId, pictureId]);
     return result.rows.find(row => row.id === pictureId) || null;
 }
@@ -131,15 +132,14 @@ export const getPrimaryProfilePicture = async (userId: string): Promise <any | n
     return result.rows.length > 0 ? result.rows[0] : null;
 }
 
-export const deleteProfilePicture = async(userId: string, pictureId: string): Promise <any | null> => {
+export const deleteProfilePicture = async (userId: string, pictureId: string): Promise <any | null> => {
     const sql = `
         DELETE FROM profile_pictures
         WHERE user_id = $1 AND id = $2
-        RETURNING is_profile_picture
+        RETURNING image_url, is_profile_picture
     `;
     const result = await query(sql, [userId, pictureId]);
     const deletedWasPrimary = result.rows.length > 0 && result.rows[0].is_profile_picture === true;
-    
     if (deletedWasPrimary) {
         const promoteSql = `
             UPDATE profile_pictures

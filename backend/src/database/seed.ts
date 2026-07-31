@@ -75,6 +75,10 @@ async function insertIntoProfilesTable(profile: SeedProfileType, id: string) {
 }
 
 async function insertIntoProfilePicturesTable(profile: SeedProfileType, id: string) {
+  if (!profile.profile_pic) {
+    return;
+  }
+
   await query(
     ` INSERT INTO profile_pictures (user_id, is_profile_picture, image_url)
       VALUES ($1, $2, $3) `,

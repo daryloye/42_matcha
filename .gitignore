@@ -53,3 +53,5 @@ coverage/
 .claude/
 CLAUDE.md
 backend/CLAUDE.md
+
+uploads/

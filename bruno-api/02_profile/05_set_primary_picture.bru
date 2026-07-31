@@ -1,0 +1,21 @@
+meta {
+  name: 05_set_primary_picture
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/profile/picture/{{pictureId}}/primary
+  auth: inherit
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}
+
+settings {
+  encodeUrl: false
+  timeout: 10000
+}
