@@ -15,6 +15,7 @@ import matchRouter from "./routes/match.routes";
 import chatRouter from "./routes/chat.routes";
 import searchRouter from "./routes/search.routes";
 import jwt from "jsonwebtoken";
+import notificationRouter from "./routes/notification.routes";
 
 dotenv.config(); //this reads my env file and makes variables available via process.env.BACKEND_PORT
 
@@ -43,6 +44,7 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use("/api/notifications", notificationRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/profile", profileRouter);
 app.use("/api/match", matchRouter);
