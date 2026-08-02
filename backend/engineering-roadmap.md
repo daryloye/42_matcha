@@ -201,7 +201,7 @@ chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
 > Note: updateUserInterests already exists in profile.model.ts.
 > This phase covers any remaining interest management endpoints.
 
-- [ ] 19.1: Verify interest endpoints are fully covered by Phase 3 or add missing ones
+- [x] 19.1: Verify interest endpoints are fully covered by Phase 3 or add missing ones — confirmed covered via `GET /api/profile/details` (returns interests) and `POST /api/profile/details` (calls `updateUserInterests`); no dedicated `/interests` routes needed. Removed dead-code duplicate `controllers/updateProfileDetails.ts` (unused, not wired to any route).
 - [ ] 19.2: Test interest management end-to-end
 
 ---
