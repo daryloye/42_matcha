@@ -291,7 +291,7 @@ function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise
                 onError={(err) => {
                   toaster.push(
                     <Notification type='error' closable>
-                      {err.response.message || 'File upload failed'}
+                      {err.response.error || err.response.message || 'File upload failed'}
                     </Notification>,
                   );
                 }}
@@ -324,7 +324,7 @@ function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise
                 onError={(err) => {
                   toaster.push(
                     <Notification type='error' closable>
-                      {err.response.message || 'File upload failed'}
+                      {err.response.error || err.response.message || 'File upload failed'}
                     </Notification>,
                   );
                 }}
