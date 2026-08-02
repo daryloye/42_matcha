@@ -1,0 +1,14 @@
+frontend/src/pages/home/Profile.tsx
+  h_5839197889c05f 294,327
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "9cb75c8267f17256e49f8add54a4520dda61759c",
+  "prompts": {},
+  "humans": {
+    "h_5839197889c05f": {
+      "author": "daryloye <daryloye@gmail.com>"
+    }
+  }
+}
