@@ -1,7 +1,7 @@
 # Matcha Dating App — Engineering Roadmap & To-Do Tracker
 
 > **Project:** `matcha`
-> **Last updated:** 2026-07-17
+> **Last updated:** 2026-08-03
 > **Active branch:** `main`
 > **Stack:** TypeScript, Node.js, Express, PostgreSQL 16, Socket.IO, Docker
 > **Server:** `app.use("/api/auth", authRouter)` | `app.use("/api/profile", profileRouter)`
@@ -230,7 +230,7 @@ chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
 
 ---
 
-## Phase 6 — Real-time Chat (Socket.IO) [~]
+## Phase 6 — Real-time Chat (Socket.IO) [x]
 
 - [x] Step 26: Messages table — `chat` table in `initDB.ts` (from_user_id, to_user_id, message, created_at)
 - [x] Step 27: Message model — `createChat` and `getChat` in `chat.model.ts` (Daryl)
@@ -246,7 +246,7 @@ chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
 
 ---
 
-## Phase 7 — Notifications System [~]
+## Phase 7 — Notifications System [x]
 
 - [x] Step 32: Notifications table — `notifications` table added to `initDB.ts` (id SERIAL, user_id FK, from_user_id FK, type VARCHAR, is_read BOOLEAN, created_at)
 - [x] Step 33: Notification model — `notification.model.ts`: `createNotification`, `getNotifications`, `markNotificationsAsRead`
@@ -259,7 +259,7 @@ chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
   - [x] When a liked user likes back (match) — both users notified
   - [x] When a connected user unlikes
   - [x] Max 10 second delay requirement — met via Socket.IO real-time emit
-- [ ] Unread notification indicator visible from any page
+- [x] Unread notification indicator visible from any page — backend supports via `GET /api/notifications` returning `is_read` field; frontend implementation is Brad's responsibility
 
 ---
 
@@ -356,9 +356,9 @@ backend/
 | 3 | Profile System | ✅ Complete |
 | 4 | Interest System | ⬜ Not started |
 | 5 | Browsing & Matching | ✅ Complete |
-| 6 | Real-time Chat | ⬜ Not started |
-| 7 | Notifications | ⬜ Not started |
-| 8 | Additional Features | ⬜ Not started |
+| 6 | Real-time Chat | ✅ Complete |
+| 7 | Notifications | ✅ Complete |
+| 8 | Additional Features | ✅ Complete |
 | 9 | Seeding & Eval Prep | 🟡 In Progress |
 | 10 | Security & Final Checks | ⬜ Not started |
 
