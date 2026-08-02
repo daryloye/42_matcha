@@ -253,12 +253,13 @@ chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
 
 ---
 
-## Phase 7 — Notifications System [ ]
+## Phase 7 — Notifications System [~]
 
-- [ ] Step 32: Notifications table (schema + migration)
-- [ ] Step 33: Notification model (`notification.model.ts`)
-- [ ] Step 34: Notification controller
-- [ ] Step 35: Real-time notifications via Socket.IO
+- [x] Step 32: Notifications table — `notifications` table added to `initDB.ts` (id SERIAL, user_id FK, from_user_id FK, type VARCHAR, is_read BOOLEAN, created_at)
+- [x] Step 33: Notification model — `notification.model.ts`: `createNotification`, `getNotifications`, `markNotificationsAsRead`
+- [x] Step 34: Notification controller — `getNotificationHandler`, `markNotificationsReadHandler` in `notification.controller.ts`
+- [x] Notification routes — `GET /api/notifications`, `PATCH /api/notifications/read` in `notification.routes.ts`; mounted in `server.ts`
+- [ ] Step 35: Real-time notifications via Socket.IO — wire `createNotification` + `io.to().emit()` into `updateMatchHandler`
   - [ ] When user receives a like
   - [ ] When profile has been viewed
   - [ ] When user receives a message
