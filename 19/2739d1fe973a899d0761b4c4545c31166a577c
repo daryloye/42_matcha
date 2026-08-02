@@ -1,0 +1,79 @@
+frontend/src/api/profile.tsx
+  h_5839197889c05f 1,30-65
+bruno-api/02_profile/03_add_profile_picture.bru
+  h_5839197889c05f 1-31
+frontend/src/utils/types.ts
+  h_5839197889c05f 55-56,81-85
+backend/src/routes/profile.routes.ts
+  h_5839197889c05f 6-11,23-27,29
+frontend/src/pages/home/Users.tsx
+  h_5839197889c05f 28,30,182,209,211-221,224
+openapi.yaml
+  s_f7d186da89456e::t_5e96247e401185 198-293
+bruno-api/02_profile/02_update_full_profile.bru
+  h_5839197889c05f 24
+backend/README.md
+  s_f7d186da89456e::t_5e96247e401185 247-252
+backend/src/models/profile.model.ts
+  s_f7d186da89456e::t_8947f4cd0d092e 198
+  h_5839197889c05f 83-90,93,95-96,98-99,102,104-106,108-110,113,119,121-123,125-126,129,131-132,140,144,163,167,187,192,194-197,199-208,210,212
+  s_f7d186da89456e::t_301f0e97f2ac01 209
+bruno-api/02_profile/04_get_profile_picture.bru
+  h_5839197889c05f 1-22
+docker-compose.dev.yml
+  h_5839197889c05f 7-8
+frontend/src/pages/home/Profile.tsx
+  h_5839197889c05f 12,14,16,19-20,24-30,33,36-37,41-42,56-72,82,84-93,95-124,169-182,194-197,269-270,272-280,282-284,287,291,294,299,303-304,306-314,316-317,320,324,327,332
+backend/engineering-roadmap.md
+  s_f7d186da89456e::t_5e96247e401185 138-141,156-159,166-169,171,363
+bruno-api/02_profile/05_delete_profile_picture.bru
+  h_5839197889c05f 1-27
+backend/src/server.ts
+  h_5839197889c05f 6,20,39-41,62-81
+frontend/src/utils/utils.ts
+  h_5839197889c05f 1-9
+bruno-api/02_profile/06_add_picture.bru
+  h_5839197889c05f 1-32
+bruno-api/02_profile/08_delete_picture.bru
+  h_5839197889c05f 1-21
+bruno-api/02_profile/07_get_pictures.bru
+  h_5839197889c05f 1-27
+backend/src/models/search.model.ts
+  h_5839197889c05f 42,86-111,113
+backend/src/middleware/multer.ts
+  h_5839197889c05f 30,32,35,43
+frontend/src/pages/home/Search.tsx
+  h_5839197889c05f 31,187
+backend/profiles.json
+  h_5839197889c05f 4,11,23-27,29,33-34
+docker-compose.yml
+  h_5839197889c05f 6-8
+frontend/src/pages/home/HomePageTemplate.tsx
+  s_f7d186da89456e::t_17d04ab21c5d81 63
+  h_5839197889c05f 21,23-24,27-28,32,59-62,64,68,115
+backend/src/controllers/profile.controller.ts
+  h_5839197889c05f 8-11,13-14,143,149,154-158,162,164-165,169,173,179-180,182,189,195-199,201-214,218-223,226-231,233-234,244-245,254-255,268-269,273
+frontend/src/api/httpClient.tsx
+  h_5839197889c05f 55-78
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "192739d1fe973a899d0761b4c4545c31166a577c",
+  "prompts": {},
+  "humans": {
+    "h_5839197889c05f": {
+      "author": "daryloye <daryloye@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_f7d186da89456e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fb0d2-22c8-7922-a7e8-df3a18bd0243",
+        "model": "gpt-5.5"
+      },
+      "human_author": "daryloye <daryloye@gmail.com>"
+    }
+  }
+}
