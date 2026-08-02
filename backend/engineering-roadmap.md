@@ -259,13 +259,13 @@ chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
 - [x] Step 33: Notification model — `notification.model.ts`: `createNotification`, `getNotifications`, `markNotificationsAsRead`
 - [x] Step 34: Notification controller — `getNotificationHandler`, `markNotificationsReadHandler` in `notification.controller.ts`
 - [x] Notification routes — `GET /api/notifications`, `PATCH /api/notifications/read` in `notification.routes.ts`; mounted in `server.ts`
-- [ ] Step 35: Real-time notifications via Socket.IO — wire `createNotification` + `io.to().emit()` into `updateMatchHandler`
-  - [ ] When user receives a like
-  - [ ] When profile has been viewed
-  - [ ] When user receives a message
-  - [ ] When a liked user likes back (match)
-  - [ ] When a connected user unlikes
-  - [ ] Max 10 second delay requirement
+- [x] Step 35: Real-time notifications via Socket.IO — wired into `updateMatchHandler` in `match.controller.ts`
+  - [x] When user receives a like
+  - [x] When profile has been viewed
+  - [x] When user receives a message — via `new_message` event in `createChatHandler`
+  - [x] When a liked user likes back (match) — both users notified
+  - [x] When a connected user unlikes
+  - [x] Max 10 second delay requirement — met via Socket.IO real-time emit
 - [ ] Unread notification indicator visible from any page
 
 ---
