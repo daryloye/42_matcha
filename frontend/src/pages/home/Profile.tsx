@@ -1,64 +1,127 @@
 import { useEffect, useState } from 'react';
-import { RxAvatar, RxCamera } from 'react-icons/rx';
 import {
-  Box,
   Button,
   DatePicker,
   Form,
-  Loader,
   Notification,
   SelectPicker,
   TagInput,
   Textarea,
   Uploader,
   useToaster,
+  type FileType,
 } from 'rsuite';
-import { GetFullProfile, UpdateProfile } from '../../api/profile';
+import { DeletePicture, DeleteProfilePic, GetFullProfile, GetPictures, GetProfilePic, UpdateProfile } from '../../api/profile';
 import { ProfileLocation } from '../../components/profile/ProfileLocation';
-import type { ProfileForm } from '../../utils/types';
+import type { PictureData, ProfileForm } from '../../utils/types';
 import { HomePageTemplate } from './HomePageTemplate';
 import { genderData, model, preferenceData } from './ProfileUtils';
+import { useSearchParams } from 'react-router-dom';
+import { getPictureSrc } from '../../utils/utils';
+
 
 export default function Profile() {
-  return <HomePageTemplate page={<ProfilePage />} />;
+  return (
+    <HomePageTemplate
+      page={({ refreshBasicProfile }) => (
+        <ProfilePage refreshBasicProfile={refreshBasicProfile} />
+      )}
+    />
+  );
 }
 
-function ProfilePage() {
+function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise<void> }) {
   const [loading, setLoading] = useState(false);
   const [formValue, setFormValue] = useState<ProfileForm | null>(null);
-
-  const [uploading, setUploading] = useState(false);
-  const [fileInfo, setFileInfo] = useState<any>(null);
+  const [profilePic, setProfilePic] = useState<FileType[] | null>(null);
+  const [pictures, setPictures] = useState<FileType[] | null>(null);
   const [position, setPosition] = useState(null);
 
   const toaster = useToaster();
+  
+  const fetchProfile = async () => {
+    try {
+      const res = await GetFullProfile();
+      setFormValue({
+        firstname: res.profile.first_name,
+        lastname: res.profile.last_name,
+        email: res.profile.email,
+        dateOfBirth: new Date(res.profile.date_of_birth),
+        gender: res.profile.gender,
+        preference: res.profile.sexual_preference,
+        biography: res.profile.biography,
+        interests: res.profile.interests,
+      });
 
-  useEffect(() => {
-    async function fetchProfile() {
-      try {
-        const res = await GetFullProfile();
-        setFormValue({
-          firstname: res.profile.first_name,
-          lastname: res.profile.last_name,
-          email: res.profile.email,
-          dateOfBirth: new Date(res.profile.date_of_birth),
-          gender: res.profile.gender,
-          preference: res.profile.sexual_preference,
-          biography: res.profile.biography,
-          interests: res.profile.interests,
-          pictures: res.profile.pictures,
-        });
-      } catch (err: any) {
-        toaster.push(
-          <Notification type='error' closable>
-            {err.message}
-          </Notification>,
-        );
+      const profile_pic = res.profile.profile_picture;
+      if (profile_pic?.length > 0) {
+        setProfilePic([{
+          fileKey: profile_pic[0].id,
+          name: 'profilepic',
+          url: getPictureSrc(profile_pic[0].image_url),
+          status: 'finished' as const,
+        }]);
       }
+      
+      const pictures = res.profile.pictures;
+      if (pictures?.length > 0) {
+        setPictures(pictures.map((p: PictureData) => ({
+          fileKey: p.id,
+          name: 'picture',
+          url: getPictureSrc(p.image_url),
+          status: 'finished' as const,
+        })))
+      }
+    } catch (err: any) {
+      toaster.push(
+        <Notification type='error' closable>
+          {err.message}
+        </Notification>,
+      );
     }
+  }
 
-    fetchProfile();
-  }, []);
+  const fetchProfilePic = async () => {
+    try {
+      const res = await GetProfilePic();
+      const profile_pic = res.picture;
+      if (profile_pic) {
+        setProfilePic([{
+          fileKey: profile_pic.id,
+          name: 'profilepic',
+          url: getPictureSrc(profile_pic.image_url),
+          status: 'finished' as const
+        }]);
+      }
+    } catch (err: any) {
+      toaster.push(
+        <Notification type='error' closable>
+          {err.message}
+        </Notification>,
+      );
+    }
+  }
+
+  const fetchPictures = async () => {
+    try {
+      const res = await GetPictures();
+      const pictures = res.pictures;
+      if (pictures?.length > 0) {
+        setPictures(pictures.map((p: PictureData) => ({
+          fileKey: p.id,
+          name: 'picture',
+          url: getPictureSrc(p.image_url),
+          status: 'finished' as const,
+        })))
+      }
+    } catch (err: any) {
+      toaster.push(
+        <Notification type='error' closable>
+          {err.message}
+        </Notification>,
+      );
+    }
+  }
 
   const handleChange = (value: any) => {
     setFormValue({
@@ -70,13 +133,11 @@ function ProfilePage() {
       preference: value.preference,
       biography: value.biography,
       interests: value.interests,
-      pictures: value.pictures,
     });
   };
 
   const handleSubmit = async () => {
     setLoading(true);
-
     try {
       await UpdateProfile({
         first_name: formValue?.firstname,
@@ -87,7 +148,6 @@ function ProfilePage() {
         sexual_preference: formValue?.preference,
         biography: formValue?.biography,
         interests: formValue?.interests,
-        pictures: formValue?.pictures,
       });
 
       toaster.push(
@@ -106,6 +166,20 @@ function ProfilePage() {
     }
   };
 
+  
+  const [searchParams] = useSearchParams();
+  useEffect(() => {
+    fetchProfile();
+    
+    if (searchParams.get("reason") === 'profile_incomplete') {
+      toaster.push(
+        <Notification type='error' closable>
+          Complete your profile to continue
+        </Notification>
+      );
+    }
+  }, []);
+  
   if (!formValue) return null;
 
   return (
@@ -117,7 +191,10 @@ function ProfilePage() {
         formValue={formValue}
         model={model}
         onChange={handleChange}
-        onSubmit={handleSubmit}
+        onSubmit={async () => {
+          await handleSubmit();
+          await refreshBasicProfile();
+        }}
         className='flex pt-6'
       >
         <Form.Stack spacing={10}>
@@ -189,87 +266,70 @@ function ProfilePage() {
             </Form.Group>
 
             <Form.Group>
-              <p className='text-lg font-bold'>Avatar</p>
-              <Form.Control
-                name='profilePic'
-                accepter={Uploader}
+              <p className='text-lg font-bold'>Profile Picture (required)</p>
+              <Uploader
                 listType='picture'
-                action='/upload' // Change this
-                accept='image/*'
-                onUpload={(file) => {
-                  setUploading(true);
-                  previewFile(file.blobFile, (value) => {
-                    setFileInfo(value);
-                  });
+                fileList={profilePic ?? undefined}
+                action={`${import.meta.env.VITE_API_URL}/api/profile/profilepic`}
+                name='picture'
+                withCredentials
+                accept={import.meta.env.VITE_ALLOWED_FILE_TYPES}
+                onRemove={async () => {
+                  await DeleteProfilePic();
+                  await fetchProfilePic();
+                  await refreshBasicProfile();
                 }}
-                onSuccess={(response, file) => {
-                  setUploading(false);
+                onSuccess={async () => {
+                  await fetchProfilePic();
+                  await refreshBasicProfile();
                   toaster.push(
                     <Notification type='success'>
-                      Uploaded successfully
+                      Picture uploaded
                     </Notification>,
                   );
-                  console.log(response);
                 }}
-                onError={() => {
-                  setFileInfo(null);
-                  setUploading(false);
+                onError={(err) => {
                   toaster.push(
                     <Notification type='error' closable>
-                      File upload failed
+                      {err.response.message || 'File upload failed'}
                     </Notification>,
                   );
                 }}
               >
-                <Box as='button' w={150} h={150}>
-                  {uploading && <Loader backdrop center />}
-                  {fileInfo ? (
-                    <img src={fileInfo} width='100%' height='100%' />
-                  ) : (
-                    <RxAvatar size={40} color='var(--rs-gray-500)' />
-                  )}
-                </Box>
-              </Form.Control>
+              </Uploader>
             </Form.Group>
 
             <Form.Group>
-              <p className='text-lg font-bold'>Pictures</p>
-              <Form.Control
-                name='pictures'
-                accepter={Uploader}
+              <p className='text-lg font-bold'>Pictures (optional, max 4)</p>
+              <Uploader
                 listType='picture'
-                action='/upload' // Change this
-                accept='image/*'
-                multiple
-                onUpload={(file) => {
-                  setUploading(true);
-                  previewFile(file.blobFile, (value) => {
-                    setFileInfo(value);
-                  });
+                fileList={pictures ?? undefined}
+                action={`${import.meta.env.VITE_API_URL}/api/profile/pictures`}
+                name='picture'
+                withCredentials
+                accept={import.meta.env.VITE_ALLOWED_FILE_TYPES}
+                onRemove={async (file) => {
+                  if (!file.fileKey) return;
+                  await DeletePicture(String(file.fileKey));
+                  await fetchPictures();
                 }}
-                onSuccess={(response, file) => {
-                  setUploading(false);
+                onSuccess={async () => {
+                  await fetchPictures();
                   toaster.push(
                     <Notification type='success'>
-                      Uploaded successfully
+                      Picture uploaded
                     </Notification>,
                   );
-                  console.log(response);
                 }}
-                onError={() => {
-                  setFileInfo(null);
-                  setUploading(false);
+                onError={(err) => {
                   toaster.push(
                     <Notification type='error' closable>
-                      File upload failed
+                      {err.response.message || 'File upload failed'}
                     </Notification>,
                   );
                 }}
               >
-                <button>
-                  <RxCamera size={24} />
-                </button>
-              </Form.Control>
+              </Uploader>
             </Form.Group>
           </div>
 
@@ -285,12 +345,4 @@ function ProfilePage() {
       </Form>
     </div>
   );
-}
-
-function previewFile(file: any, callback: any) {
-  const reader = new FileReader();
-  reader.onloadend = () => {
-    callback(reader.result);
-  };
-  reader.readAsDataURL(file);
 }

@@ -135,11 +135,10 @@ chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
 ### 3.1 — Profile Model (`profile.model.ts`) ✅
 - [x] `getProfileByUserId(userId: string)`
 - [x] `updateProfile(userId: string, data)` — dynamic update, only updates provided fields via Object.entries loop
-- [x] `addProfilePicture(userId: string, imageUrl: string)` — max 5 photos enforced, first photo auto-set as primary
-- [x] `setProfilePicture(userId: string, pictureId: string)` — single-query toggle trick `SET is_profile_picture = (id = $2)`
-- [x] `getProfilePictures(userId: string)` — ordered by primary first
-- [x] `getPrimaryProfilePicture(userId: string)`
-- [x] `deleteProfilePicture(userId: string, pictureId: string)` — auto-promotes next oldest photo if primary is deleted
+- [x] `addProfilePictureByUserId(userId: string, imageUrl: string)` — replaces the single profile picture
+- [x] `getProfilePictureByUserId(userId: string)` — returns the current profile picture
+- [x] `deleteProfilePictureByUserId(userId: string)` — deletes the current profile picture
+- [x] Gallery picture model functions — up to 4 non-profile pictures in DB
 - [x] `getProfileMe(userId: string)` — joins users + profiles + profile_pictures, returns username, first_name, last_name, picture, is_profile_completed
 - [x] `getProfileDetails(userId: string)` — full profile join including interests[] and pictures[] as JSON arrays via JSON_AGG + COALESCE
 - [x] `updateUserInterests(userId: string, interestNames: string[])` — deletes existing interests, upserts new ones via ON CONFLICT
@@ -154,20 +153,22 @@ chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
 ### 3.3 — Profile Controller (`profile.controller.ts`) ✅
 - [x] `getMe` — GET, returns lightweight profile (username, first_name, last_name, picture, is_profile_completed)
 - [x] `getFullProfileDetails` — GET, returns full profile page data including interests[] and pictures[]
-- [x] `uploadProfilePicture` — POST, multer processes file, saves to uploads/, stores path in DB
-- [x] `setPrimaryPicture` — POST /:pictureId/primary, marks a picture as profile picture
-- [x] `removePicture` — DELETE /:pictureId, removes picture, auto-promotes next
-- [x] `getPictures` — GET, returns all pictures for current user
+- [x] `addProfilePicture` — POST /profilepic, multer processes file, replaces existing profile picture, stores path in DB
+- [x] `getProfilePicture` — GET /profilepic, returns the current profile picture
+- [x] `deleteProfilePicture` — DELETE /profilepic, removes the current profile picture
+- [x] Gallery picture controller functions — manage up to 4 non-profile pictures
 - [x] `updateProfileDetails` — POST /details, updates users + profiles + calls updateUserInterests
 
 ### 3.4 — Profile Routes (`profile.routes.ts`) ✅
 - [x] `GET /api/profile/me`
 - [x] `GET /api/profile/details`
 - [x] `POST /api/profile/details`
-- [x] `POST /api/profile/picture` — requireAuth → upload.single('picture') → uploadProfilePicture
-- [x] `POST /api/profile/picture/:pictureId/primary`
-- [x] `DELETE /api/profile/picture/:pictureId`
+- [x] `POST /api/profile/profilepic` — requireAuth → upload.single('picture') → addProfilePicture
+- [x] `GET /api/profile/profilepic`
+- [x] `DELETE /api/profile/profilepic`
+- [x] `POST /api/profile/pictures` — upload gallery pictures, max 4 non-profile pictures
 - [x] `GET /api/profile/pictures`
+- [x] `DELETE /api/profile/pictures/:pictureId`
 - [x] `GET /api/profile/:id` — must stay last (wildcard route)
 
 ### 3.5 — isProfileCompleted definition (agreed with frontend)

@@ -1,11 +1,11 @@
 meta {
-  name: 05_set_primary_picture
+  name: 08_delete_picture
   type: http
-  seq: 6
+  seq: 9
 }
 
-post {
-  url: {{baseUrl}}/api/profile/picture/{{pictureId}}/primary
+delete {
+  url: {{baseUrl}}/api/profile/pictures/{{pictureId}}
   auth: inherit
 }
 

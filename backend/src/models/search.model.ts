@@ -39,7 +39,7 @@ export const getReommendedProfiles = async (
       
     FROM users u
     LEFT JOIN profiles p ON p.user_id = u.id
-    LEFT JOIN profile_pictures pp ON pp.user_id = u.id
+    LEFT JOIN profile_pictures pp ON pp.user_id = u.id AND pp.is_profile_picture IS TRUE
     LEFT JOIN user_interests ui ON ui.user_id = u.id
     LEFT JOIN interests i ON i.id = ui.interest_id
     WHERE 
@@ -83,10 +83,34 @@ export const getUserProfile = async (
       p.longitude,
       p.biography,
       p.fame_rating,
-      pp.image_url as profile_pic,
-      JSON_AGG(i.name) as interests
+
+      COALESCE(
+          JSONB_AGG(
+              DISTINCT JSONB_BUILD_OBJECT(
+                  'id', pp.id,
+                  'image_url', pp.image_url
+              ) 
+          ) FILTER (WHERE pp.id IS NOT NULL AND pp.is_profile_picture IS TRUE),
+          '[]'::jsonb
+      ) AS profile_picture,
+
+      COALESCE(
+          JSONB_AGG(
+              DISTINCT JSONB_BUILD_OBJECT(
+                  'id', pp.id,
+                  'image_url', pp.image_url
+              ) 
+          ) FILTER (WHERE pp.id IS NOT NULL AND pp.is_profile_picture IS FALSE),
+          '[]'::jsonb
+      ) AS pictures,
+
+      COALESCE(
+          JSON_AGG(DISTINCT i.name) FILTER (WHERE i.name IS NOT NULL),
+          '[]'
+      ) AS interests
+
     FROM users u
-    left JOIN profiles p ON p.user_id = u.id
+    LEFT JOIN profiles p ON p.user_id = u.id
     LEFT JOIN profile_pictures pp ON pp.user_id = u.id
     LEFT JOIN user_interests ui ON ui.user_id = u.id
     LEFT JOIN interests i ON i.id = ui.interest_id
@@ -99,7 +123,7 @@ export const getUserProfile = async (
         AND r.target_user_id = $2
         AND r.status = 'block'
     )
-    GROUP BY u.id, p.id, pp.id;
+    GROUP BY u.id, p.id;
   `;
   const result = await query(sql, [targetId, userId]);
   return result.rows.length > 0 ? result.rows[0] : null;

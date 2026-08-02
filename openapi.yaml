@@ -195,3 +195,99 @@ paths:
       responses:
         "200":
           description: Profile updated
+
+  /profile/profilepic:
+    post:
+      description: Upload or replace the single profile picture.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                picture:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Profile picture uploaded
+        "400":
+          description: Missing file, invalid file type, or invalid upload
+        "401":
+          description: Unauthorized
+    get:
+      description: Get the current profile picture.
+      responses:
+        "200":
+          description: Profile picture returned
+          content:
+            application/json:
+              example:
+                picture:
+                  image_url: "/uploads/profile.png"
+        "401":
+          description: Unauthorized
+    delete:
+      description: Delete the current profile picture.
+      responses:
+        "200":
+          description: Profile picture deleted
+        "401":
+          description: Unauthorized
+
+  /profile/pictures:
+    post:
+      description: Upload gallery pictures. Gallery pictures are separate from the single profile picture and are limited to 4.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                picture:
+                  type: array
+                  maxItems: 4
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        "200":
+          description: Gallery pictures uploaded
+        "400":
+          description: Missing file, invalid file type, or gallery picture limit reached
+        "401":
+          description: Unauthorized
+    get:
+      description: Get gallery pictures for the current user.
+      responses:
+        "200":
+          description: Gallery pictures returned
+          content:
+            application/json:
+              example:
+                pictures:
+                  - id: "67f41054-1337-4fd7-9ccf-dbd48f3c4ca8"
+                    image_url: "/uploads/gallery-1.png"
+                    is_profile_picture: false
+        "401":
+          description: Unauthorized
+
+  /profile/pictures/{pictureId}:
+    delete:
+      description: Delete one gallery picture.
+      parameters:
+        - name: pictureId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Gallery picture deleted
+        "401":
+          description: Unauthorized
+        "404":
+          description: Picture not found

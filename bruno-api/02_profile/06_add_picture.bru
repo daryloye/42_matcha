@@ -1,12 +1,17 @@
 meta {
-  name: 04_get_pictures
+  name: 06_add_picture
   type: http
-  seq: 5
+  seq: 7
 }
 
-get {
+post {
   url: {{baseUrl}}/api/profile/pictures
+  body: multipartForm
   auth: inherit
+}
+
+body:multipart-form {
+  picture: @file(test_image.png)
 }
 
 tests {
@@ -17,14 +22,8 @@ tests {
 
 script:post-response {
   const body = res.getBody();
-  const pictures = body.pictures || [];
-
-  if (!pictures.length) {
-    throw new Error('No pictures found');
-  }
-
-  const pictureId = pictures[1].id;
-  bru.setVar('pictureId', pictureId);
+  bru.setVar("pictureUrl", body.picture.image_url);
+  bru.setVar("pictureId", body.picture.id);
 }
 
 settings {

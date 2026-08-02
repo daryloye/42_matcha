@@ -3,7 +3,7 @@
 
 import cors from "cors";
 import dotenv from "dotenv";
-import express, { Application, Request, Response } from "express"; //framework
+import express, { Application, NextFunction, Request, Response } from "express"; //framework
 import helmet from "helmet";
 import { createServer } from "http";
 import { Server as SocketIOServer } from "socket.io"; //library
@@ -17,6 +17,7 @@ import searchRouter from "./routes/search.routes";
 import fs from "fs";
 import https from "https";
 import cookieParser from 'cookie-parser';
+import multer from "multer";
 
 dotenv.config(); //this reads my env file and makes variables available via process.env.BACKEND_PORT
 
@@ -35,7 +36,9 @@ const io = new SocketIOServer(httpServer, {
 });
 
 //middleware
-app.use(helmet()); //default security headers to help protect against various attacks
+app.use(helmet({
+  crossOriginResourcePolicy: {policy: 'cross-origin'}
+}));
 app.use(
   cors({
     origin: allowedOrigins,
@@ -55,6 +58,26 @@ app.use("/api/search", searchRouter);
 
 //static files for uploads
 app.use("/uploads", express.static("uploads"));
+
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === "LIMIT_FILE_SIZE") {
+      res.status(413).json({ error: "File too large. Maximum size is 5MB" });
+      return;
+    }
+    if (err.code === "LIMIT_UNEXPECTED_FILE") {
+      res.status(400).json({ error: "Too many files uploaded" });
+      return;
+    }
+
+    res.status(400).json({ error: err.message });
+    return;
+  }
+  if (err.message === "INVALID_FILE_TYPE") {
+    res.status(400).json({ error: "Invalid file type. Only JPEG, PNG and WebP are allowed" });
+    return;
+  }
+});
 
 app.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({

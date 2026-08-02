@@ -4,6 +4,8 @@ services:
     working_dir: /app
     environment:
       VITE_API_URL: https://localhost:5001
+      VITE_ALLOWED_FILE_TYPES: image/jpeg,image/jpg,image/png,image/webp
+      VITE_PLACEHOLDER_IMAGE: /placeholder.png
     command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 80"
     ports:
       - "5173:80"

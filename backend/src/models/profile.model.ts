@@ -80,79 +80,70 @@ export const updateProfile = async (
     return result.rows.length > 0 ? result.rows[0] : null;
 }
 
+export const addProfilePictureByUserId = async (userId: string, imageUrl: string): Promise<any | null> => {
+    const sql = `
+        INSERT INTO profile_pictures (user_id, image_url, is_profile_picture)
+        VALUES ($1, $2, TRUE)
+        RETURNING id, image_url
+    `;
+    const result = await query(sql, [userId, imageUrl]);
+    return result.rows.length > 0 ? result.rows[0]: null;
+}
+
+export const getProfilePictureByUserId = async (userId: string): Promise <any | null> => {
+    const sql = `
+        SELECT id, image_url FROM profile_pictures
+        WHERE user_id = $1 AND is_profile_picture = TRUE
+    `;
+    const result = await query(sql, [userId])
+    return result.rows.length > 0 ? result.rows[0]: null;
+}
+
+export const deleteProfilePictureByUserId = async (userId: string): Promise <any | null> => {
+    const sql = `
+        DELETE FROM profile_pictures
+        WHERE user_id = $1 AND is_profile_picture = TRUE
+        RETURNING id, image_url
+    `;
+    const result = await query(sql, [userId]);
+    return result.rows.length > 0 ? result.rows[0]: null;
+}
+
 export const getPictureCount = async (userId: string): Promise<number> => {
-    const sql = `SELECT COUNT (*) FROM profile_pictures WHERE user_id = $1`;
+    const sql = `SELECT COUNT (*) FROM profile_pictures WHERE user_id = $1 AND is_profile_picture IS FALSE`;
     const result = await query(sql, [userId]);
     const count = parseInt(result.rows[0].count, 10);
     return count;
 }
 
-export const addProfilePicture = async (userId: string, imageUrl: string, isFirstPhoto: boolean): Promise<any | null> => {
+export const addPictureByUserId = async (userId: string, imageUrl: string): Promise<any | null> => {
     const sql = `
         INSERT INTO profile_pictures (user_id, image_url, is_profile_picture)
-        VALUES ($1, $2, $3)
-        RETURNING *
+        VALUES ($1, $2, FALSE)
+        RETURNING id, image_url
     `;
-    
-    const result = await query(sql, [userId, imageUrl, isFirstPhoto]);
-    return result.rows.length > 0 ? result.rows[0] : null;
+    const result = await query(sql, [userId, imageUrl]);
+    return result.rows.length > 0 ? result.rows[0]: null;
 }
 
-export const setProfilePicture = async (userId: string, pictureId: string): Promise<any | null> => {
+export const getPicturesByUserId = async (userId: string): Promise <any | null> => {
     const sql = `
-        UPDATE profile_pictures
-        SET is_profile_picture = (id = $2)
-        WHERE user_id = $1
-        RETURNING *
-    `;
-
-    const result = await query(sql, [userId, pictureId]);
-    return result.rows.find(row => row.id === pictureId) || null;
-}
-
-export const getProfilePictures = async (userId: string): Promise <any | null> => {
-    const sql = `
-        SELECT * FROM profile_pictures
-        WHERE user_id = $1
-        ORDER BY is_profile_picture DESC, created_at DESC
+        SELECT id, image_url FROM profile_pictures
+        WHERE user_id = $1 AND is_profile_picture = FALSE
+        ORDER BY created_at DESC
     `;
 
     const result = await query(sql, [userId])
     return result.rows;
 }
 
-export const getPrimaryProfilePicture = async (userId: string): Promise <any | null> => {
-    const sql = `
-        SELECT * FROM profile_pictures
-        WHERE user_id = $1 AND is_profile_picture = true
-        LIMIT 1
-    `;
-
-    const result = await query(sql, [userId]);
-    return result.rows.length > 0 ? result.rows[0] : null;
-}
-
-export const deleteProfilePicture = async (userId: string, pictureId: string): Promise <any | null> => {
+export const deletePictureByUserId = async (userId: string, pictureId: string): Promise <any | null> => {
     const sql = `
         DELETE FROM profile_pictures
         WHERE user_id = $1 AND id = $2
-        RETURNING image_url, is_profile_picture
+        RETURNING id, image_url
     `;
     const result = await query(sql, [userId, pictureId]);
-    const deletedWasPrimary = result.rows.length > 0 && result.rows[0].is_profile_picture === true;
-    if (deletedWasPrimary) {
-        const promoteSql = `
-            UPDATE profile_pictures
-            SET is_profile_picture = true
-            WHERE id = (
-                SELECT id FROM profile_pictures
-                WHERE user_id = $1
-                ORDER BY created_at ASC
-                LIMIT 1
-            )
-        `;
-        await query(promoteSql, [userId]);
-    }
     return result.rows.length > 0 ? result.rows[0]: null;
 }
 
@@ -169,11 +160,11 @@ export const getProfileMe = async (userId: string): Promise<any | null> => {
                 p.sexual_preference IS NOT NULL AND
                 p.biography IS NOT NULL AND
                 (SELECT COUNT(*) FROM user_interests WHERE user_id = $1) > 0 AND
-                (SELECT COUNT(*) FROM profile_pictures WHERE user_id = $1) > 0
+                (SELECT COUNT(*) FROM profile_pictures WHERE user_id = $1 AND is_profile_picture IS TRUE) > 0
             THEN true ELSE false END AS is_profile_completed
         FROM users u
         LEFT JOIN profiles p ON p.user_id = u.id
-        LEFT JOIN profile_pictures pp ON pp.user_id = u.id AND pp.is_profile_picture = true
+        LEFT JOIN profile_pictures pp ON pp.user_id = u.id AND pp.is_profile_picture IS TRUE
         WHERE u.id = $1
     `;
     const result = await query(sql, [userId]);
@@ -193,14 +184,32 @@ export const getProfileDetails = async (userId: string): Promise<any | null> => 
             p.latitude,
             p.longitude,
             p.fame_rating,
+            
             COALESCE(
                 JSON_AGG(DISTINCT i.name) FILTER (WHERE i.name IS NOT NULL),
                 '[]'
             ) AS interests,
+            
             COALESCE(
-                JSON_AGG(DISTINCT pp.image_url) FILTER (WHERE pp.image_url IS NOT NULL),
-                '[]'
+                JSONB_AGG(
+                    DISTINCT JSONB_BUILD_OBJECT(
+                        'id', pp.id,
+                        'image_url', pp.image_url
+                    ) 
+                ) FILTER (WHERE pp.id IS NOT NULL AND pp.is_profile_picture IS TRUE),
+                '[]'::jsonb
+            ) AS profile_picture,
+            
+            COALESCE(
+                JSONB_AGG(
+                    DISTINCT JSONB_BUILD_OBJECT(
+                        'id', pp.id,
+                        'image_url', pp.image_url
+                    ) 
+                ) FILTER (WHERE pp.id IS NOT NULL AND pp.is_profile_picture IS FALSE),
+                '[]'::jsonb
             ) AS pictures
+        
         FROM users u
         LEFT JOIN profiles p ON p.user_id = u.id
         LEFT JOIN user_interests ui ON ui.user_id = u.id

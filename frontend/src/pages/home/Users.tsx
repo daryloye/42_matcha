@@ -25,8 +25,9 @@ import {
 } from 'rsuite';
 import { HomePageTemplate } from './HomePageTemplate';
 import { GetMatchStatus, UpdateMatchStatus } from '../../api/match';
-import { MatchStatusEnum, type MatchStatus, type SearchUserProfile } from '../../utils/types';
+import { MatchStatusEnum, type MatchStatus, type PictureData, type SearchUserProfile } from '../../utils/types';
 import { GetUserProfile } from '../../api/search';
+import { getPictureSrc } from '../../utils/utils';
 
 export default function Users() {
   return <HomePageTemplate page={<UsersPage />} />;
@@ -178,7 +179,7 @@ function UserProfileHeader({profile, matchStatus}: {profile: SearchUserProfile, 
 function UserProfileBody({profile}: {profile: SearchUserProfile}) {
   return (
     <>
-      <Image rounded src={profile.profile_pic} alt='Shadow' width={300} height={300}/>
+      <Image rounded src={getPictureSrc(profile.profile_picture[0]?.image_url) ?? import.meta.env.VITE_PLACEHOLDER_IMAGE} width={300} height={300}/>
       <HStack>
         <Tag color='green' size='lg' className='opacity-70'>
           <MdPersonOutline className='inline' /> {profile.gender}
@@ -205,8 +206,22 @@ function UserProfileBody({profile}: {profile: SearchUserProfile}) {
       </TagGroup>
 
       <VStack>
+        <br/>
         <p className='text-lg font-bold'>Biography:</p>
-        <p>{profile.biography}</p>
+        <p className='whitespace-pre-line'>{profile.biography}</p>
+        <br/>
+        {profile.pictures.length > 0 && <p className='text-lg font-bold'>Pictures:</p>}
+        <HStack>
+          {(profile.pictures ?? []).map((pic: PictureData) => (
+            <Image
+              key={pic.id}
+              rounded
+              src={getPictureSrc(pic.image_url)}
+              width={200}
+              height={200}
+            />
+          ))}
+        </HStack>
       </VStack>
     </>
   );

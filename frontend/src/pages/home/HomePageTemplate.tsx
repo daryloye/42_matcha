@@ -18,28 +18,28 @@ import {
 import { GetBasicProfile } from '../../api/profile';
 import type { BasicProfile } from '../../utils/types';
 import { Logout } from '../../api/auth';
+import { getPictureSrc } from '../../utils/utils';
 
-export function HomePageTemplate({ page }: { page: ReactNode }) {
+export function HomePageTemplate({ page }
+  : { page: ReactNode | ((helpers: { refreshBasicProfile: () => Promise<void> }) => ReactNode) }) {
   const [basicProfile, setBasicProfile] = useState<BasicProfile | null>(null);
   const toaster = useToaster();
+  
+  const fetchBasicProfile = async () => {
+    try {
+      const res = await GetBasicProfile();
+      setBasicProfile(res.profile);
+    } catch (err: any) {
+      toaster.push(
+        <Notification type='error' closable>
+          {err.message}
+        </Notification>,
+      );
+    }
+  }
 
   // Get user profile
   useEffect(() => {
-    async function fetchBasicProfile() {
-      try {
-        const res = await GetBasicProfile();
-        setBasicProfile(res.profile);
-        console.log('Profile retrieved');
-
-      } catch (err: any) {
-        toaster.push(
-          <Notification type='error' closable>
-            {err.message}
-          </Notification>,
-        );
-      }
-    }
-
     fetchBasicProfile();
 
     const interval = setInterval(fetchBasicProfile, 10000);
@@ -56,13 +56,16 @@ export function HomePageTemplate({ page }: { page: ReactNode }) {
             <Sidebar profile={basicProfile} />
           </div>
 
-          <div className='flex-1 min-w-0 px-8 border-l-4 overflow-y-scroll hidden md:block'>
-            {page}
-          </div>
+          <main className='flex-1 min-w-0 px-8 border-l-4 overflow-y-scroll hidden md:block'>
+            {typeof page === 'function'
+              ? page({ refreshBasicProfile: fetchBasicProfile })
+              : page
+            }
+          </main>
         </div>
       </div>
 
-      <p className='text-center text-sm pt-2 italic'>@ 42-matcha-2026</p>
+      <footer className='text-center text-sm pt-2 italic'>@ 42-matcha-2026</footer>
     </div>
   );
 }
@@ -109,7 +112,7 @@ function Sidebar({ profile }: { profile: BasicProfile }) {
   return (
     <div className='home-sidebar flex flex-col gap-4'>
       <HStack spacing={15}>
-        <Avatar src={profile.picture} size='xl' circle />
+        <Avatar src={getPictureSrc(profile.picture)} size='xl' circle />
 
         <Tag color='red' size='lg'>
           <HeartIcon /> {profile.fame_rating}
@@ -132,7 +135,7 @@ function Sidebar({ profile }: { profile: BasicProfile }) {
       </HStack>
 
       <p className='text-xl font-bold truncate'>
-        Welcome back, {profile.first_name}!
+        Welcome {profile.first_name}!
       </p>
 
       <NavigationLinks />

@@ -1,16 +1,17 @@
 meta {
-  name: 06_delete_picture
+  name: 04_get_profile_picture
   type: http
-  seq: 7
+  seq: 5
 }
 
-delete {
-  url: {{baseUrl}}/api/profile/picture/{{pictureId}}
+get {
+  url: {{baseUrl}}/api/profile/profilepic
   auth: inherit
 }
 
 tests {
   test("status 200", function() {
+    expect(res.getBody().picture.image_url).to.equal(bru.getVar("profilePicUrl"))
     expect(res.getStatus()).to.equal(200);
   });
 }

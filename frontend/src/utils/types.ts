@@ -37,7 +37,6 @@ export type ProfileForm = {
   preference: string;
   biography: string;
   interests: string[];
-  pictures: any;
 };
 
 export type MatchStatus = {
@@ -53,7 +52,8 @@ export type SearchUserProfile = {
   last_name: string,
   gender: string,
   fame_rating: number,
-  profile_pic: string,
+  profile_picture: PictureData[],
+  pictures: PictureData[]
   biography: string,
   interests: string[],
   distance: number,
@@ -77,4 +77,9 @@ export enum MatchStatusEnum {
   UNBLOCK = 'unblock',
   VIEW = 'view',
   REPORT = 'report',
+}
+
+export type PictureData = {
+  image_url: string,
+  id: string,
 }

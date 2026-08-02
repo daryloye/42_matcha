@@ -4,12 +4,14 @@ import {
   getProfileDetails,
   getProfileMe,
   updateProfile,
-  addProfilePicture,
-  setProfilePicture,
-  deleteProfilePicture,
-  getProfilePictures,
   updateUserInterests,
+  deleteProfilePictureByUserId,
+  addProfilePictureByUserId,
+  getProfilePictureByUserId,
+  getPicturesByUserId,
   getPictureCount,
+  addPictureByUserId,
+  deletePictureByUserId,
 } from "../models/profile.model";
 import { updateLastSeen, updateUser } from '../models/user.model';
 import fs from 'fs'
@@ -96,49 +98,113 @@ export const updateProfileDetails = async (req: AuthRequest, res: Response): Pro
     try {
         const userId = req.user!.userId;
         const {
-            first_name,
-            last_name,
-            email,
-            gender,
-            sexual_preference,
-            biography,
-            date_of_birth,
-            latitude,
-            longitude,
-            location_city,
-            interests
+          first_name,
+          last_name,
+          email,
+          gender,
+          sexual_preference,
+          biography,
+          date_of_birth,
+          latitude,
+          longitude,
+          location_city,
+          interests
         } = req.body
 
         await updateUser(userId, { first_name, last_name, email });
 
         await updateProfile(userId, { 
-            gender, 
-            sexual_preference, 
-            biography, 
-            date_of_birth,
-            latitude,
-            longitude,
-            location_city
+          gender, 
+          sexual_preference, 
+          biography, 
+          date_of_birth,
+          latitude,
+          longitude,
+          location_city
         });
 
         if (interests && Array.isArray(interests)){
-            await updateUserInterests(userId, interests);
+          await updateUserInterests(userId, interests);
         }
         
         const profile = await getProfileDetails(userId);
 
         res.status(200).json({
-            message: 'Profile updated successfully',
-            profile
+          message: 'Profile updated successfully',
+          profile
         });
 
     } catch (error) {
-        console.error('update profile details error: ', error);
-        res.status(500).json({  error: 'Internal server error' });
+      console.error('update profile details error: ', error);
+      res.status(500).json({  error: 'Internal server error' });
     }
 };
 
-export const uploadProfilePicture = async (
+export const addProfilePicture = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const userId = req.user!.userId;
+    
+    if (!req.file) {
+      res.status(400).json({ error: "No file provided" });
+      return;
+    }
+
+    // delete old profile pic
+    const oldProfilePic = await deleteProfilePictureByUserId(userId);
+    if (oldProfilePic && !oldProfilePic.image_url.startsWith('http://') && !oldProfilePic.image_url.startsWith('https://')) {
+      fs.rmSync(process.cwd() + oldProfilePic.image_url);
+    }
+    
+    const imageUrl = `/uploads/${req.file.filename}`;
+    const profilePic = await addProfilePictureByUserId(userId, imageUrl);
+    res.status(200).json({
+      message: "Picture uploaded",
+      picture: profilePic,
+    });
+  } catch (error) {
+    console.error("upload error: ", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const getProfilePicture = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const userId = req.user!.userId;
+    
+    const profilePic = await getProfilePictureByUserId(userId);
+    res.status(200).json({
+      picture: profilePic,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const deleteProfilePicture = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const userId = req.user!.userId;
+    
+    const oldProfilePic = await deleteProfilePictureByUserId(userId);
+    if (oldProfilePic && !oldProfilePic.image_url.startsWith('http://') && !oldProfilePic.image_url.startsWith('https://')) {
+      fs.rmSync(process.cwd() + oldProfilePic.image_url);
+    }
+
+    res.status(200).json({message: "Picture deleted"});
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const addPicture = async (
   req: AuthRequest,
   res: Response,
 ): Promise<void> => {
@@ -148,20 +214,20 @@ export const uploadProfilePicture = async (
       res.status(400).json({ error: "No file provided" });
       return;
     }
+
+    const imageUrl = `/uploads/${req.file.filename}`;
     
     const currentImageCount = await getPictureCount(userId);
-    if (currentImageCount >= 5){
-      res.status(400).json({
-        message: "Image limit reached (maximum 5 images)",
-      });
+    if (currentImageCount >= 4){
+      res.status(400).json({ message: "Image limit reached (maximum 4 images)" });
+      fs.rmSync(process.cwd() + imageUrl);
+      return;
     }
-    const isFirstPicture = (currentImageCount === 0);
     
-    const imageUrl = `/uploads/${req.file.filename}`;
-    const newPicture = await addProfilePicture(userId, imageUrl, isFirstPicture);
+    const picture = await addPictureByUserId(userId, imageUrl);
     res.status(200).json({
-      message: "Picture uploaded successfully",
-      picture: newPicture,
+      message: "Picture uploaded",
+      picture: picture,
     });
   } catch (error) {
     console.error("upload error: ", error);
@@ -169,35 +235,24 @@ export const uploadProfilePicture = async (
   }
 };
 
-export const setPrimaryPicture = async (
+export const getPictures = async (
   req: AuthRequest,
   res: Response,
 ): Promise<void> => {
   try {
     const userId = req.user!.userId;
-
-    const pictureId = req.params.pictureId as string;
-    if (!pictureId) {
-      res.status(404).json({ error: "Picture ID is required" });
-      return;
-    }
-
-    const picture = await setProfilePicture(userId, pictureId);
-    if (!picture) {
-      res.status(404).json({ error: "Picture not found" });
-      return;
-    }
+    
+    const pictures = await getPicturesByUserId(userId);
     res.status(200).json({
-      message: "Profile picture updated successfully",
-      picture,
+      pictures,
     });
   } catch (error) {
-    console.error("set profile picture error: ", error);
+    console.error("get pictures error: ", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
-export const removePicture = async (
+export const deletePicture = async (
   req: AuthRequest,
   res: Response,
 ): Promise<void> => {
@@ -210,36 +265,14 @@ export const removePicture = async (
       return;
     }
 
-    const deleted = await deleteProfilePicture(userId, pictureId);
-    if (!deleted) {
-      res.status(404).json({ error: "Picture not found" });
-      return;
-    }
-    if (!deleted.image_url.startsWith('http://') && !deleted.image_url.startsWith('https://')) {
+    const deleted = await deletePictureByUserId(userId, pictureId);
+    if (deleted && !deleted.image_url.startsWith('http://') && !deleted.image_url.startsWith('https://')) {
       fs.rmSync(process.cwd() + deleted.image_url);
     }
 
-    res.status(200).json({ message: "Picture deleted successfully" });
+    res.status(200).json({ message: "Picture deleted" });
   } catch (error) {
     console.error("delete picture error: ", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
-export const getPictures = async (
-  req: AuthRequest,
-  res: Response,
-): Promise<void> => {
-  try {
-    const userId = req.user!.userId;
-    const pictures = await getProfilePictures(userId);
-
-    res.status(200).json({
-      message: "Pictures retrieved successfully",
-      pictures,
-    });
-  } catch (error) {
-    console.error("get pictures error: ", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };

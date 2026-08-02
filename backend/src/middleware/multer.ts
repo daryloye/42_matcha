@@ -13,9 +13,7 @@ import fs from 'fs';
 
 const uploadDir = process.cwd() + '/uploads';
 
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, {recursive: true});
-}
+fs.mkdirSync(uploadDir, {recursive: true});
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -29,12 +27,12 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req: any, file: Express.Multer.File, cb: any) => {
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    const allowedTypes = process.env.ALLOWED_FILE_TYPES?.split(',').map(type => type.trim());
 
-    if(allowedTypes.includes(file.mimetype)){
+    if (allowedTypes?.includes(file.mimetype)){
         cb(null, true);
     } else {
-        cb(new Error('invalid file type. Only JPEG, PNG and WebP are allowed.'), false);
+        cb(new Error('INVALID_FILE_TYPE'));
     }
 };
 
@@ -42,9 +40,6 @@ export const upload = multer({
     storage: storage,
     fileFilter: fileFilter,
     limits: {
-        fileSize: 5 * 1024 * 1024,
+        fileSize: Number(process.env.MAX_FILE_SIZE),
     }
 })
-
-
-// TODO: test for error messages with invalid file type, file too large, and max picture limit

@@ -3,7 +3,9 @@ services:
     build:
       context: ./frontend
       args:
-        VITE_API_URL: http://localhost:5001
+        VITE_API_URL: https://localhost:5001
+        VITE_ALLOWED_FILE_TYPES: image/jpeg,image/jpg,image/png,image/webp
+        VITE_PLACEHOLDER_IMAGE: /placeholder.png
     ports:
       - "5173:80"
     networks:

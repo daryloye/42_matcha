@@ -1,0 +1,27 @@
+meta {
+  name: 05_delete_profile_picture
+  type: http
+  seq: 6
+}
+
+delete {
+  url: {{baseUrl}}/api/profile/profilepic
+  auth: inherit
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}
+
+script:post-response {
+  if (res.getStatus() === 200) {
+    await bru.runRequest("02_profile/03_add_profile_picture");
+  }
+}
+
+settings {
+  encodeUrl: false
+  timeout: 10000
+}

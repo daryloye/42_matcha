@@ -28,6 +28,7 @@ import {
   SearchFilterRange
 } from './SearchUtils';
 import { GetSearchProfiles } from '../../api/search';
+import { getPictureSrc } from '../../utils/utils';
 
 export default function Search() {
   return <HomePageTemplate page={<SearchPage />} />;
@@ -183,7 +184,7 @@ function SearchPage() {
               onClick={() => navigate(`/users/${c.id}`)}
               className='text-left transition transform active:scale-95 hover:scale-[1.02]'
             >
-              <img src={c.profile_pic} alt='Shadow' className='w-full aspect-square object-cover'/>
+              <img src={getPictureSrc(c.profile_pic) ?? import.meta.env.VITE_PLACEHOLDER_IMAGE} className='w-full aspect-square object-cover'/>
               <Card.Header>
                 <p className='text-xl font-bold truncate'>
                   {`${c.first_name} ${c.last_name}`}

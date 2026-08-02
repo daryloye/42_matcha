@@ -2,11 +2,13 @@ import { Router } from "express";
 import {
   getFullProfileDetails,
   getMe,
-  uploadProfilePicture,
-  setPrimaryPicture,
-  removePicture,
   getPictures,
-  updateProfileDetails
+  updateProfileDetails,
+  addProfilePicture,
+  getProfilePicture,
+  deleteProfilePicture,
+  addPicture,
+  deletePicture
 } from "../controllers/profile.controller";
 import { requireAuth } from "../middleware/auth.middleware";
 import { upload } from "../middleware/multer";
@@ -18,9 +20,12 @@ router.get('/details', requireAuth, getFullProfileDetails);
 router.post('/details', requireAuth, updateProfileDetails);
 
 //profilepicture upload
-router.post('/picture', requireAuth, upload.single('picture'), uploadProfilePicture);
-router.post('/picture/:pictureId/primary', requireAuth, setPrimaryPicture);
-router.delete('/picture/:pictureId', requireAuth, removePicture);
+router.post('/profilepic', requireAuth, upload.single('picture'), addProfilePicture);
+router.get('/profilepic', requireAuth, getProfilePicture);
+router.delete('/profilepic', requireAuth, deleteProfilePicture);
+
+router.post('/pictures', requireAuth, upload.single('picture'), addPicture);
 router.get('/pictures', requireAuth, getPictures);
+router.delete('/pictures/:pictureId', requireAuth, deletePicture);
 
 export default router;

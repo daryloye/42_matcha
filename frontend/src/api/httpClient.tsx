@@ -52,3 +52,27 @@ export async function GetHTTP(endpoint: string, headers: HeadersInit) {
 
   return data;
 }
+
+export async function DeleteHTTP(endpoint: string, headers: HeadersInit) {
+  const res = await fetch(`${API_URL}${endpoint}`, {
+    method: 'DELETE',
+    headers: headers,
+    credentials: 'include',
+  });
+
+  const data = await res.json();
+
+  if (res.status === 401) {
+    window.location.href = '/';
+  }
+
+  if (res.status === 403 && data?.code === 'PROFILE_INCOMPLETE') {
+    window.location.href = '/profile?reason=profile_incomplete';
+  }
+
+  if (!res.ok) {
+    throw new Error(data?.error || 'Unknown error');
+  }
+
+  return data;
+}

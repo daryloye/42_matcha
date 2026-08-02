@@ -244,10 +244,12 @@ flowchart TD
 | GET | `/api/profile/me` | ✅ | Lightweight profile (username, name, picture, isProfileCompleted) |
 | GET | `/api/profile/details` | ✅ | Full profile page data (interests, pictures) |
 | POST | `/api/profile/details` | ✅ | Update full profile (users + profiles + interests) |
-| POST | `/api/profile/picture` | ✅ | Upload a profile picture (multer, max 5MB, jpeg/jpg/png/webp) |
-| POST | `/api/profile/picture/:pictureId/primary` | ✅ | Set a picture as the primary profile picture |
-| DELETE | `/api/profile/picture/:pictureId` | ✅ | Delete a picture (auto-promotes next oldest if primary) |
-| GET | `/api/profile/pictures` | ✅ | Get all pictures for current user |
+| POST | `/api/profile/profilepic` | ✅ | Upload/replace the single profile picture (multer, max 5MB, jpeg/jpg/png/webp) |
+| GET | `/api/profile/profilepic` | ✅ | Get the current profile picture |
+| DELETE | `/api/profile/profilepic` | ✅ | Delete the current profile picture |
+| POST | `/api/profile/pictures` | ✅ | Upload gallery pictures (up to 4 non-profile pictures) |
+| GET | `/api/profile/pictures` | ✅ | Get gallery pictures for current user |
+| DELETE | `/api/profile/pictures/:pictureId` | ✅ | Delete one gallery picture |
 
 ### Match Routes — `/api/match`
 
