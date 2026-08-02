@@ -4,6 +4,8 @@ import { createMatchStatus, deleteMatchStatus, getLikeData, getMatchStatus, getT
 import { getUsernameFromId } from "../models/user.model";
 import { MatchRequest, matchStatus } from "../types/match.types";
 import { increaseUserFame } from "../models/profile.model";
+import { createNotification } from "../models/notification.model";
+import { io } from "../server";
 
 export const updateMatchHandler = async (
   req: AuthRequest,
@@ -49,9 +51,15 @@ export const updateMatchHandler = async (
     switch (action) {
       case matchStatus.LIKE:
         await createMatchStatus(userId, targetId, matchStatus.LIKE);
+        await createNotification(targetId, userId, 'like');
+        io.to(targetId).emit('notification', { type: 'like', fromId: userId });
         if (statusFromTarget?.includes(matchStatus.LIKE)) {
           await createMatchStatus(userId, targetId, matchStatus.CONNECTED);
           await createMatchStatus(targetId, userId, matchStatus.CONNECTED);
+          await createNotification(targetId, userId, 'match');
+          await createNotification(userId, targetId, 'match');
+          io.to(targetId).emit('notification', { type: 'match', fromId: userId });
+          io.to(userId).emit('notification', { type: 'match', fromId: targetId });
         }
         await increaseUserFame(targetId, 1);
         res.status(200).json({ message: `${userId} ${action} ${targetId}`});
@@ -73,6 +81,13 @@ export const updateMatchHandler = async (
         res.status(200).json({ message: `${userId} ${action} ${targetId}`});
         return;
 
+      case matchStatus.VIEW:
+        await createMatchStatus(userId, targetId, action);
+        await createNotification(targetId, userId, 'view');
+        io.to(targetId).emit('notification', { type: 'view', fromId: userId });
+        res.status(200).json({ message: `${userId} ${action} ${targetId}`});
+        return;
+
       case matchStatus.REPORT:
         await createMatchStatus(userId, targetId, action);
         await increaseUserFame(targetId, -3);
@@ -84,6 +99,8 @@ export const updateMatchHandler = async (
         await deleteMatchStatus(userId, targetId, matchStatus.CONNECTED);
         await deleteMatchStatus(targetId, userId, matchStatus.CONNECTED);
         await increaseUserFame(targetId, -1);
+        await createNotification(targetId, userId, 'unlike');
+        io.to(targetId).emit('notification', { type: 'unlike', fromId: userId });
         res.status(200).json({ message: `${userId} ${action} ${targetId}`});
         return;
 

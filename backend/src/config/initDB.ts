@@ -12,6 +12,9 @@ const createTables = async () => {
     DROP TABLE IF EXISTS user_interests CASCADE;
     DROP TABLE IF EXISTS relationships;
     DROP TABLE IF EXISTS chat;
+    DROP TABLE IF EXISTS notifications;
+
+     
 
     CREATE TABLE users (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -83,6 +86,16 @@ const createTables = async () => {
         message TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT NOW()
     );
+
+    CREATE TABLE notifications (
+        id SERIAL PRIMARY KEY,
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        from_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        type VARCHAR(50) NOT NULL,
+        is_read BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT NOW()
+    );
+
     `;
 
   try {

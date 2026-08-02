@@ -5,6 +5,7 @@ import { getUsernameFromId } from "../models/user.model";
 import { ChatRequest } from "../types/chat.types";
 import { createChat, getChat } from "../models/chat.model";
 import { matchStatus } from "../types/match.types";
+import { io } from "../server";
 
 export const createChatHandler = async (
   req: AuthRequest,
@@ -36,6 +37,11 @@ export const createChatHandler = async (
     }
 
     await createChat(userId, targetId, message);
+    io.to(targetId).emit("new_messages", {
+      fromId: userId,
+      message,
+      createdAt: new Date(),
+    });
     res.status(201).json({ message: "message sent"} );
 
   } catch (error) {

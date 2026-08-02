@@ -14,10 +14,10 @@ import profileRouter from "./routes/profile.routes";
 import matchRouter from "./routes/match.routes";
 import chatRouter from "./routes/chat.routes";
 import searchRouter from "./routes/search.routes";
-import fs from "fs";
-import https from "https";
 import cookieParser from 'cookie-parser';
 import multer from "multer";
+import jwt from "jsonwebtoken";
+import notificationRouter from "./routes/notification.routes";
 
 dotenv.config(); //this reads my env file and makes variables available via process.env.BACKEND_PORT
 
@@ -49,6 +49,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+app.use("/api/notifications", notificationRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/profile", profileRouter);
 app.use("/api/match", matchRouter);
@@ -87,12 +88,42 @@ app.get("/health", (_req: Request, res: Response) => {
   });
 });
 
+io.use((socket, next) => {
+  const token = socket.handshake.auth.token;
+  if(!token){
+    return next(new Error("Authentication Error"));
+  }
+  try{
+    const jwtSecret = process.env.JWT_SECRET;
+    if(!jwtSecret){
+      throw new Error("JWT_SECRET not defined");
+    } 
+      const decoded = jwt.verify(token, jwtSecret!) as unknown as { userId: string};
+      socket.data.userId = decoded.userId;
+      next();
+  }catch{
+    next (new Error("Authentication error"))
+  }
+})
+
 //socket.io connection handling
+// io.on("connection", (socket) => {
+//   console.log("user connected:", socket.id);
+
+//   socket.on("disconnect", () => {
+//     console.log("User disconnected:", socket.id);
+//   });
+// });
+
 io.on("connection", (socket) => {
-  console.log("user connected:", socket.id);
+  const userId = socket.data.userId;
+  console.log(`user connected: ${socket.id}, userId: ${userId} `)
+
+  //JOIN PERSONAL ROOM
+  socket.join(userId);
 
   socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
+    console.log(`User disconnected: ${socket.id}, userId: ${userId}`);
   });
 });
 
@@ -111,22 +142,35 @@ app.use((err: Error, _req: Request, res: Response) => {
   });
 });
 
-https.createServer(
-  {
-    key: fs.readFileSync("/certs/localhost-key.pem"),
-    cert: fs.readFileSync("/certs/localhost.pem"),
-  },
-  app,
-).listen(process.env.BACKEND_PORT, async () => {
-  console.log(`HTTPS server running on https://localhost:${process.env.BACKEND_PORT}`);
+const PORT = process.env.BACKEND_PORT || process.env.PORT || 5001;
 
-  if (!await testDatabaseConnection()) {
+httpServer.listen(PORT, async () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV}`);
+  if(!await testDatabaseConnection())  {
     process.exit(1);
   }
+  if(!await createTables()){
+    process.exit(1);
+  }
+});
+
+// https.createServer(
+//   {
+//     key: fs.readFileSync("/certs/localhost-key.pem"),
+//     cert: fs.readFileSync("/certs/localhost.pem"),
+//   },
+//   app,
+// ).listen(process.env.BACKEND_PORT, async () => {
+//   console.log(`HTTPS server running on https://localhost:${process.env.BACKEND_PORT}`);
+
+//   if (!await testDatabaseConnection()) {
+//     process.exit(1);
+//   }
   
-  if (!await createTables()) {
-    process.exit(1);
-  }
-})
+//   if (!await createTables()) {
+//     process.exit(1);
+//   }
+// })
 
 export { io };
