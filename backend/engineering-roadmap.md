@@ -297,6 +297,8 @@ chat:           id (SERIAL PK), from_user_id (UUID FK), to_user_id (UUID FK),
 - [ ] No errors, warnings, or notices server-side or client-side
 - [ ] Test on latest Firefox and Chrome
 
+> **Frontend fixes applied (2026-08-03):** Fixed TypeScript build errors in `Chat.tsx` (unused variables), `Profile.tsx` (type mismatch on `setPosition`), and `vite.config.ts` (removed HTTPS/cert config — switched to HTTP to match backend).
+
 ---
 
 backend/
