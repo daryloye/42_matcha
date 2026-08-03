@@ -18,6 +18,9 @@ import cookieParser from 'cookie-parser';
 import multer from "multer";
 import jwt from "jsonwebtoken";
 import notificationRouter from "./routes/notification.routes";
+import https from "https";
+import fs from "fs";
+
 
 dotenv.config(); //this reads my env file and makes variables available via process.env.BACKEND_PORT
 
@@ -106,15 +109,6 @@ io.use((socket, next) => {
   }
 })
 
-//socket.io connection handling
-// io.on("connection", (socket) => {
-//   console.log("user connected:", socket.id);
-
-//   socket.on("disconnect", () => {
-//     console.log("User disconnected:", socket.id);
-//   });
-// });
-
 io.on("connection", (socket) => {
   const userId = socket.data.userId;
   console.log(`user connected: ${socket.id}, userId: ${userId} `)
@@ -142,35 +136,35 @@ app.use((err: Error, _req: Request, res: Response) => {
   });
 });
 
-const PORT = process.env.BACKEND_PORT || process.env.PORT || 5001;
+// const PORT = process.env.BACKEND_PORT || process.env.PORT || 5001;
 
-httpServer.listen(PORT, async () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV}`);
-  if(!await testDatabaseConnection())  {
-    process.exit(1);
-  }
-  if(!await createTables()){
-    process.exit(1);
-  }
-});
-
-// https.createServer(
-//   {
-//     key: fs.readFileSync("/certs/localhost-key.pem"),
-//     cert: fs.readFileSync("/certs/localhost.pem"),
-//   },
-//   app,
-// ).listen(process.env.BACKEND_PORT, async () => {
-//   console.log(`HTTPS server running on https://localhost:${process.env.BACKEND_PORT}`);
-
-//   if (!await testDatabaseConnection()) {
+// httpServer.listen(PORT, async () => {
+//   console.log(`Server running on port ${PORT}`);
+//   console.log(`Environment: ${process.env.NODE_ENV}`);
+//   if(!await testDatabaseConnection())  {
 //     process.exit(1);
 //   }
+//   if(!await createTables()){
+//     process.exit(1);
+//   }
+// });
+
+https.createServer(
+  {
+    key: fs.readFileSync("/certs/localhost-key.pem"),
+    cert: fs.readFileSync("/certs/localhost.pem"),
+  },
+  app,
+).listen(process.env.BACKEND_PORT, async () => {
+  console.log(`HTTPS server running on https://localhost:${process.env.BACKEND_PORT}`);
+
+  if (!await testDatabaseConnection()) {
+    process.exit(1);
+  }
   
-//   if (!await createTables()) {
-//     process.exit(1);
-//   }
-// })
+  if (!await createTables()) {
+    process.exit(1);
+  }
+})
 
 export { io };

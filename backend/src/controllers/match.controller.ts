@@ -78,11 +78,6 @@ export const updateMatchHandler = async (
 
       case matchStatus.VIEW:
         await createMatchStatus(userId, targetId, action);
-        res.status(200).json({ message: `${userId} ${action} ${targetId}`});
-        return;
-
-      case matchStatus.VIEW:
-        await createMatchStatus(userId, targetId, action);
         await createNotification(targetId, userId, 'view');
         io.to(targetId).emit('notification', { type: 'view', fromId: userId });
         res.status(200).json({ message: `${userId} ${action} ${targetId}`});
