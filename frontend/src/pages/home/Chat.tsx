@@ -60,9 +60,11 @@ export default function Chat() {
 }
 
 function ChatPage() {
-  const [selectedChat, setSelectedChat] = useState<any | null>(null);
+  // const [selectedChat, setSelectedChat] = useState<any | null>(null);
+  // const [selectedChatId, setselectedChatId] = useState<string>('');
+  // const [connetedUsers, setConnectedUsers] = useState<String[]>([]);  
   const [selectedChatId, setselectedChatId] = useState<string>('');
-  const [connetedUsers, setConnectedUsers] = useState<String[]>([]);  
+  const [_connetedUsers, setConnectedUsers] = useState<String[]>([]);
 
   const toaster = useToaster();
   
@@ -93,7 +95,8 @@ function ChatPage() {
       <h1>Chat</h1>
       <div className='flex-1 mt-5 min-h-0 border'>
         <div className='flex flex-row h-[65vh]'>
-          <ChatSidebar setselectedChatId={setselectedChatId} selectedChat={selectedChat} />
+          {/* <ChatSidebar setselectedChatId={setselectedChatId} selectedChat={selectedChat} /> */}
+          <ChatSidebar setselectedChatId={setselectedChatId} selectedChat={null} />
           <ChatSelected selectedChatId={selectedChatId} />
         </div>
       </div>
@@ -109,11 +112,12 @@ function ChatSidebar({setselectedChatId, selectedChat} : {setselectedChatId: any
           role='button'
           tabIndex={0}
           key={c.id}
-          className={`flex items-center gap-3 p-2 w-full overflow-hidden text-left border-b ${
-            c.id === selectedChat?.id
-              ? 'bg-[var(--color-link-hover)]'
-              : 'hover:bg-[rgba(179,148,214,0.25)]'
-          }`}
+          // className={`flex items-center gap-3 p-2 w-full overflow-hidden text-left border-b ${
+          //   c.id === selectedChat?.id
+          //     ? 'bg-[var(--color-link-hover)]'
+          //     : 'hover:bg-[rgba(179,148,214,0.25)]'
+          // }`}
+          className={`flex items-center gap-3 p-2 w-full overflow-hidden text-left border-b hover:bg-[rgba(179,148,214,0.25)]`}
           onClick={() => { setselectedChatId(test_user) }}
         >
           <Avatar src={c.image} size='lg' circle className='shrink-0' />

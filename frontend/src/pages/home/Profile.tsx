@@ -35,7 +35,8 @@ function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise
   const [formValue, setFormValue] = useState<ProfileForm | null>(null);
   const [profilePic, setProfilePic] = useState<FileType[] | null>(null);
   const [pictures, setPictures] = useState<FileType[] | null>(null);
-  const [position, setPosition] = useState(null);
+  // const [position, setPosition] = useState(null);
+  const [position, setPosition] = useState<any>(null);
 
   const toaster = useToaster();
   
@@ -334,8 +335,8 @@ function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise
           </div>
 
           <p className='text-lg font-bold'>Location</p>
-          <ProfileLocation position={position} setPosition={setPosition} />
-
+          {/* <ProfileLocation position={position} setPosition={setPosition} /> */}
+          <ProfileLocation position={position} setPosition={setPosition as any} />
           <Form.Group className='my-4'>
             <Button type='submit' appearance='primary' loading={loading} block>
               Update Profile
