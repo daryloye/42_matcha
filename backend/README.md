@@ -74,9 +74,9 @@ backend/
 │   │   ├── auth.controller.ts
 │   │   ├── chat.controller.ts        (Daryl's)
 │   │   ├── match.controller.ts       (Daryl's)
+│   │   ├── notification.controller.ts
 │   │   ├── profile.controller.ts
-│   │   ├── search.controller.ts      (Jack & Daryl's)
-│   │   └── updateProfileDetails.ts
+│   │   └── search.controller.ts      (Jack & Daryl's)
 │   ├── database/
 │   │   ├── migrations/
 │   │   │   └── 001_initial_schema.sql
@@ -87,6 +87,7 @@ backend/
 │   ├── models/
 │   │   ├── chat.model.ts             (Daryl's)
 │   │   ├── match.model.ts            (Daryl's)
+│   │   ├── notification.model.ts
 │   │   ├── profile.model.ts
 │   │   ├── search.model.ts           (Daryl's)
 │   │   └── user.model.ts
@@ -94,6 +95,7 @@ backend/
 │   │   ├── auth.routes.ts
 │   │   ├── chat.routes.ts            (Daryl's)
 │   │   ├── match.routes.ts           (Daryl's)
+│   │   ├── notification.routes.ts
 │   │   ├── profile.routes.ts
 │   │   └── search.routes.ts          (Daryl's)
 │   ├── types/
@@ -182,6 +184,14 @@ erDiagram
         TEXT message
         TIMESTAMP created_at
     }
+    notifications {
+        SERIAL id PK
+        UUID user_id FK
+        UUID from_user_id FK
+        VARCHAR type
+        BOOLEAN is_read
+        TIMESTAMP created_at
+    }
 
     users ||--o| profiles : "has"
     users ||--o{ profile_pictures : "has"
@@ -189,6 +199,7 @@ erDiagram
     user_interests }o--|| interests : "references"
     users ||--o{ relationships : "initiates"
     users ||--o{ chat : "sends"
+    users ||--o{ notifications : "receives"
 ```
 
 ---
@@ -214,6 +225,7 @@ flowchart TD
         MR["/api/match"]
         CHR["/api/chat"]
         SR["/api/search"]
+        NR["/api/notifications"]
     end
 
     RT --> AR
@@ -221,7 +233,10 @@ flowchart TD
     RT --> MR
     RT --> CHR
     RT --> SR
+    RT --> NR
 ```
+
+Notifications are also pushed to the frontend in real time over Socket.IO: `match.controller.ts` emits a `notification` event (`like`, `match`, `view`, `unlike`) and `chat.controller.ts` emits a `new_messages` event, both via `io.to(targetUserId).emit(...)` to the recipient's personal room (joined as `socket.join(userId)` on connect).
 
 ---
 
@@ -236,6 +251,7 @@ flowchart TD
 | POST | `/api/auth/login` | None | Login with username + password; blocks unverified users and resends verification email |
 | POST | `/api/auth/forgot-password` | None | Request password reset (unified response to prevent account enumeration) |
 | POST | `/api/auth/reset-password` | None | Reset password using reset token |
+| POST | `/api/auth/logout` | None | Clears the `access_token` cookie |
 
 ### Profile Routes — `/api/profile`
 
@@ -264,8 +280,15 @@ flowchart TD
 
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| POST | `/api/chat/send` | ✅ | Send a chat message to another user |
-| GET | `/api/chat/` | ✅ | Get chat history |
+| POST | `/api/chat/send` | ✅ | Send a chat message to another user; emits `new_messages` over Socket.IO to the recipient |
+| GET | `/api/chat/` | ✅ | Get chat history with a given user (`?targetId=`) |
+
+### Notification Routes — `/api/notifications`
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/api/notifications` | ✅ | Get all notifications for the current user, newest first |
+| PATCH | `/api/notifications/read` | ✅ | Mark all of the current user's unread notifications as read |
 
 ### Search Routes — `/api/search`
 

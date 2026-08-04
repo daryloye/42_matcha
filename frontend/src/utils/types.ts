@@ -3,6 +3,15 @@ export type PictureItem = {
   url: string;
 };
 
+export type AppNotification = {
+  id: number;
+  user_id: string;
+  from_user_id: string;
+  type: 'like' | 'match' | 'view' | 'unlike';
+  is_read: boolean;
+  created_at: string;
+};
+
 
 export type SearchFilters = {
   name: string;

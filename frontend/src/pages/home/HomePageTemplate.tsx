@@ -16,9 +16,11 @@ import {
   Whisper,
 } from 'rsuite';
 import { GetBasicProfile } from '../../api/profile';
-import type { BasicProfile } from '../../utils/types';
+import type { AppNotification, BasicProfile } from '../../utils/types';
 import { Logout } from '../../api/auth';
 import { getPictureSrc } from '../../utils/utils';
+import { GetNotifications, MarkNotificationsRead } from '../../api/notification';
+import { connectSocket, disconnectSocket } from '../../api/socket';
 
 export function HomePageTemplate({ page }
   : { page: ReactNode | ((helpers: { refreshBasicProfile: () => Promise<void> }) => ReactNode) }) {
@@ -46,6 +48,14 @@ export function HomePageTemplate({ page }
     return () => clearInterval(interval);
   }, []);
 
+  // A successful basicProfile fetch means the httpOnly access_token cookie is
+  // valid, so it's safe to open the socket. connectSocket() is a no-op if a
+  // connection already exists (e.g. navigating between pages).
+  useEffect(() => {
+    if (!basicProfile) return;
+    connectSocket();
+  }, [basicProfile]);
+
   if (!basicProfile) return null;
 
   return (
@@ -70,34 +80,78 @@ export function HomePageTemplate({ page }
   );
 }
 
+const NOTIFICATION_LABELS: Record<AppNotification['type'], string> = {
+  like: 'Someone liked your profile.',
+  match: "It's a match!",
+  view: 'Someone viewed your profile.',
+  unlike: 'A connection unliked you.',
+};
+
 function Sidebar({ profile }: { profile: BasicProfile }) {
-  const [messages, setMessages] = useState([
-    { key: 1, value: 'You have a new follower.' },
-    { key: 2, value: 'User1 wants to chat.' },
-    { key: 3, value: 'User1 wants to chat.' },
-    { key: 4, value: 'You have a new follower.' },
-    { key: 5, value: 'You have a new follower.' },
-    { key: 6, value: 'You have a new follower.' },
-    { key: 7, value: 'You have a new follower.' },
-    { key: 8, value: 'You have a new follower.' },
-    { key: 9, value: 'You have a new follower.' },
-    { key: 10, value: 'You have a new follower.' },
-  ]);
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const toaster = useToaster();
+
+  // Load notification history once on mount.
+  useEffect(() => {
+    GetNotifications()
+      .then((res) => setNotifications(res.notifications))
+      .catch(() => {});
+  }, []);
+
+  // Live push: the server emits `notification` to this user's personal room
+  // (see match.controller.ts) any time someone likes/views/matches/unlikes them.
+  useEffect(() => {
+    const socket = connectSocket();
+
+    const handleNotification = (payload: { type: AppNotification['type']; fromId: string }) => {
+      setNotifications((prev) => [
+        {
+          id: Date.now(),
+          user_id: '',
+          from_user_id: payload.fromId,
+          type: payload.type,
+          is_read: false,
+          created_at: new Date().toISOString(),
+        },
+        ...prev,
+      ]);
+
+      toaster.push(
+        <Notification type='info' closable>
+          {NOTIFICATION_LABELS[payload.type]}
+        </Notification>,
+      );
+    };
+
+    socket.on('notification', handleNotification);
+    return () => {
+      socket.off('notification', handleNotification);
+    };
+  }, [toaster]);
+
+  const unreadCount = notifications.filter((n) => !n.is_read).length;
+
+  const handleOpen = () => {
+    if (unreadCount === 0) return;
+    MarkNotificationsRead()
+      .then(() => setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true }))))
+      .catch(() => {});
+  };
 
   const handleMessageClose = (id: number) => {
-    setMessages((prev) => prev.filter((m) => m.key !== id));
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
 
   const speaker = (
     <Popover title='Notifications' className='max-h-128 w-64 overflow-y-scroll'>
-      {messages.length > 0 ? (
-        messages.map((m) => (
+      {notifications.length > 0 ? (
+        notifications.map((n) => (
           <Message
             closable
-            key={m.key}
-            onClose={() => handleMessageClose(m.key)}
+            key={n.id}
+            onClose={() => handleMessageClose(n.id)}
           >
-            {m.value}
+            {NOTIFICATION_LABELS[n.type]}
           </Message>
         ))
       ) : (
@@ -118,10 +172,10 @@ function Sidebar({ profile }: { profile: BasicProfile }) {
           <HeartIcon /> {profile.fame_rating}
         </Tag>
 
-        <Whisper placement='rightStart' trigger='click' speaker={speaker}>
+        <Whisper placement='rightStart' trigger='click' speaker={speaker} onOpen={handleOpen}>
           <Badge
-            content={messages.length}
-            className={messages.length > 0 ? 'animate-bounce' : ''}
+            content={unreadCount}
+            className={unreadCount > 0 ? 'animate-bounce' : ''}
           >
             <IconButton
               icon={<NoticeIcon />}
@@ -162,7 +216,7 @@ function NavigationLinks() {
         <h1>Account</h1>
       </Link>
 
-      <Link to='/' onClick={async () => { await Logout() }}>
+      <Link to='/' onClick={async () => { disconnectSocket(); await Logout() }}>
         <h1>Logout</h1>
       </Link>
     </VStack>

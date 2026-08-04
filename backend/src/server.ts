@@ -5,7 +5,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express, { Application, NextFunction, Request, Response } from "express"; //framework
 import helmet from "helmet";
-import { createServer } from "http";
 import { Server as SocketIOServer } from "socket.io"; //library
 import { testDatabaseConnection } from "./config/database";
 import createTables from "./config/initDB";
@@ -27,10 +26,19 @@ dotenv.config(); //this reads my env file and makes variables available via proc
 const allowedOrigins = `${process.env.APP_HOSTNAME}:${process.env.FRONTEND_PORT}`;
 
 const app: Application = express(); //Express application. Its job is to handle standard requests (HTTP).
-const httpServer = createServer(app); //Node js httpServer
+
+// The app is actually served over HTTPS (see httpsServer below) — Socket.IO must
+// attach to that same server instance, otherwise it never receives any traffic.
+const httpsServer = https.createServer(
+  {
+    key: fs.readFileSync("/certs/localhost-key.pem"),
+    cert: fs.readFileSync("/certs/localhost.pem"),
+  },
+  app,
+);
 
 //this is for the handshake; a walkie talkie system for talking and pushes updates
-const io = new SocketIOServer(httpServer, {
+const io = new SocketIOServer(httpsServer, {
   cors: {
     origin: allowedOrigins,
     methods: ["GET", "POST"],
@@ -92,15 +100,31 @@ app.get("/health", (_req: Request, res: Response) => {
 });
 
 io.use((socket, next) => {
-  const token = socket.handshake.auth.token;
-  if(!token){
+  // The JWT lives in an httpOnly cookie, so the browser can't hand it to us via
+  // `auth.token` — it rides along in the handshake's raw Cookie header instead
+  // (client must connect with `withCredentials: true`).
+  const cookieHeader = socket.handshake.headers.cookie;
+  if (!cookieHeader) {
     return next(new Error("Authentication Error"));
   }
+
+  const cookies = Object.fromEntries(
+    cookieHeader.split("; ").map((pair) => {
+      const [key, ...rest] = pair.split("=");
+      return [key, decodeURIComponent(rest.join("="))];
+    }),
+  );
+
+  const token = cookies["access_token"];
+  if (!token) {
+    return next(new Error("Authentication Error"));
+  }
+
   try{
     const jwtSecret = process.env.JWT_SECRET;
     if(!jwtSecret){
       throw new Error("JWT_SECRET not defined");
-    } 
+    }
       const decoded = jwt.verify(token, jwtSecret!) as unknown as { userId: string};
       socket.data.userId = decoded.userId;
       next();
@@ -136,26 +160,7 @@ app.use((err: Error, _req: Request, res: Response) => {
   });
 });
 
-// const PORT = process.env.BACKEND_PORT || process.env.PORT || 5001;
-
-// httpServer.listen(PORT, async () => {
-//   console.log(`Server running on port ${PORT}`);
-//   console.log(`Environment: ${process.env.NODE_ENV}`);
-//   if(!await testDatabaseConnection())  {
-//     process.exit(1);
-//   }
-//   if(!await createTables()){
-//     process.exit(1);
-//   }
-// });
-
-https.createServer(
-  {
-    key: fs.readFileSync("/certs/localhost-key.pem"),
-    cert: fs.readFileSync("/certs/localhost.pem"),
-  },
-  app,
-).listen(process.env.BACKEND_PORT, async () => {
+httpsServer.listen(process.env.BACKEND_PORT, async () => {
   console.log(`HTTPS server running on https://localhost:${process.env.BACKEND_PORT}`);
 
   if (!await testDatabaseConnection()) {
