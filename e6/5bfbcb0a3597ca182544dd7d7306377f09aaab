@@ -1,0 +1,20 @@
+backend/src/controllers/match.controller.ts
+  h_5839197889c05f 93-97,103
+frontend/src/pages/home/HomePageTemplate.tsx
+  h_5839197889c05f 88
+backend/src/server.ts
+  h_5839197889c05f 164
+frontend/src/utils/types.ts
+  h_5839197889c05f 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "e65bfbcb0a3597ca182544dd7d7306377f09aaab",
+  "prompts": {},
+  "humans": {
+    "h_5839197889c05f": {
+      "author": "daryloye <daryloye@gmail.com>"
+    }
+  }
+}
