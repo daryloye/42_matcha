@@ -85,6 +85,7 @@ const NOTIFICATION_LABELS: Record<AppNotification['type'], string> = {
   match: "It's a match!",
   view: 'Someone viewed your profile.',
   unlike: 'A connection unliked you.',
+  message: 'You received a message',
 };
 
 function Sidebar({ profile }: { profile: BasicProfile }) {
@@ -138,18 +139,12 @@ function Sidebar({ profile }: { profile: BasicProfile }) {
       .catch(() => {});
   };
 
-  const handleMessageClose = (id: number) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
-  };
-
   const speaker = (
     <Popover title='Notifications' className='max-h-128 w-64 overflow-y-scroll'>
       {notifications.length > 0 ? (
         notifications.map((n) => (
           <Message
-            closable
             key={n.id}
-            onClose={() => handleMessageClose(n.id)}
           >
             {NOTIFICATION_LABELS[n.type]}
           </Message>

@@ -90,12 +90,17 @@ export const updateMatchHandler = async (
         return;
 
       case matchStatus.UNLIKE:
+        // send notification only if users are connected
+        if (statusFromUser?.includes(matchStatus.CONNECTED)) {
+          io.to(targetId).emit('notification', { type: 'unlike', fromId: userId });
+        }
+
         await deleteMatchStatus(userId, targetId, matchStatus.LIKE);
         await deleteMatchStatus(userId, targetId, matchStatus.CONNECTED);
         await deleteMatchStatus(targetId, userId, matchStatus.CONNECTED);
         await increaseUserFame(targetId, -1);
         await createNotification(targetId, userId, 'unlike');
-        io.to(targetId).emit('notification', { type: 'unlike', fromId: userId });
+
         res.status(200).json({ message: `${userId} ${action} ${targetId}`});
         return;
 

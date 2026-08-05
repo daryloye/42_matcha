@@ -161,7 +161,7 @@ app.use((err: Error, _req: Request, res: Response) => {
 });
 
 httpsServer.listen(process.env.BACKEND_PORT, async () => {
-  console.log(`HTTPS server running on https://localhost:${process.env.BACKEND_PORT}`);
+  console.log(`HTTPS server running on ${process.env.APP_HOSTNAME}:${process.env.BACKEND_PORT}`);
 
   if (!await testDatabaseConnection()) {
     process.exit(1);
