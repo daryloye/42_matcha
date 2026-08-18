@@ -68,22 +68,22 @@ function ChatPage() {
 
   const toaster = useToaster();
   
-  useEffect(() => {
-    async function fetchConnectedUsers() {
-      try {
-        const res = await GetConnectedUsers();
-        console.log(res['connectedUsers']);
+  const fetchConnectedUsers = async () => {
+    try {
+      const res = await GetConnectedUsers();  // TODO: also need to fetch connected users details
+      console.log(res['connectedUsers']);
 
-        setConnectedUsers(res['connectedUsers']);
-      } catch (err: any) {
-        toaster.push(
-          <Notification type='error' closable>
-            {err.message}
-          </Notification>,
-        );
-      }
+      setConnectedUsers(res['connectedUsers']);
+    } catch (err: any) {
+      toaster.push(
+        <Notification type='error' closable>
+          {err.message}
+        </Notification>,
+      );
     }
+  }
 
+  useEffect(() => {
     fetchConnectedUsers();
 
     const interval = setInterval(fetchConnectedUsers, 2000);
@@ -97,7 +97,7 @@ function ChatPage() {
         <div className='flex flex-row h-[65vh]'>
           {/* <ChatSidebar setselectedChatId={setselectedChatId} selectedChat={selectedChat} /> */}
           <ChatSidebar setselectedChatId={setselectedChatId} selectedChat={null} />
-          <ChatSelected selectedChatId={selectedChatId} />
+          {/* <ChatSelected selectedChatId={selectedChatId} /> */}
         </div>
       </div>
     </div>
@@ -135,10 +135,11 @@ function ChatSelected({selectedChatId} : {selectedChatId: any}) {
 
   const toaster = useToaster();
 
+  // load chat history once on mount
   useEffect(() => {
     async function fetchMessages() {
       try {
-        const res = await GetMessages(test_user);
+        const res = await GetMessages(selectedChatId);
         setMessages(res['messages']);
       } catch (err: any) {
         toaster.push(
@@ -150,9 +151,6 @@ function ChatSelected({selectedChatId} : {selectedChatId: any}) {
     }
 
     fetchMessages();
-
-    const interval = setInterval(fetchMessages, 1000);
-    return () => clearInterval(interval);
   }, []);
 
   const handleSendMessage = async (e: any) => {
@@ -166,9 +164,9 @@ function ChatSelected({selectedChatId} : {selectedChatId: any}) {
         targetId: selectedChatId,
         message: messageToSend,
       });
-      const res = await GetMessages(test_user);
+      const res = await GetMessages(selectedChatId);
       setMessages(res['messages']);
-      setMessageToSend('')
+      setMessageToSend('');
     } catch (err: any) {
       toaster.push(
         <Notification type='error' closable>

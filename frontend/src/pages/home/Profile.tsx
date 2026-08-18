@@ -3,6 +3,7 @@ import {
   Button,
   DatePicker,
   Form,
+  Input,
   Notification,
   SelectPicker,
   TagInput,
@@ -11,9 +12,9 @@ import {
   useToaster,
   type FileType,
 } from 'rsuite';
-import { DeletePicture, DeleteProfilePic, GetFullProfile, GetPictures, GetProfilePic, UpdateProfile } from '../../api/profile';
+import { DeletePicture, DeleteProfilePic, GetFullProfile, GetOpenMeteoGeocoding, GetPictures, GetProfilePic, UpdateProfile } from '../../api/profile';
 import { ProfileLocation } from '../../components/profile/ProfileLocation';
-import type { PictureData, ProfileForm } from '../../utils/types';
+import { type LocationData, type PictureData, type ProfileForm } from '../../utils/types';
 import { HomePageTemplate } from './HomePageTemplate';
 import { genderData, model, preferenceData } from './ProfileUtils';
 import { useSearchParams } from 'react-router-dom';
@@ -33,10 +34,14 @@ export default function Profile() {
 function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise<void> }) {
   const [loading, setLoading] = useState(false);
   const [formValue, setFormValue] = useState<ProfileForm | null>(null);
+  
   const [profilePic, setProfilePic] = useState<FileType[] | null>(null);
   const [pictures, setPictures] = useState<FileType[] | null>(null);
-  // const [position, setPosition] = useState(null);
-  const [position, setPosition] = useState<any>(null);
+  
+  const [position, setPosition] = useState(null);
+  
+  const [location, setLocation] = useState<LocationData | null>(null)
+  const [manualLocation, setManualLocation] = useState<string>("");
 
   const toaster = useToaster();
   
@@ -167,6 +172,26 @@ function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise
     }
   };
 
+  const handleOpenMeteoGeocoding = async (manualLocation: string) => {
+    try {
+      const res = await GetOpenMeteoGeocoding(manualLocation);
+      const result = res.results;
+      if (!result) return;
+      
+      setLocation({
+        country: result[0]?.country,
+        city: result[0]?.name,
+        latitude: result[0]?.latitude,
+        longitude: result[0]?.longitude,
+      });
+    } catch (err: any) {
+      toaster.push(
+        <Notification type='error' closable>
+          {err.message}
+        </Notification>,
+      );
+    }
+  }
   
   const [searchParams] = useSearchParams();
   useEffect(() => {
@@ -292,12 +317,13 @@ function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise
                 onError={(err) => {
                   toaster.push(
                     <Notification type='error' closable>
-                      {err.response.error || err.response.message || 'File upload failed'}
+                      {err.response.error ||
+                        err.response.message ||
+                        'File upload failed'}
                     </Notification>,
                   );
                 }}
-              >
-              </Uploader>
+              ></Uploader>
             </Form.Group>
 
             <Form.Group>
@@ -325,18 +351,40 @@ function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise
                 onError={(err) => {
                   toaster.push(
                     <Notification type='error' closable>
-                      {err.response.error || err.response.message || 'File upload failed'}
+                      {err.response.error ||
+                        err.response.message ||
+                        'File upload failed'}
                     </Notification>,
                   );
                 }}
-              >
-              </Uploader>
+              ></Uploader>
             </Form.Group>
           </div>
 
+          <br />
+
           <p className='text-lg font-bold'>Location</p>
-          {/* <ProfileLocation position={position} setPosition={setPosition} /> */}
-          <ProfileLocation position={position} setPosition={setPosition as any} />
+          <ProfileLocation position={position} setPosition={setPosition} />
+          <div>
+            <br />
+            <p className='text-base'>Enter your location:</p>
+            <Input
+              name='location'
+              placeholder='Your location'
+              value={manualLocation}
+              onChange={setManualLocation}
+            />
+            <br />
+            <p className='text-base'>Country: {location?.country ?? 'null'}</p>
+            <p className='text-base'>City: {location?.city ?? 'null'}</p>
+            <p className='text-base'>
+              Latitude: {location?.latitude ?? 'null'}
+            </p>
+            <p className='text-base'>
+              Longitude: {location?.longitude ?? 'null'}
+            </p>
+          </div>
+
           <Form.Group className='my-4'>
             <Button type='submit' appearance='primary' loading={loading} block>
               Update Profile

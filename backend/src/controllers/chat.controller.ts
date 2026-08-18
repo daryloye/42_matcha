@@ -6,6 +6,8 @@ import { ChatRequest } from "../types/chat.types";
 import { createChat, getChat } from "../models/chat.model";
 import { matchStatus } from "../types/match.types";
 import { io } from "../server";
+import { getFullProfileDetails } from "./profile.controller";
+import { getUserProfile } from "../models/search.model";
 
 export const createChatHandler = async (
   req: AuthRequest,
@@ -37,11 +39,15 @@ export const createChatHandler = async (
     }
 
     await createChat(userId, targetId, message);
+
+    io.to(targetId).emit('notification', { type: 'message', fromId: userId });
+
     io.to(targetId).emit("new_messages", {
       fromId: userId,
       message,
       createdAt: new Date(),
     });
+    
     res.status(201).json({ message: "message sent"} );
 
   } catch (error) {
@@ -76,11 +82,17 @@ export const getChatHandler = async (
         return;
     }
 
-    const messages = await getChat(userId, targetId);
-    res.status(200).json({ messages } );
+    const ids = await getChat(userId, targetId);
+    const ret = await Promise.all(
+      ids.map(async (id: any) => {
+        const profile = await getUserProfile(id, userId);
+        return profile;
+      }),
+    );
+    res.status(200).json({ ret } );
 
   } catch (error) {
-    console.error("error updating match status", error);
+    console.error("error getting chat", error);
     res.status(500).json({ error: "internal server error" });
   }
 };

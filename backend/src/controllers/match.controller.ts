@@ -6,6 +6,7 @@ import { MatchRequest, matchStatus } from "../types/match.types";
 import { increaseUserFame } from "../models/profile.model";
 import { createNotification } from "../models/notification.model";
 import { io } from "../server";
+import { getUserProfile } from "../models/search.model";
 
 export const updateMatchHandler = async (
   req: AuthRequest,
@@ -166,7 +167,15 @@ export const getConnectedUsersHandler = async (
     const userId = req.user!.userId;
 
     const connectedUsers = await getTargetIdsWithStatus(userId, matchStatus.CONNECTED);
-    res.status(200).json({ connectedUsers });
+    const connectedUserDetails = await Promise.all(
+      (connectedUsers ?? []).map(async (id: any) => { 
+        const details = await getUserProfile(id, userId);
+        console.log({id, details});
+      }),
+    );
+    console.log(connectedUsers);
+    console.log(connectedUserDetails);
+    res.status(200).json({ connectedUserDetails });
 
   } catch (error) {
     console.error("error getting connected users", error);

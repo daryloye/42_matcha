@@ -92,3 +92,10 @@ export type PictureData = {
   image_url: string,
   id: string,
 }
+
+export type LocationData = {
+  country: string,
+  city: string,
+  latitude: number,
+  longitude: number,
+}

@@ -66,7 +66,7 @@ export function ProfileLocation({
   setPosition,
 }: {
   position: any;
-  setPosition: () => void;
+  setPosition: (value: any) => void;
 }) {
   return (
     <MapContainer
@@ -83,3 +83,10 @@ export function ProfileLocation({
     </MapContainer>
   );
 }
+
+// export function OpenMeteoGeocoding() {
+//   const [locationString, setLocationString] = useState<string>("")
+//   return (
+//     <Input name='location' placeholder='Enter your location' value={locationString} onChange={setLocationString}/>
+//   );
+// }
