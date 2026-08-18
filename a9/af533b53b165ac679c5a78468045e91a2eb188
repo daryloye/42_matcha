@@ -1,0 +1,22 @@
+backend/src/controllers/match.controller.ts
+  h_5839197889c05f 9,170-178
+frontend/src/pages/home/Chat.tsx
+  h_5839197889c05f 71,73,84,86,100,138,142,167,169
+backend/src/controllers/chat.controller.ts
+  h_5839197889c05f 9-10,42-44,50,85-92,95
+Makefile
+  h_5839197889c05f 18
+frontend/src/utils/types.ts
+  h_5839197889c05f 95-101
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "a9af533b53b165ac679c5a78468045e91a2eb188",
+  "prompts": {},
+  "humans": {
+    "h_5839197889c05f": {
+      "author": "daryloye <daryloye@gmail.com>"
+    }
+  }
+}
