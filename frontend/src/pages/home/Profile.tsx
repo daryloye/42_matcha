@@ -3,6 +3,7 @@ import {
   Button,
   DatePicker,
   Form,
+  Input,
   Notification,
   SelectPicker,
   TagInput,
@@ -11,9 +12,9 @@ import {
   useToaster,
   type FileType,
 } from 'rsuite';
-import { DeletePicture, DeleteProfilePic, GetFullProfile, GetPictures, GetProfilePic, UpdateProfile } from '../../api/profile';
-import { ProfileLocation } from '../../components/profile/ProfileLocation';
-import type { PictureData, ProfileForm } from '../../utils/types';
+import { DeletePicture, DeleteProfilePic, GetFullProfile, GetOpenMeteoGeocoding, GetPictures, GetProfilePic, UpdateProfile } from '../../api/profile';
+import { GPSButton, ManualLocation, ProfileLocation } from '../../components/profile/ProfileLocation';
+import { type LocationData, type PictureData, type Position, type ProfileForm } from '../../utils/types';
 import { HomePageTemplate } from './HomePageTemplate';
 import { genderData, model, preferenceData } from './ProfileUtils';
 import { useSearchParams } from 'react-router-dom';
@@ -33,11 +34,12 @@ export default function Profile() {
 function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise<void> }) {
   const [loading, setLoading] = useState(false);
   const [formValue, setFormValue] = useState<ProfileForm | null>(null);
+  
   const [profilePic, setProfilePic] = useState<FileType[] | null>(null);
   const [pictures, setPictures] = useState<FileType[] | null>(null);
-  // const [position, setPosition] = useState(null);
-  const [position, setPosition] = useState<any>(null);
-
+  
+  const [position, setPosition] = useState<Position | null>(null);
+  
   const toaster = useToaster();
   
   const fetchProfile = async () => {
@@ -53,6 +55,18 @@ function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise
         biography: res.profile.biography,
         interests: res.profile.interests,
       });
+      setPosition({
+        lat: res.profile.latitude,
+        lng: res.profile.longitude,
+      });
+
+      if (!res.profile.latitude || !res.profile.longitude) {
+        toaster.push(
+          <Notification type='error' closable>
+            Please set your location
+          </Notification>
+        )
+      }
 
       const profile_pic = res.profile.profile_picture;
       if (profile_pic?.length > 0) {
@@ -62,6 +76,13 @@ function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise
           url: getPictureSrc(profile_pic[0].image_url),
           status: 'finished' as const,
         }]);
+      } 
+      else {
+        toaster.push(
+          <Notification type='error' closable>
+            Please upload a profile picture
+          </Notification>
+        )
       }
       
       const pictures = res.profile.pictures;
@@ -149,6 +170,8 @@ function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise
         sexual_preference: formValue?.preference,
         biography: formValue?.biography,
         interests: formValue?.interests,
+        latitude: position?.lat,
+        longitude: position?.lng,
       });
 
       toaster.push(
@@ -167,7 +190,6 @@ function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise
     }
   };
 
-  
   const [searchParams] = useSearchParams();
   useEffect(() => {
     fetchProfile();
@@ -196,9 +218,14 @@ function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise
           await handleSubmit();
           await refreshBasicProfile();
         }}
-        className='flex pt-6'
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+          }
+        }}
+        className='pt-6 w-full'
       >
-        <Form.Stack spacing={10}>
+        <Form.Stack spacing={10} className='w-full space-y-3'>
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4'>
             <Form.Group>
               <p className='text-lg font-bold'>First Name</p>
@@ -292,12 +319,13 @@ function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise
                 onError={(err) => {
                   toaster.push(
                     <Notification type='error' closable>
-                      {err.response.error || err.response.message || 'File upload failed'}
+                      {err.response.error ||
+                        err.response.message ||
+                        'File upload failed'}
                     </Notification>,
                   );
                 }}
-              >
-              </Uploader>
+              ></Uploader>
             </Form.Group>
 
             <Form.Group>
@@ -325,18 +353,26 @@ function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise
                 onError={(err) => {
                   toaster.push(
                     <Notification type='error' closable>
-                      {err.response.error || err.response.message || 'File upload failed'}
+                      {err.response.error ||
+                        err.response.message ||
+                        'File upload failed'}
                     </Notification>,
                   );
                 }}
-              >
-              </Uploader>
+              ></Uploader>
             </Form.Group>
           </div>
 
-          <p className='text-lg font-bold'>Location</p>
-          {/* <ProfileLocation position={position} setPosition={setPosition} /> */}
-          <ProfileLocation position={position} setPosition={setPosition as any} />
+          <div className='space-y-3 w-full'>
+            <div className='flex items-center gap-3'>
+              <p className='text-lg font-bold'>Location</p>
+              <GPSButton setPosition={setPosition} />
+            </div>
+
+            <ProfileLocation position={position} setPosition={setPosition} />
+            <ManualLocation setPosition={setPosition} />
+          </div>
+
           <Form.Group className='my-4'>
             <Button type='submit' appearance='primary' loading={loading} block>
               Update Profile

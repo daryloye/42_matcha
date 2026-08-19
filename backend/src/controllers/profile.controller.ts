@@ -107,7 +107,6 @@ export const updateProfileDetails = async (req: AuthRequest, res: Response): Pro
           date_of_birth,
           latitude,
           longitude,
-          location_city,
           interests
         } = req.body
 
@@ -120,7 +119,6 @@ export const updateProfileDetails = async (req: AuthRequest, res: Response): Pro
           date_of_birth,
           latitude,
           longitude,
-          location_city
         });
 
         if (interests && Array.isArray(interests)){

@@ -129,6 +129,7 @@ export const getUserProfileHandler = async (
 ): Promise<void> => {
   try {
     const userId = req.user!.userId;
+    const userProfile = await getProfileDetails(userId);
 
     const { id: targetId } = req.params as { id: string };
     if (!targetId) {
@@ -142,7 +143,22 @@ export const getUserProfileHandler = async (
       return;
     }
 
-    // profile.distance = 10; // TODO: calculate distance to user based on latitude and longitude
+    const userHasLocation =
+      userProfile.latitude !== null && userProfile.longitude !== null;
+
+    const profileHasLocation =
+      profile.latitude !== null && profile.longitude !== null;
+
+    profile.distance =
+      userHasLocation && profileHasLocation
+        ? calculateDistance(
+          userProfile.latitude,
+          userProfile.longitude,
+          profile.latitude!,
+          profile.longitude!,
+        )
+        : null;
+
     profile.age = getAge(profile.date_of_birth);
     profile.online = profile.last_seen
       ? (new Date().getTime() - new Date(profile.last_seen).getTime() < 15000) 

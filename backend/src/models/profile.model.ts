@@ -156,11 +156,17 @@ export const getProfileMe = async (userId: string): Promise<any | null> => {
             pp.image_url AS picture,
             p.fame_rating,
             CASE WHEN
+                u.first_name IS NOT NULL AND
+                u.last_name IS NOT NULL AND
+                u.email IS NOT NULL AND
+                p.date_of_birth IS NOT NULL AND
                 p.gender IS NOT NULL AND
                 p.sexual_preference IS NOT NULL AND
                 p.biography IS NOT NULL AND
                 (SELECT COUNT(*) FROM user_interests WHERE user_id = $1) > 0 AND
-                (SELECT COUNT(*) FROM profile_pictures WHERE user_id = $1 AND is_profile_picture IS TRUE) > 0
+                (SELECT COUNT(*) FROM profile_pictures WHERE user_id = $1 AND is_profile_picture IS TRUE) > 0 AND
+                p.latitude IS NOT NULL AND
+                p.longitude IS NOT NULL
             THEN true ELSE false END AS is_profile_completed
         FROM users u
         LEFT JOIN profiles p ON p.user_id = u.id

@@ -48,6 +48,19 @@ export type ProfileForm = {
   interests: string[];
 };
 
+export type Position = {
+  lat: number,
+  lng: number,
+}
+
+export type LocationData = {
+  country: string,
+  city: string,
+  latitude: number,
+  longitude: number,
+}
+
+
 export type MatchStatus = {
   isConnected: boolean;
   hasLikedTarget: boolean;
