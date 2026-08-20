@@ -23,11 +23,16 @@ import {
   useToaster,
   VStack,
 } from 'rsuite';
-import { HomePageTemplate } from './HomePageTemplate';
 import { GetMatchStatus, UpdateMatchStatus } from '../../api/match';
-import { MatchStatusEnum, type MatchStatus, type PictureData, type SearchUserProfile } from '../../utils/types';
 import { GetUserProfile } from '../../api/search';
+import {
+  MatchStatusEnum,
+  type MatchStatus,
+  type PictureData,
+  type SearchUserProfile,
+} from '../../utils/types';
 import { getPictureSrc } from '../../utils/utils';
+import { HomePageTemplate } from './HomePageTemplate';
 
 export default function Users() {
   return <HomePageTemplate page={<UsersPage />} />;
@@ -39,13 +44,13 @@ function UsersPage() {
   const [loading, setLoading] = useState(false);
 
   const toaster = useToaster();
-  
+
   const { id } = useParams();
   if (!id) return null;
 
   const fetchProfile = async () => {
     try {
-      await UpdateMatchStatus({action: MatchStatusEnum.VIEW, targetId: id})
+      await UpdateMatchStatus({ action: MatchStatusEnum.VIEW, targetId: id });
       const res = await GetUserProfile(id);
       setProfile(res.profile);
     } catch (err: any) {
@@ -55,7 +60,7 @@ function UsersPage() {
         </Notification>,
       );
     }
-  }
+  };
 
   const fetchMatchStatus = async () => {
     try {
@@ -68,15 +73,15 @@ function UsersPage() {
         </Notification>,
       );
     }
-  }
-  
+  };
+
   useEffect(() => {
     fetchProfile();
     fetchMatchStatus();
   }, []);
 
   if (!profile || !matchStatus) return null;
-  
+
   const handleUpdateStatus = async (action: string) => {
     setLoading(true);
 
@@ -89,7 +94,7 @@ function UsersPage() {
     }
 
     try {
-      await UpdateMatchStatus({action: action, targetId: id});
+      await UpdateMatchStatus({ action: action, targetId: id });
       await fetchMatchStatus();
     } catch (err: any) {
       toaster.push(
@@ -121,35 +126,54 @@ function UsersPage() {
       setLoading(false);
     }
   };
-  
+
   if (matchStatus.isBlockedByTarget) {
     return (
       <VStack>
-      <h1>{profile.first_name} {profile.last_name}</h1>
-      <p className='mt-5'>You have been blocked by this user</p>
+        <header>
+          {profile.first_name} {profile.last_name}
+        </header>
+        <p className='mt-5'>You have been blocked by this user</p>
       </VStack>
-    )
+    );
   }
   return (
     <div>
-      <UserProfileHeader profile={profile} matchStatus={matchStatus}/>
+      <UserProfileHeader profile={profile} matchStatus={matchStatus} />
 
       <div className='flex flex-col mt-5 gap-4'>
         <UserProfileBody profile={profile} />
 
-        <UserProfileMatchButtons matchStatus={matchStatus} loading={loading} handleChat={handleChat} handleUpdateStatus={handleUpdateStatus} />
+        <UserProfileMatchButtons
+          matchStatus={matchStatus}
+          loading={loading}
+          handleChat={handleChat}
+          handleUpdateStatus={handleUpdateStatus}
+        />
       </div>
     </div>
   );
 }
 
-function UserProfileHeader({profile, matchStatus}: {profile: SearchUserProfile, matchStatus: MatchStatus}) {
+function UserProfileHeader({
+  profile,
+  matchStatus,
+}: {
+  profile: SearchUserProfile;
+  matchStatus: MatchStatus;
+}) {
   return (
     <VStack>
-      <h1>{profile.first_name} {profile.last_name}</h1>
+      <header>
+        {profile.first_name} {profile.last_name}
+      </header>
       <HStack>
         <Badge compact size='lg' color={profile.online ? 'green' : 'red'} />
-        <p>{profile.online ? 'Online' : `Last seen ${new Date(profile.last_seen).toLocaleString("en-GB")}`}</p>
+        <p>
+          {profile.online
+            ? 'Online'
+            : `Last seen ${new Date(profile.last_seen).toLocaleString('en-GB')}`}
+        </p>
       </HStack>
       {matchStatus.isConnected ? (
         <HStack>
@@ -176,10 +200,18 @@ function UserProfileHeader({profile, matchStatus}: {profile: SearchUserProfile, 
   );
 }
 
-function UserProfileBody({profile}: {profile: SearchUserProfile}) {
+function UserProfileBody({ profile }: { profile: SearchUserProfile }) {
   return (
     <>
-      <Image rounded src={getPictureSrc(profile.profile_picture[0]?.image_url) ?? import.meta.env.VITE_PLACEHOLDER_IMAGE} width={300} height={300}/>
+      <Image
+        rounded
+        src={
+          getPictureSrc(profile.profile_picture[0]?.image_url) ??
+          import.meta.env.VITE_PLACEHOLDER_IMAGE
+        }
+        width={300}
+        height={300}
+      />
       <HStack>
         <Tag color='green' size='lg' className='opacity-70'>
           <MdPersonOutline className='inline' /> {profile.gender}
@@ -206,11 +238,13 @@ function UserProfileBody({profile}: {profile: SearchUserProfile}) {
       </TagGroup>
 
       <VStack>
-        <br/>
+        <br />
         <p className='text-lg font-bold'>Biography:</p>
         <p className='whitespace-pre-line'>{profile.biography}</p>
-        <br/>
-        {profile.pictures.length > 0 && <p className='text-lg font-bold'>Pictures:</p>}
+        <br />
+        {profile.pictures.length > 0 && (
+          <p className='text-lg font-bold'>Pictures:</p>
+        )}
         <HStack>
           {(profile.pictures ?? []).map((pic: PictureData) => (
             <Image
@@ -233,10 +267,10 @@ function UserProfileMatchButtons({
   handleChat,
   handleUpdateStatus,
 }: {
-  matchStatus: MatchStatus,
-  loading: boolean,
-  handleChat: any,
-  handleUpdateStatus: any
+  matchStatus: MatchStatus;
+  loading: boolean;
+  handleChat: any;
+  handleUpdateStatus: any;
 }) {
   return (
     <>
@@ -289,7 +323,7 @@ function UserProfileMatchButtons({
             onClick={() => {
               matchStatus.isBlockingTarget
                 ? handleUpdateStatus(MatchStatusEnum.UNBLOCK)
-                : handleUpdateStatus(MatchStatusEnum.BLOCK)
+                : handleUpdateStatus(MatchStatusEnum.BLOCK);
             }}
           >
             <MdBlock />

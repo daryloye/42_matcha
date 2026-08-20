@@ -6,7 +6,7 @@ export default function NotFoundPage() {
 
   return (
     <div className='min-h-screen flex flex-col items-center justify-center'>
-      <h1>Page Not Found</h1>
+      <header>Page Not Found</header>
       <br />
       <Button
         type='submit'
