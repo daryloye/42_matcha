@@ -15,18 +15,26 @@ import {
   VStack,
   Whisper,
 } from 'rsuite';
-import { GetBasicProfile } from '../../api/profile';
-import type { AppNotification, BasicProfile } from '../../utils/types';
 import { Logout } from '../../api/auth';
-import { getPictureSrc } from '../../utils/utils';
-import { GetNotifications, MarkNotificationsRead } from '../../api/notification';
+import {
+  GetNotifications,
+  MarkNotificationsRead,
+} from '../../api/notification';
+import { GetBasicProfile } from '../../api/profile';
 import { connectSocket, disconnectSocket } from '../../api/socket';
+import type { AppNotification, BasicProfile } from '../../utils/types';
+import { getPictureSrc } from '../../utils/utils';
 
-export function HomePageTemplate({ page }
-  : { page: ReactNode | ((helpers: { refreshBasicProfile: () => Promise<void> }) => ReactNode) }) {
+export function HomePageTemplate({
+  page,
+}: {
+  page:
+    | ReactNode
+    | ((helpers: { refreshBasicProfile: () => Promise<void> }) => ReactNode);
+}) {
   const [basicProfile, setBasicProfile] = useState<BasicProfile | null>(null);
   const toaster = useToaster();
-  
+
   const fetchBasicProfile = async () => {
     try {
       const res = await GetBasicProfile();
@@ -38,7 +46,7 @@ export function HomePageTemplate({ page }
         </Notification>,
       );
     }
-  }
+  };
 
   // Get user profile
   useEffect(() => {
@@ -59,23 +67,24 @@ export function HomePageTemplate({ page }
   if (!basicProfile) return null;
 
   return (
-    <div className='h-screen flex flex-col px-12 pt-8 pb-4'>
+    <div className='min-h-screen flex flex-col px-4 py-4 md:h-screen md:px-12 md:pt-8 md:pb-4'>
       <div className='flex-1 min-h-0'>
-        <div className='flex h-full flex-col py-8 md:flex-row bg-white/75 backdrop-blur-md rounded-3xl border-3 overflow-hidden'>
-          <div className='w-full md:w-[25%] md:min-w-[220px] md:max-w-[320px] shrink-0 px-8 overflow-y-scroll'>
+        <div className='flex min-h-full flex-col md:h-full md:flex-row bg-white/75 backdrop-blur-md rounded-3xl border-3 overflow-hidden'>
+          <div className='w-full shrink-0 px-4 py-8 md:w-[25%] md:min-w-[220px] md:max-w-[320px] md:px-8 md:overflow-y-auto'>
             <Sidebar profile={basicProfile} />
           </div>
 
-          <main className='flex-1 min-w-0 px-8 border-l-4 overflow-y-scroll hidden md:block'>
+          <main className='flex-1 min-w-0 px-4 py-8 border-t-2 md:px-8 md:border-t-0 md:border-l-4 md:overflow-y-auto'>
             {typeof page === 'function'
               ? page({ refreshBasicProfile: fetchBasicProfile })
-              : page
-            }
+              : page}
           </main>
         </div>
       </div>
 
-      <footer className='text-center text-sm pt-2 italic'>@ 42-matcha-2026</footer>
+      <footer className='text-center text-sm pt-2 italic'>
+        @ 42-matcha-2026
+      </footer>
     </div>
   );
 }
@@ -104,7 +113,10 @@ function Sidebar({ profile }: { profile: BasicProfile }) {
   useEffect(() => {
     const socket = connectSocket();
 
-    const handleNotification = (payload: { type: AppNotification['type']; fromId: string }) => {
+    const handleNotification = (payload: {
+      type: AppNotification['type'];
+      fromId: string;
+    }) => {
       setNotifications((prev) => [
         {
           id: Date.now(),
@@ -135,19 +147,17 @@ function Sidebar({ profile }: { profile: BasicProfile }) {
   const handleOpen = () => {
     if (unreadCount === 0) return;
     MarkNotificationsRead()
-      .then(() => setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true }))))
+      .then(() =>
+        setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true }))),
+      )
       .catch(() => {});
   };
 
   const speaker = (
-    <Popover title='Notifications' className='max-h-128 w-64 overflow-y-scroll'>
+    <Popover title='Notifications' className='max-h-96 overflow-y-auto'>
       {notifications.length > 0 ? (
         notifications.map((n) => (
-          <Message
-            key={n.id}
-          >
-            {NOTIFICATION_LABELS[n.type]}
-          </Message>
+          <Message key={n.id}>{NOTIFICATION_LABELS[n.type]}</Message>
         ))
       ) : (
         <div>
@@ -167,7 +177,12 @@ function Sidebar({ profile }: { profile: BasicProfile }) {
           <HeartIcon /> {profile.fame_rating}
         </Tag>
 
-        <Whisper placement='rightStart' trigger='click' speaker={speaker} onOpen={handleOpen}>
+        <Whisper
+          placement='bottomStart'
+          trigger='click'
+          speaker={speaker}
+          onOpen={handleOpen}
+        >
           <Badge
             content={unreadCount}
             className={unreadCount > 0 ? 'animate-bounce' : ''}
@@ -211,7 +226,13 @@ function NavigationLinks() {
         <h1>Account</h1>
       </Link>
 
-      <Link to='/' onClick={async () => { disconnectSocket(); await Logout() }}>
+      <Link
+        to='/'
+        onClick={async () => {
+          disconnectSocket();
+          await Logout();
+        }}
+      >
         <h1>Logout</h1>
       </Link>
     </VStack>
