@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   Button,
   DatePicker,
@@ -11,14 +12,19 @@ import {
   useToaster,
   type FileType,
 } from 'rsuite';
-import { DeletePicture, DeleteProfilePic, GetFullProfile, GetPictures, GetProfilePic, UpdateProfile } from '../../api/profile';
+import {
+  DeletePicture,
+  DeleteProfilePic,
+  GetFullProfile,
+  GetPictures,
+  GetProfilePic,
+  UpdateProfile,
+} from '../../api/profile';
 import { ProfileLocation } from '../../components/profile/ProfileLocation';
 import type { PictureData, ProfileForm } from '../../utils/types';
+import { getPictureSrc } from '../../utils/utils';
 import { HomePageTemplate } from './HomePageTemplate';
 import { genderData, model, preferenceData } from './ProfileUtils';
-import { useSearchParams } from 'react-router-dom';
-import { getPictureSrc } from '../../utils/utils';
-
 
 export default function Profile() {
   return (
@@ -30,7 +36,11 @@ export default function Profile() {
   );
 }
 
-function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise<void> }) {
+function ProfilePage({
+  refreshBasicProfile,
+}: {
+  refreshBasicProfile: () => Promise<void>;
+}) {
   const [loading, setLoading] = useState(false);
   const [formValue, setFormValue] = useState<ProfileForm | null>(null);
   const [profilePic, setProfilePic] = useState<FileType[] | null>(null);
@@ -39,7 +49,7 @@ function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise
   const [position, setPosition] = useState<any>(null);
 
   const toaster = useToaster();
-  
+
   const fetchProfile = async () => {
     try {
       const res = await GetFullProfile();
@@ -56,22 +66,26 @@ function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise
 
       const profile_pic = res.profile.profile_picture;
       if (profile_pic?.length > 0) {
-        setProfilePic([{
-          fileKey: profile_pic[0].id,
-          name: 'profilepic',
-          url: getPictureSrc(profile_pic[0].image_url),
-          status: 'finished' as const,
-        }]);
+        setProfilePic([
+          {
+            fileKey: profile_pic[0].id,
+            name: 'profilepic',
+            url: getPictureSrc(profile_pic[0].image_url),
+            status: 'finished' as const,
+          },
+        ]);
       }
-      
+
       const pictures = res.profile.pictures;
       if (pictures?.length > 0) {
-        setPictures(pictures.map((p: PictureData) => ({
-          fileKey: p.id,
-          name: 'picture',
-          url: getPictureSrc(p.image_url),
-          status: 'finished' as const,
-        })))
+        setPictures(
+          pictures.map((p: PictureData) => ({
+            fileKey: p.id,
+            name: 'picture',
+            url: getPictureSrc(p.image_url),
+            status: 'finished' as const,
+          })),
+        );
       }
     } catch (err: any) {
       toaster.push(
@@ -80,19 +94,21 @@ function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise
         </Notification>,
       );
     }
-  }
+  };
 
   const fetchProfilePic = async () => {
     try {
       const res = await GetProfilePic();
       const profile_pic = res.picture;
       if (profile_pic) {
-        setProfilePic([{
-          fileKey: profile_pic.id,
-          name: 'profilepic',
-          url: getPictureSrc(profile_pic.image_url),
-          status: 'finished' as const
-        }]);
+        setProfilePic([
+          {
+            fileKey: profile_pic.id,
+            name: 'profilepic',
+            url: getPictureSrc(profile_pic.image_url),
+            status: 'finished' as const,
+          },
+        ]);
       }
     } catch (err: any) {
       toaster.push(
@@ -101,19 +117,21 @@ function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise
         </Notification>,
       );
     }
-  }
+  };
 
   const fetchPictures = async () => {
     try {
       const res = await GetPictures();
       const pictures = res.pictures;
       if (pictures?.length > 0) {
-        setPictures(pictures.map((p: PictureData) => ({
-          fileKey: p.id,
-          name: 'picture',
-          url: getPictureSrc(p.image_url),
-          status: 'finished' as const,
-        })))
+        setPictures(
+          pictures.map((p: PictureData) => ({
+            fileKey: p.id,
+            name: 'picture',
+            url: getPictureSrc(p.image_url),
+            status: 'finished' as const,
+          })),
+        );
       }
     } catch (err: any) {
       toaster.push(
@@ -122,7 +140,7 @@ function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise
         </Notification>,
       );
     }
-  }
+  };
 
   const handleChange = (value: any) => {
     setFormValue({
@@ -167,25 +185,24 @@ function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise
     }
   };
 
-  
   const [searchParams] = useSearchParams();
   useEffect(() => {
     fetchProfile();
-    
-    if (searchParams.get("reason") === 'profile_incomplete') {
+
+    if (searchParams.get('reason') === 'profile_incomplete') {
       toaster.push(
         <Notification type='error' closable>
           Complete your profile to continue
-        </Notification>
+        </Notification>,
       );
     }
   }, []);
-  
+
   if (!formValue) return null;
 
   return (
     <div>
-      <h1>Profile</h1>
+      <header>Profile</header>
 
       <Form
         fluid
@@ -292,12 +309,13 @@ function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise
                 onError={(err) => {
                   toaster.push(
                     <Notification type='error' closable>
-                      {err.response.error || err.response.message || 'File upload failed'}
+                      {err.response.error ||
+                        err.response.message ||
+                        'File upload failed'}
                     </Notification>,
                   );
                 }}
-              >
-              </Uploader>
+              ></Uploader>
             </Form.Group>
 
             <Form.Group>
@@ -325,18 +343,22 @@ function ProfilePage({refreshBasicProfile}: { refreshBasicProfile: () => Promise
                 onError={(err) => {
                   toaster.push(
                     <Notification type='error' closable>
-                      {err.response.error || err.response.message || 'File upload failed'}
+                      {err.response.error ||
+                        err.response.message ||
+                        'File upload failed'}
                     </Notification>,
                   );
                 }}
-              >
-              </Uploader>
+              ></Uploader>
             </Form.Group>
           </div>
 
           <p className='text-lg font-bold'>Location</p>
           {/* <ProfileLocation position={position} setPosition={setPosition} /> */}
-          <ProfileLocation position={position} setPosition={setPosition as any} />
+          <ProfileLocation
+            position={position}
+            setPosition={setPosition as any}
+          />
           <Form.Group className='my-4'>
             <Button type='submit' appearance='primary' loading={loading} block>
               Update Profile

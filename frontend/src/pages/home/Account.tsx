@@ -1,8 +1,8 @@
-import { List, VStack, useToaster, Notification } from 'rsuite';
-import { HomePageTemplate } from './HomePageTemplate';
 import { useEffect, useState } from 'react';
+import { List, Notification, VStack, useToaster } from 'rsuite';
 import { GetAccountData } from '../../api/match';
 import type { AccountData } from '../../utils/types';
+import { HomePageTemplate } from './HomePageTemplate';
 
 export default function Account() {
   return <HomePageTemplate page={<AccountPage />} />;
@@ -19,7 +19,6 @@ function AccountPage() {
         const res = await GetAccountData();
         setViews(res.views || []);
         setLikes(res.likes || []);
-
       } catch (err: any) {
         toaster.push(
           <Notification type='error' closable>
@@ -36,28 +35,30 @@ function AccountPage() {
 
   return (
     <div>
-      <h1>Account</h1>
+      <header>Account</header>
 
       <div className='flex flex-col mt-5 gap-12'>
         <VStack>
           <p className='text-lg font-bold'>Your profile was viewed by:</p>
           <List className='rounded-lg'>
-            {views && views.map((v: AccountData) => (
-              <List.Item key={v.user_id} className='w-100 text-center'>
-                {v.first_name} {v.last_name}
-              </List.Item>
-            ))}
+            {views &&
+              views.map((v: AccountData) => (
+                <List.Item key={v.user_id} className='w-100 text-center'>
+                  {v.first_name} {v.last_name}
+                </List.Item>
+              ))}
           </List>
         </VStack>
 
         <VStack>
           <p className='text-lg font-bold'>Your profile was liked by:</p>
           <List className='rounded-lg'>
-            {likes && likes.map((v: AccountData) => (
-              <List.Item key={v.user_id} className='w-100 text-center'>
-                {v.first_name} {v.last_name}
-              </List.Item>
-            ))}
+            {likes &&
+              likes.map((v: AccountData) => (
+                <List.Item key={v.user_id} className='w-100 text-center'>
+                  {v.first_name} {v.last_name}
+                </List.Item>
+              ))}
           </List>
         </VStack>
       </div>

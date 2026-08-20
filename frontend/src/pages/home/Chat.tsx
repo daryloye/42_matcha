@@ -1,9 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
-import { Avatar, Badge, HStack, Tag, Textarea, VStack, useToaster, Notification } from 'rsuite';
+import {
+  Avatar,
+  Badge,
+  HStack,
+  Notification,
+  Tag,
+  Textarea,
+  VStack,
+  useToaster,
+} from 'rsuite';
+import { GetMessages, SendMessage } from '../../api/chat';
+import { GetConnectedUsers } from '../../api/match';
 import profilePic from '../../assets/profilePic2.png';
 import { HomePageTemplate } from './HomePageTemplate';
-import { GetConnectedUsers } from '../../api/match';
-import { GetMessages, SendMessage } from '../../api/chat';
 
 const chatSidebarJson = [
   {
@@ -62,12 +71,12 @@ export default function Chat() {
 function ChatPage() {
   // const [selectedChat, setSelectedChat] = useState<any | null>(null);
   // const [selectedChatId, setselectedChatId] = useState<string>('');
-  // const [connetedUsers, setConnectedUsers] = useState<String[]>([]);  
+  // const [connetedUsers, setConnectedUsers] = useState<String[]>([]);
   const [selectedChatId, setselectedChatId] = useState<string>('');
   const [_connetedUsers, setConnectedUsers] = useState<String[]>([]);
 
   const toaster = useToaster();
-  
+
   useEffect(() => {
     async function fetchConnectedUsers() {
       try {
@@ -92,11 +101,14 @@ function ChatPage() {
 
   return (
     <div>
-      <h1>Chat</h1>
+      <header>Chat</header>
       <div className='flex-1 mt-5 min-h-0 border'>
         <div className='flex flex-row h-[65vh]'>
           {/* <ChatSidebar setselectedChatId={setselectedChatId} selectedChat={selectedChat} /> */}
-          <ChatSidebar setselectedChatId={setselectedChatId} selectedChat={null} />
+          <ChatSidebar
+            setselectedChatId={setselectedChatId}
+            selectedChat={null}
+          />
           <ChatSelected selectedChatId={selectedChatId} />
         </div>
       </div>
@@ -104,7 +116,13 @@ function ChatPage() {
   );
 }
 
-function ChatSidebar({setselectedChatId, selectedChat} : {setselectedChatId: any, selectedChat: any}) {
+function ChatSidebar({
+  setselectedChatId,
+  selectedChat,
+}: {
+  setselectedChatId: any;
+  selectedChat: any;
+}) {
   return (
     <div className='flex flex-col w-[35%] h-full overflow-y-auto border-r'>
       {chatSidebarJson.map((c) => (
@@ -118,7 +136,9 @@ function ChatSidebar({setselectedChatId, selectedChat} : {setselectedChatId: any
           //     : 'hover:bg-[rgba(179,148,214,0.25)]'
           // }`}
           className={`flex items-center gap-3 p-2 w-full overflow-hidden text-left border-b hover:bg-[rgba(179,148,214,0.25)]`}
-          onClick={() => { setselectedChatId(test_user) }}
+          onClick={() => {
+            setselectedChatId(test_user);
+          }}
         >
           <Avatar src={c.image} size='lg' circle className='shrink-0' />
           <p className='text-xl w-full font-bold truncate'>{c.name}</p>
@@ -128,7 +148,7 @@ function ChatSidebar({setselectedChatId, selectedChat} : {setselectedChatId: any
   );
 }
 
-function ChatSelected({selectedChatId} : {selectedChatId: any}) {
+function ChatSelected({ selectedChatId }: { selectedChatId: any }) {
   const [messageToSend, setMessageToSend] = useState<string>('');
   const [messages, setMessages] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -168,7 +188,7 @@ function ChatSelected({selectedChatId} : {selectedChatId: any}) {
       });
       const res = await GetMessages(test_user);
       setMessages(res['messages']);
-      setMessageToSend('')
+      setMessageToSend('');
     } catch (err: any) {
       toaster.push(
         <Notification type='error' closable>
@@ -181,7 +201,7 @@ function ChatSelected({selectedChatId} : {selectedChatId: any}) {
   useEffect(
     () => messagesEndRef?.current?.scrollIntoView({ behavior: 'smooth' }),
     [],
-  );    // TODO: scroll into view on load
+  ); // TODO: scroll into view on load
 
   if (!selectedChatId)
     return (
@@ -204,7 +224,7 @@ function ChatSelected({selectedChatId} : {selectedChatId: any}) {
           {/* Online Status */}
           <HStack>
             <Badge compact size='lg' color={1 ? 'green' : 'red'} />
-            <p>Online {1 ? '' : 'last seen'}</p>  // TODO: check last seen status
+            <p>Online {1 ? '' : 'last seen'}</p> // TODO: check last seen status
           </HStack>
         </VStack>
       </HStack>

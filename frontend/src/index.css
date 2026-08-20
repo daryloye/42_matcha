@@ -68,7 +68,8 @@ body {
   background-position: center;
 }
 
-h1 {
+h1,
+header {
   font-family: 'Pricedown';
   font-size: 3.2em;
   line-height: 1.1;

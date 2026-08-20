@@ -8,27 +8,27 @@ import { useNavigate } from 'react-router-dom';
 import {
   Card,
   Input,
+  Notification,
   SelectPicker,
   Tag,
   TagGroup,
   TagInput,
   VStack,
   useToaster,
-  Notification,
 } from 'rsuite';
+import { GetSearchProfiles } from '../../api/search';
 import type { SearchFilters, SearchSort } from '../../utils/types';
+import { getPictureSrc } from '../../utils/utils';
 import { HomePageTemplate } from './HomePageTemplate';
 import {
+  SearchFilterRange,
   baseFilters,
   baseSorts,
-  getRange,
   getFilteredProfiles,
+  getRange,
   getSortedProfiles,
   sortOptions,
-  SearchFilterRange
 } from './SearchUtils';
-import { GetSearchProfiles } from '../../api/search';
-import { getPictureSrc } from '../../utils/utils';
 
 export default function Search() {
   return <HomePageTemplate page={<SearchPage />} />;
@@ -77,14 +77,16 @@ function SearchPage() {
 
   return (
     <div>
-      <h1>Search</h1>
+      <header>Search</header>
 
       <div className='flex flex-col mt-5 gap-4'>
         {/* Search Bar */}
         <Input
           placeholder='Search for user'
           value={filters.name}
-          onChange={(value: string) => setFilters((prev) => ({ ...prev, name: value }))}
+          onChange={(value: string) =>
+            setFilters((prev) => ({ ...prev, name: value }))
+          }
         />
 
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4'>
@@ -184,7 +186,13 @@ function SearchPage() {
               onClick={() => navigate(`/users/${c.id}`)}
               className='text-left transition transform active:scale-95 hover:scale-[1.02]'
             >
-              <img src={getPictureSrc(c.profile_pic) ?? import.meta.env.VITE_PLACEHOLDER_IMAGE} className='w-full aspect-square object-cover'/>
+              <img
+                src={
+                  getPictureSrc(c.profile_pic) ??
+                  import.meta.env.VITE_PLACEHOLDER_IMAGE
+                }
+                className='w-full aspect-square object-cover'
+              />
               <Card.Header>
                 <p className='text-xl font-bold truncate'>
                   {`${c.first_name} ${c.last_name}`}
@@ -208,11 +216,13 @@ function SearchPage() {
               </Card.Body>
               <Card.Footer>
                 <TagGroup className='flex flex-wrap w-full'>
-                  {(c.interests ?? []).filter((t: any) => t).map((t: string) => (
-                    <Tag key={t} color='pink' className='tag-ellipsis'>
-                      <TagIcon /> {t}
-                    </Tag>
-                  ))}
+                  {(c.interests ?? [])
+                    .filter((t: any) => t)
+                    .map((t: string) => (
+                      <Tag key={t} color='pink' className='tag-ellipsis'>
+                        <TagIcon /> {t}
+                      </Tag>
+                    ))}
                 </TagGroup>
               </Card.Footer>
             </Card>

@@ -54,7 +54,7 @@ export default function LoginPage() {
   return (
     <div className='min-h-screen flex flex-col items-center justify-center'>
       <div className='flex flex-col items-center gap-3 px-24 py-12 bg-white/75 backdrop-blur-md rounded-3xl border-2'>
-        <h1>Welcome to Matcha</h1>
+        <header>Welcome to Matcha</header>
 
         <Form
           fluid
