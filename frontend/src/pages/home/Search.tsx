@@ -281,6 +281,7 @@ export function LocationMap({ profiles }: { profiles: any }) {
       />
       {profiles.map((p: any) => (
         <LocationMarker
+          key={p.id}
           position={{ lat: p.latitude, lng: p.longitude }}
           firstname={p.first_name}
           lastname={p.last_name}

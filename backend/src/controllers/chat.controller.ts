@@ -37,6 +37,9 @@ export const createChatHandler = async (
     }
 
     await createChat(userId, targetId, message);
+
+    io.to(targetId).emit('notification', { type: 'message', fromId: userId });
+
     io.to(targetId).emit("new_messages", {
       fromId: userId,
       message,
@@ -80,7 +83,7 @@ export const getChatHandler = async (
     res.status(200).json({ messages } );
 
   } catch (error) {
-    console.error("error updating match status", error);
+    console.error("error getting chat", error);
     res.status(500).json({ error: "internal server error" });
   }
 };

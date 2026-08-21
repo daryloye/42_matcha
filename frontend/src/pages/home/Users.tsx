@@ -107,26 +107,6 @@ function UsersPage() {
     }
   };
 
-  const handleChat = async () => {
-    setLoading(true);
-
-    try {
-      toaster.push(
-        <Notification type='info' closable>
-          Chat {profile.first_name}
-        </Notification>,
-      );
-    } catch (err: any) {
-      toaster.push(
-        <Notification type='error' closable>
-          {err.message}
-        </Notification>,
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
   if (matchStatus.isBlockedByTarget) {
     return (
       <VStack>
@@ -147,7 +127,6 @@ function UsersPage() {
         <UserProfileMatchButtons
           matchStatus={matchStatus}
           loading={loading}
-          handleChat={handleChat}
           handleUpdateStatus={handleUpdateStatus}
         />
       </div>
@@ -264,7 +243,6 @@ function UserProfileBody({ profile }: { profile: SearchUserProfile }) {
 function UserProfileMatchButtons({
   matchStatus,
   loading,
-  handleChat,
   handleUpdateStatus,
 }: {
   matchStatus: MatchStatus;
@@ -295,21 +273,6 @@ function UserProfileMatchButtons({
             <span className='ml-2'>
               {matchStatus.hasLikedTarget ? 'Unlike' : 'Like'}
             </span>
-          </Button>
-
-          {/* Chat */}
-          <Button
-            type='button'
-            appearance='primary'
-            size='lg'
-            color='green'
-            className='w-full rounded-2xl font-semibold transition'
-            loading={loading}
-            disabled={!matchStatus.isConnected || matchStatus.isBlockingTarget}
-            onClick={handleChat}
-          >
-            <IoChatbubbleEllipses />
-            <span className='ml-2'>Chat</span>
           </Button>
 
           {/* Block / Unblock */}

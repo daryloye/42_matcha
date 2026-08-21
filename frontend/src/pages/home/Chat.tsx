@@ -11,79 +11,25 @@ import {
 } from 'rsuite';
 import { GetMessages, SendMessage } from '../../api/chat';
 import { GetConnectedUsers } from '../../api/match';
-import profilePic from '../../assets/profilePic2.png';
 import { HomePageTemplate } from './HomePageTemplate';
-
-const chatSidebarJson = [
-  {
-    id: 1,
-    name: 'Test',
-    image: profilePic,
-    status: 'Online',
-    messages: [
-      { from: 'user', message: 'hello from me' },
-      { from: 'other', message: 'hello from friend' },
-    ],
-  },
-  {
-    id: 2,
-    name: 'Your Mom',
-    image: profilePic,
-    status: 'Offline',
-    messages: [
-      { from: 'user', message: 'hello from me' },
-      { from: 'user', message: 'hello from me again' },
-      { from: 'other', message: 'hello from friend' },
-      { from: 'user', message: 'hello from me' },
-      { from: 'user', message: 'hello from me again' },
-      { from: 'other', message: 'hello from friend' },
-      { from: 'user', message: 'hello from me' },
-      { from: 'user', message: 'hello from me again' },
-      { from: 'other', message: 'hello from friend' },
-      { from: 'user', message: 'hello from me' },
-      { from: 'user', message: 'hello from me again' },
-      {
-        from: 'other',
-        message:
-          'hello from friend hello from friend hello from friend hello from friend hello from friendvhello from friendhello from friend hello from friend hello from friend hello from friend ',
-      },
-    ],
-  },
-  {
-    id: 3,
-    name: 'Your Dad',
-    image: profilePic,
-    status: 'Online',
-    messages: [
-      { from: 'user', message: 'hello from me' },
-      { from: 'user', message: 'hello from me again' },
-      { from: 'other', message: 'hello from friend' },
-    ],
-  },
-];
-
-const test_user = '450d84f8-c8ae-4842-a87d-b9a0839ab2a8';
+import { getPictureSrc } from '../../utils/utils';
+import { connectSocket } from '../../api/socket';
 
 export default function Chat() {
   return <HomePageTemplate page={<ChatPage />} />;
 }
 
 function ChatPage() {
-  // const [selectedChat, setSelectedChat] = useState<any | null>(null);
-  // const [selectedChatId, setselectedChatId] = useState<string>('');
-  // const [connetedUsers, setConnectedUsers] = useState<String[]>([]);
-  const [selectedChatId, setselectedChatId] = useState<string>('');
-  const [_connetedUsers, setConnectedUsers] = useState<String[]>([]);
+  const [selectedChatUser, setSelectedChatUser] = useState<any>(null);
+  const [connectedUsers, setConnectedUsers] = useState<any>([]);
 
   const toaster = useToaster();
-
+  
   useEffect(() => {
-    async function fetchConnectedUsers() {
+    const fetchConnectedUsers = async () => {
       try {
         const res = await GetConnectedUsers();
-        console.log(res['connectedUsers']);
-
-        setConnectedUsers(res['connectedUsers']);
+        setConnectedUsers(res.profiles);
       } catch (err: any) {
         toaster.push(
           <Notification type='error' closable>
@@ -94,7 +40,6 @@ function ChatPage() {
     }
 
     fetchConnectedUsers();
-
     const interval = setInterval(fetchConnectedUsers, 2000);
     return () => clearInterval(interval);
   }, []);
@@ -104,12 +49,8 @@ function ChatPage() {
       <header>Chat</header>
       <div className='flex-1 mt-5 min-h-0 border'>
         <div className='flex flex-row h-[65vh]'>
-          {/* <ChatSidebar setselectedChatId={setselectedChatId} selectedChat={selectedChat} /> */}
-          <ChatSidebar
-            setselectedChatId={setselectedChatId}
-            selectedChat={null}
-          />
-          <ChatSelected selectedChatId={selectedChatId} />
+          <ChatSidebar connectedUsers={connectedUsers} setSelectedChatUser={setSelectedChatUser} selectedChatUser={selectedChatUser} />
+          <ChatSelected selectedChatUser={selectedChatUser} />
         </div>
       </div>
     </div>
@@ -117,48 +58,58 @@ function ChatPage() {
 }
 
 function ChatSidebar({
-  setselectedChatId,
-  selectedChat,
+  connectedUsers,
+  setSelectedChatUser,
+  selectedChatUser,
 }: {
-  setselectedChatId: any;
-  selectedChat: any;
+  connectedUsers: any,
+  setSelectedChatUser: any;
+  selectedChatUser: any;
 }) {
   return (
-    <div className='flex flex-col w-[35%] h-full overflow-y-auto border-r'>
-      {chatSidebarJson.map((c) => (
-        <div
-          role='button'
-          tabIndex={0}
-          key={c.id}
-          // className={`flex items-center gap-3 p-2 w-full overflow-hidden text-left border-b ${
-          //   c.id === selectedChat?.id
-          //     ? 'bg-[var(--color-link-hover)]'
-          //     : 'hover:bg-[rgba(179,148,214,0.25)]'
-          // }`}
-          className={`flex items-center gap-3 p-2 w-full overflow-hidden text-left border-b hover:bg-[rgba(179,148,214,0.25)]`}
-          onClick={() => {
-            setselectedChatId(test_user);
-          }}
-        >
-          <Avatar src={c.image} size='lg' circle className='shrink-0' />
-          <p className='text-xl w-full font-bold truncate'>{c.name}</p>
-        </div>
-      ))}
-    </div>
+  <div className='flex flex-col w-[35%] h-full overflow-y-auto border-r'>
+    {connectedUsers.length === 0
+    ? <div className='flex flex-1 items-center justify-center text-center h-full'>
+        <h1>You have no connections</h1>
+      </div>
+    : connectedUsers.map((c: any) => (
+      <div
+        role='button'
+        tabIndex={0}
+        key={c.id}
+        className={`flex items-center gap-3 p-2 w-full overflow-hidden text-left border-b ${
+          c.id === selectedChatUser?.id
+            ? 'bg-[var(--color-link-hover)]'
+            : 'hover:bg-[rgba(179,148,214,0.25)]'
+        }`}
+        onClick={() => setSelectedChatUser(c)}
+      >
+        <Avatar 
+          src={getPictureSrc(c.profile_picture[0].image_url) ?? import.meta.env.VITE_PLACEHOLDER_IMAGE}
+          size='lg' 
+          circle
+          className='shrink-0' />
+        <p className='text-xl w-full font-bold truncate'>{c.first_name} {c.last_name}</p>
+      </div>
+    ))}
+  </div>
   );
 }
 
-function ChatSelected({ selectedChatId }: { selectedChatId: any }) {
+function ChatSelected({ selectedChatUser }: { selectedChatUser: any }) {
   const [messageToSend, setMessageToSend] = useState<string>('');
   const [messages, setMessages] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const toaster = useToaster();
-
+  
+  // load chat history when selectedChatUser is updated
   useEffect(() => {
+    if (!selectedChatUser) return;
+  
     async function fetchMessages() {
       try {
-        const res = await GetMessages(test_user);
+        const res = await GetMessages(selectedChatUser?.id);
         setMessages(res['messages']);
       } catch (err: any) {
         toaster.push(
@@ -169,11 +120,30 @@ function ChatSelected({ selectedChatId }: { selectedChatId: any }) {
       }
     }
 
-    fetchMessages();
+    const socket = connectSocket();
 
-    const interval = setInterval(fetchMessages, 1000);
-    return () => clearInterval(interval);
-  }, []);
+    const handleIncomingChat = () => {
+      fetchMessages();
+    }
+    
+    fetchMessages();
+  
+    socket.on('new_messages', handleIncomingChat);
+    return () => {
+      socket.off('new_messages', handleIncomingChat);
+    }
+  }, [selectedChatUser?.id]);
+  
+  useEffect(() => {
+    messagesEndRef?.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+  
+  if (!selectedChatUser)
+    return (
+      <div className='flex flex-1 items-center justify-center text-center h-full'>
+        <h1>select a chat</h1>
+      </div>
+    );
 
   const handleSendMessage = async (e: any) => {
     if (e.key !== 'Enter' || e.shiftKey) return;
@@ -183,10 +153,10 @@ function ChatSelected({ selectedChatId }: { selectedChatId: any }) {
 
     try {
       await SendMessage({
-        targetId: selectedChatId,
+        targetId: selectedChatUser.id,
         message: messageToSend,
       });
-      const res = await GetMessages(test_user);
+      const res = await GetMessages(selectedChatUser?.id);
       setMessages(res['messages']);
       setMessageToSend('');
     } catch (err: any) {
@@ -198,46 +168,38 @@ function ChatSelected({ selectedChatId }: { selectedChatId: any }) {
     }
   };
 
-  useEffect(
-    () => messagesEndRef?.current?.scrollIntoView({ behavior: 'smooth' }),
-    [],
-  ); // TODO: scroll into view on load
-
-  if (!selectedChatId)
-    return (
-      <div className='flex flex-1 items-center justify-center h-full'>
-        <h1>select a chat</h1>
-      </div>
-    );
-
   return (
     <div className='flex flex-col flex-1 h-full overflow-hidden'>
       {/* Header */}
       <HStack background='var(--color-link-hover)' className='p-2 shrink-0'>
-        <Avatar src={chatSidebarJson[0].image} size='lg' circle />
+        <Avatar src={getPictureSrc(selectedChatUser.profile_picture[0].image_url) ?? import.meta.env.VITE_PLACEHOLDER_IMAGE} size='lg' circle />
 
         <VStack className='overflow-hidden'>
           <p className='text-xl font-bold w-full truncate'>
-            {chatSidebarJson[0].name}
+            {selectedChatUser.first_name} {selectedChatUser.last_name}
           </p>
 
           {/* Online Status */}
           <HStack>
-            <Badge compact size='lg' color={1 ? 'green' : 'red'} />
-            <p>Online {1 ? '' : 'last seen'}</p> // TODO: check last seen status
+            <Badge compact size='lg' color={selectedChatUser.online ? 'green' : 'red'} />
+            <p>
+              {selectedChatUser.online
+                ? 'Online'
+                : `Last seen ${new Date(selectedChatUser.last_seen).toLocaleString('en-GB')}`}
+            </p>
           </HStack>
         </VStack>
       </HStack>
 
       {/* Messages */}
       <div className='flex-1 min-h-0 flex flex-col gap-2 p-2 overflow-y-auto'>
-        {messages.map((item: any) => (
+        {messages?.map((item: any) => (
           <div
             key={item.id}
-            className={`flex ${item.to_user_id === selectedChatId ? 'justify-end pl-20' : 'justify-start pr-20'}`}
+            className={`flex ${item.to_user_id === selectedChatUser.id ? 'justify-end pl-20' : 'justify-start pr-20'}`}
           >
             <Tag
-              color={item.to_user_id === selectedChatId ? 'lightblue' : 'white'}
+              color={item.to_user_id === selectedChatUser.id ? 'lightblue' : 'white'}
               size='lg'
               className='break-all whitespace-pre-wrap'
             >
@@ -245,6 +207,7 @@ function ChatSelected({ selectedChatId }: { selectedChatId: any }) {
             </Tag>
           </div>
         ))}
+
         <div ref={messagesEndRef} />
       </div>
 

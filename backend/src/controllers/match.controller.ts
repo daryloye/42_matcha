@@ -6,6 +6,7 @@ import { MatchRequest, matchStatus } from "../types/match.types";
 import { increaseUserFame } from "../models/profile.model";
 import { createNotification } from "../models/notification.model";
 import { io } from "../server";
+import { getUserProfile } from "../models/search.model";
 
 export const updateMatchHandler = async (
   req: AuthRequest,
@@ -166,7 +167,16 @@ export const getConnectedUsersHandler = async (
     const userId = req.user!.userId;
 
     const connectedUsers = await getTargetIdsWithStatus(userId, matchStatus.CONNECTED);
-    res.status(200).json({ connectedUsers });
+    const connectedUserDetails = await Promise.all(
+      (connectedUsers ?? []).map(async (id: any) => {
+        const profile = await getUserProfile(id, userId);
+        profile.online = profile.last_seen
+          ? (new Date().getTime() - new Date(profile.last_seen).getTime() < 15000)
+          : false;    // offline if last seen more than 15 seconds ago
+        return profile;
+      }),
+    );
+    res.status(200).json({ profiles: connectedUserDetails });
 
   } catch (error) {
     console.error("error getting connected users", error);

@@ -24,7 +24,7 @@ export const getChat = async (
             (from_user_id = $1 AND to_user_id = $2)
         OR  (from_user_id = $2 AND to_user_id = $1)
         )
-        ORDER BY created_at
+        ORDER BY created_at ASC;
     `;
   const result = await query(sql, [user1, user2]);
   return result.rows.length > 0 ? result.rows : null;
