@@ -1,12 +1,21 @@
+import type { Marker as LeafletMarker } from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import {
+  MapContainer,
+  Marker,
+  Popup,
+  TileLayer,
+} from 'react-leaflet';
 import CalendarIcon from '@rsuite/icons/Calendar';
 import HeartIcon from '@rsuite/icons/Heart';
 import LocationIcon from '@rsuite/icons/Location';
 import TagIcon from '@rsuite/icons/Tag';
 import StarIcon from '@rsuite/icons/Star';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MdPersonOutline } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import {
+  Button,
   Card,
   Input,
   Notification,
@@ -18,7 +27,7 @@ import {
   useToaster,
 } from 'rsuite';
 import { GetSearchProfiles } from '../../api/search';
-import type { SearchFilters, SearchSort } from '../../utils/types';
+import type { Position, SearchFilters, SearchSort } from '../../utils/types';
 import { getPictureSrc } from '../../utils/utils';
 import { HomePageTemplate } from './HomePageTemplate';
 import {
@@ -196,6 +205,8 @@ function SearchPage() {
 
         <p className='italic text-indigo-500'>* By default, profiles are sorted by Mactcha Grade {<StarIcon />} = (10 * matching tags + 5 * fame - 0.5 * distance)</p>
 
+        <LocationMap profiles={sorted}/>
+
         {/* Search Results */}
         <div className='mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8'>
           {sorted.map((c) => (
@@ -253,5 +264,64 @@ function SearchPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export function LocationMap({ profiles }: { profiles: any }) {
+  return (
+    <MapContainer
+      center={[0, 0]}
+      zoom={1}
+      scrollWheelZoom={true}
+      className='h-[300px] w-full'
+    >
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+      />
+      {profiles.map((p: any) => (
+        <LocationMarker
+          position={{ lat: p.latitude, lng: p.longitude }}
+          firstname={p.first_name}
+          lastname={p.last_name}
+          id={p.id}
+        />
+      ))}
+    </MapContainer>
+  );
+}
+
+function LocationMarker({
+  position,
+  firstname,
+  lastname,
+  id
+}: {
+  position: Position | null,
+  firstname: string,
+  lastname: string,
+  id: string
+}) {
+  const markerRef = useRef<LeafletMarker | null>(null);
+  const navigate = useNavigate();
+
+  if (!position) return null;
+
+  return (
+    <Marker
+      draggable={false}
+      position={position}
+      ref={markerRef}
+    >
+      <Popup>
+        <div className='flex flex-col items-center text-center mt-0'>
+          <p>{firstname} {lastname}
+          <br />{position.lat}, {position.lng}</p>
+          <Button onClick={() => navigate(`/users/${id}`)}>
+            View Profile
+          </Button>
+        </div>
+      </Popup>
+    </Marker>
   );
 }

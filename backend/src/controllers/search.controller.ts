@@ -47,6 +47,8 @@ export const getRecommendedSearchHandler = async (
         common_tags_count: row.common_tags_count,
         interests: row.interests,
         distance,
+        latitude: row.latitude,
+        longitude: row.longitude,
         age: getAge(row.date_of_birth),
       };
     });
