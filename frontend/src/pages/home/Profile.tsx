@@ -242,7 +242,7 @@ function ProfilePage({
         className='pt-6 w-full'
       >
         <Form.Stack spacing={10} className='w-full space-y-3'>
-          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4'>
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4 w-full'>
             <Form.Group>
               <p className='text-lg font-bold'>First Name</p>
               <Form.Control name='firstname' placeholder='First name' />

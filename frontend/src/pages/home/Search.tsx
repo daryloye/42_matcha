@@ -2,6 +2,7 @@ import CalendarIcon from '@rsuite/icons/Calendar';
 import HeartIcon from '@rsuite/icons/Heart';
 import LocationIcon from '@rsuite/icons/Location';
 import TagIcon from '@rsuite/icons/Tag';
+import StarIcon from '@rsuite/icons/Star';
 import { useEffect, useState } from 'react';
 import { MdPersonOutline } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
@@ -24,11 +25,14 @@ import {
   SearchFilterRange,
   baseFilters,
   baseSorts,
+  countMatchingInterestTags,
   getFilteredProfiles,
+  getMatchaGrade,
   getRange,
   getSortedProfiles,
   sortOptions,
 } from './SearchUtils';
+import { GetFullProfile } from '../../api/profile';
 
 export default function Search() {
   return <HomePageTemplate page={<SearchPage />} />;
@@ -45,8 +49,21 @@ function SearchPage() {
   useEffect(() => {
     async function fetchProfiles() {
       try {
+        // get user's profile for the interest tags
+        const userProfile = await GetFullProfile();
+
         const res = await GetSearchProfiles();
-        setProfiles(res.profiles);
+        setProfiles(
+          res.profiles.map((profile: any) => ({
+            ...profile,
+            matchingTags: countMatchingInterestTags(userProfile.profile.interests, profile.interests),
+            matchaGrade: getMatchaGrade(
+              countMatchingInterestTags(userProfile.profile.interests, profile.interests),
+              profile.distance,
+              profile.fame_rating
+            ).toFixed(1)
+          }))
+        );
 
         setFilters((prev) => ({
           ...prev,
@@ -72,6 +89,7 @@ function SearchPage() {
   const distanceRange = getRange(profiles, 'distance');
   const fameRange = getRange(profiles, 'fame_rating');
 
+  // filter, then sort profiles
   const filtered = getFilteredProfiles(profiles, filters);
   const sorted = getSortedProfiles(filtered, sortBy);
 
@@ -176,6 +194,8 @@ function SearchPage() {
           </VStack>
         </div>
 
+        <p className='italic text-indigo-500'>* By default, profiles are sorted by Mactcha Grade {<StarIcon />} = (10 * matching tags + 5 * fame - 0.5 * distance)</p>
+
         {/* Search Results */}
         <div className='mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8'>
           {sorted.map((c) => (
@@ -211,6 +231,9 @@ function SearchPage() {
                   </Tag>
                   <Tag color='red' size='lg'>
                     <HeartIcon /> {c.fame_rating}
+                  </Tag>
+                  <Tag color='yellow' size='lg'>
+                    <StarIcon /> {c.matchaGrade}
                   </Tag>
                 </VStack>
               </Card.Body>

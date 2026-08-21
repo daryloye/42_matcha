@@ -27,7 +27,7 @@ export function getFilteredProfiles(profiles: any, filters: SearchFilters) {
     (p: any) => {
       const fullName = `${p.first_name} ${p.last_name}`.toLowerCase();
       const profileTags = (p.interests ?? [])
-        .filter((t: any) => t != null && t !== '')
+        .filter(Boolean)    // remove falsy values like null, undefined, and ''
         .map((t: any) => String(t).toLowerCase());
 
       return (
@@ -45,6 +45,26 @@ function isInRange(value: number, range: number[]) {
   return value >= range[0] && value <= range[1];
 }
 
+export function getMatchaGrade(matchingTags: number, distance: number, fame: number) {
+  return (10 * matchingTags + 5 * fame - 0.5 * distance);
+}
+
+export function countMatchingInterestTags(userInterests: string[], profileInterests: string[]) {
+  const userTagSet = new Set(
+    userInterests
+      .filter(Boolean)    // remove falsy values like null, undefined, and ''
+      .map((tag) => tag.toLowerCase())
+  );
+
+  const count = profileInterests
+    .filter(Boolean)    // remove falsy values like null, undefined, and ''
+    .map((tag) => tag.toLowerCase())
+    .filter((tag) => userTagSet.has(tag))
+    .length;
+
+  return count;
+}
+
 export function getSortedProfiles(profiles: any, sortBy: SearchSort) {
   return [...profiles].sort((a, b): number => {
     let r;
@@ -58,15 +78,10 @@ export function getSortedProfiles(profiles: any, sortBy: SearchSort) {
     r = doSort(sortBy.fame, Number(a.fame_rating), Number(b.fame_rating));
     if (r !== 0) return r;
 
-    // TODO: sort by matching tags
-    r = doSort(
-      sortBy.tags,
-      (a.interests ?? []).filter((t: any) => t != null && t !== '').length,
-      (b.interests ?? []).filter((t: any) => t != null && t !== '').length,
-    );
+    r = doSort(sortBy.tags, a.matchingTags, b.matchingTags);
     if (r !== 0) return r;
 
-    return 0;
+    return (b.matchaGrade - a.matchaGrade);
   });
 }
 
